@@ -4,9 +4,9 @@
 **Depends on:** T06
 
 ## Spec refs
-- `docs/specification/04-auth-and-roles.md §1, §4`
-- `docs/specification/07-features.md F-ADMIN-1`
-- `docs/specification/02-data-model.md invitations, project_members`
+- `specification/04-auth-and-roles.md §1, §4`
+- `specification/07-features.md F-ADMIN-1`
+- `specification/02-data-model.md invitations, project_members`
 
 ## Scope
 - Invite-only enforcement (Supabase before-user-created auth hook, or callback fallback described in 04 §1).
@@ -23,4 +23,4 @@
 - [ ] Definition of done in `AGENTS.md` satisfied.
 
 ## Out of scope
-- Anything not listed in Scope; see `docs/specification/12-delivery-plan.md` for the owning ticket.
+- Anything not listed in Scope; see `specification/12-delivery-plan.md` for the owning ticket.

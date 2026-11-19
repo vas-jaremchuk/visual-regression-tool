@@ -4,8 +4,8 @@
 **Depends on:** T19, T20, T21, T22, T23, T24, T25
 
 ## Spec refs
-- `docs/specification/11-testing.md §4`
-- `docs/specification/12-delivery-plan.md manual steps`
+- `specification/11-testing.md §4`
+- `specification/12-delivery-plan.md manual steps`
 
 ## Scope
 - Deploy fixture site (v1/v2 switchable) somewhere reachable (e.g. Cloudflare Pages or a Worker serving `fixtures/site`).
@@ -18,4 +18,4 @@
 - [ ] Definition of done in `AGENTS.md` satisfied.
 
 ## Out of scope
-- Anything not listed in Scope; see `docs/specification/12-delivery-plan.md` for the owning ticket.
+- Anything not listed in Scope; see `specification/12-delivery-plan.md` for the owning ticket.

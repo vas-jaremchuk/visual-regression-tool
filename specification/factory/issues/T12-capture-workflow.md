@@ -4,9 +4,9 @@
 **Depends on:** T10, T11
 
 ## Spec refs
-- `docs/specification/06-jobs.md §2, §4`
-- `docs/specification/07-features.md F-RUN-1, F-RUN-2, F-RUN-4, F-RUN-5`
-- `docs/specification/09-api.md §1–§2`
+- `specification/06-jobs.md §2, §4`
+- `specification/07-features.md F-RUN-1, F-RUN-2, F-RUN-4, F-RUN-5`
+- `specification/09-api.md §1–§2`
 
 ## Scope
 - `POST /api/projects/:id/runs` (incl. dry run, scopes, sample, viewports, collision-safe label, one-active-run rule 409) creating run + items from snapshot × viewports minus ignore rules; settings frozen.

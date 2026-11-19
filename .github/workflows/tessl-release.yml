@@ -1,0 +1,67 @@
+# Releases Tessl tickets whose blocking issues are all closed.
+#
+# Issues imported by specification/factory/import-issues.mjs that are still blocked carry the
+# label `tessl:waiting`. When an issue is closed (normally by merging the PR that says
+# "Closes #N"), this workflow checks every waiting issue's native "blocked by" dependencies and,
+# if all of them are closed, swaps `tessl:waiting` for `tessl` so the Tessl factory picks it up.
+#
+# Optional secret TESSL_RELEASE_TOKEN (fine-grained PAT, Issues: read & write on this repo):
+# use it if the Tessl app does not react to labels added by the default GITHUB_TOKEN.
+
+name: Release unblocked Tessl tickets
+
+on:
+  issues:
+    types: [closed]
+  workflow_dispatch:
+  schedule:
+    - cron: "17 */6 * * *"   # safety net for missed events
+
+permissions:
+  issues: write
+
+concurrency:
+  group: tessl-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.TESSL_RELEASE_TOKEN || github.token }}
+          script: |
+            const LABEL = 'tessl';
+            const WAITING = 'tessl:waiting';
+            const { owner, repo } = context.repo;
+
+            const waiting = await github.paginate(github.rest.issues.listForRepo, {
+              owner, repo, state: 'open', labels: WAITING, per_page: 100,
+            });
+            core.info(`${waiting.length} waiting issue(s)`);
+
+            for (const issue of waiting) {
+              if (issue.pull_request) continue;
+              const blockers = await github.paginate(
+                'GET /repos/{owner}/{repo}/issues/{issue_number}/dependencies/blocked_by',
+                { owner, repo, issue_number: issue.number, per_page: 100 },
+              );
+              const open = blockers.filter(b => b.state !== 'closed');
+              if (open.length) {
+                core.info(`#${issue.number} still blocked by ${open.map(b => '#' + b.number).join(', ')}`);
+                continue;
+              }
+              await github.rest.issues.addLabels({ owner, repo, issue_number: issue.number, labels: [LABEL] });
+              try {
+                await github.rest.issues.removeLabel({ owner, repo, issue_number: issue.number, name: WAITING });
+              } catch (e) {
+                if (e.status !== 404) throw e;
+              }
+              const list = blockers.map(b => '#' + b.number).join(', ') || 'none';
+              await github.rest.issues.createComment({
+                owner, repo, issue_number: issue.number,
+                body: `All blocking issues are closed (${list}). Added \`${LABEL}\` — handing this ticket to the Tessl factory.`,
+              });
+              core.info(`released #${issue.number}`);
+            }

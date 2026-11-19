@@ -4,9 +4,9 @@
 **Depends on:** T15
 
 ## Spec refs
-- `docs/specification/07-features.md F-CMP-2..6`
-- `docs/specification/08-ui.md §3 Report, Item viewer`
-- `docs/specification/10-non-functional.md NFR-4`
+- `specification/07-features.md F-CMP-2..6`
+- `specification/08-ui.md §3 Report, Item viewer`
+- `specification/10-non-functional.md NFR-4`
 
 ## Scope
 - Report page: header, summary chips (clickable filters), viewport tabs, virtualised changed list sorted by %, severity colours, files/redirect/new/missing sections, empty state wording.

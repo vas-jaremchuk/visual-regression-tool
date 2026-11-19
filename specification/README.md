@@ -48,7 +48,8 @@ has an ID (`REQ-xxx`) so tickets, tests and PRs can reference it.
 
 ## Using this spec with Tessl
 
-See [factory/README.md](factory/README.md). In short: create the repo, copy
-`factory/AGENTS.md` and `factory/.tessl/cloud-launch-setup.sh` into it, copy this
-`specification/` folder into `docs/specification/`, then create one GitHub issue per
-file in `factory/issues/` (script provided) and add the `tessl` label in milestone order.
+The app is built in this same repository (next to `prototype/` and `specification/`).
+See [factory/README.md](factory/README.md): import the 26 tickets as GitHub issues with
+`node specification/factory/import-issues.mjs` — they get native *blocked by* dependencies,
+milestones, and the `tessl` label as soon as they are unblocked
+(`factory/github/tessl-release.yml`, copied to `.github/workflows/`, does that automatically when blockers close).

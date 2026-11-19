@@ -1,8 +1,9 @@
 # 12 — Delivery plan
 
 Tickets are sized for **one PR each** (≈ 0.5–2 days of human work) so a factory agent can
-implement them independently. Full ticket text: `factory/issues/Txx-*.md`.
-Start a ticket only when all its dependencies are merged.
+implement them independently. Full ticket text: `factory/issues/Txx-*.md`; dependencies in
+`factory/issues.json`. They are imported as GitHub issues with *blocked by* relations; a ticket
+gets the `tessl` label automatically once all its blockers are closed (see `factory/README.md`).
 
 ## Milestones
 
@@ -76,11 +77,12 @@ in parallel.
 
 ## Manual steps for the product owner (not for agents)
 
-1. Create GitHub repo, Vercel project (root `apps/web`), Supabase project, Cloudflare Workers Paid plan
+1. GitHub repo (exists), Vercel project (root `apps/web`), Supabase project, Cloudflare Workers Paid plan
    with Browser Rendering, Workflows, Queues and Containers enabled.
 2. Create R2 S3 API token (Object Read & Write) and CF API token (Workers R2 Storage: Edit, plus
    Workers Scripts/Queues/Containers edit for deploys).
 3. Set secrets in Vercel, GitHub Actions (for wrangler deploy) and Tessl environment (for tests:
    only local/dev values — agents run against local Supabase, never production).
+   Import the tickets: `node specification/factory/import-issues.mjs`.
 4. Configure Supabase Auth: site URL, redirect URLs (Vercel preview pattern), Google OAuth (optional), SMTP or Resend.
 5. Run `pnpm seed:admin <your-email>` once on production.

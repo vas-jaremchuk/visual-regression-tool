@@ -4,9 +4,9 @@
 **Depends on:** T01
 
 ## Spec refs
-- `docs/specification/02-data-model.md (all)`
-- `docs/specification/04-auth-and-roles.md §2–§3`
-- `docs/specification/10-non-functional.md NFR-11, NFR-24`
+- `specification/02-data-model.md (all)`
+- `specification/04-auth-and-roles.md §2–§3`
+- `specification/10-non-functional.md NFR-11, NFR-24`
 
 ## Scope
 - `supabase init`; migrations for all enums and tables in 02 §1–§2, indexes and unique constraints.

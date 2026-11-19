@@ -4,9 +4,9 @@
 **Depends on:** T06, T05
 
 ## Spec refs
-- `docs/specification/03-configuration.md §1, §5, §6`
-- `docs/specification/07-features.md F-PROJ-1..6, F-VIEWPORT-1`
-- `docs/specification/08-ui.md §1, §3`
+- `specification/03-configuration.md §1, §5, §6`
+- `specification/07-features.md F-PROJ-1..6, F-VIEWPORT-1`
+- `specification/08-ui.md §1, §3`
 
 ## Scope
 - Create project (platform admin) with default viewport; slug generation.

@@ -4,9 +4,9 @@
 **Depends on:** T04, T05, T09
 
 ## Spec refs
-- `docs/specification/05-engine.md §4–§5, §10`
-- `docs/specification/06-jobs.md §3`
-- `docs/specification/01-architecture.md ADR-2`
+- `specification/05-engine.md §4–§5, §10`
+- `specification/06-jobs.md §3`
+- `specification/01-architecture.md ADR-2`
 
 ## Scope
 - `BrowserRenderingProvider` implementing `BrowserProvider` with `@cloudflare/puppeteer` (session reuse).

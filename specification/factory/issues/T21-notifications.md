@@ -4,9 +4,9 @@
 **Depends on:** T15
 
 ## Spec refs
-- `docs/specification/07-features.md F-NOTIFY-1..5`
-- `docs/specification/02-data-model.md notification_*`
-- `docs/specification/06-jobs.md §2 step 4, §5 step 9`
+- `specification/07-features.md F-NOTIFY-1..5`
+- `specification/02-data-model.md notification_*`
+- `specification/06-jobs.md §2 step 4, §5 step 9`
 
 ## Scope
 - Notifications settings tab: channels CRUD, events, test send, delivery log.
@@ -21,4 +21,4 @@
 - [ ] Definition of done in `AGENTS.md` satisfied.
 
 ## Out of scope
-- Anything not listed in Scope; see `docs/specification/12-delivery-plan.md` for the owning ticket.
+- Anything not listed in Scope; see `specification/12-delivery-plan.md` for the owning ticket.

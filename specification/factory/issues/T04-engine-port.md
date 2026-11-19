@@ -4,9 +4,9 @@
 **Depends on:** T01
 
 ## Spec refs
-- `docs/specification/05-engine.md §1–§9`
-- `docs/specification/11-testing.md §1–§2`
-- `docs/reference/prototype/*`
+- `specification/05-engine.md §1–§9`
+- `specification/11-testing.md §1–§2`
+- `prototype/*.js`
 
 ## Scope
 Port to TypeScript (pure, dependency-injected):
@@ -19,7 +19,7 @@ Port to TypeScript (pure, dependency-injected):
 - `buildComparisonMatrix(beforeItems, afterItems)` per 05 §6.
 - `renderStaticReport(...)` with HTML escaping.
 - Ignore-rule matching (`glob` and `re:`).
-Golden fixtures: generate expected filenames for all URLs from the prototype's sample sitemap list by executing the prototype function in `docs/reference/prototype`; commit JSON.
+Golden fixtures: commit `fixtures/urls.txt` with ≥ 200 URLs (root, nested paths, trailing slashes, query strings, encoded/unicode chars, > 200-char paths, file links) and generate the expected filenames by executing the prototype logic from `prototype/take-screenshots.js` / `prototype/files.js` (copy the pure functions into a one-off script; do not modify `prototype/`); commit the resulting JSON.
 
 ## Acceptance criteria
 - [ ] Filename parity: 100 % match with golden JSON.

@@ -4,10 +4,10 @@
 **Depends on:** T01
 
 ## Spec refs
-- `docs/specification/03-configuration.md §2–§5`
-- `docs/specification/04-auth-and-roles.md §6`
-- `docs/specification/02-data-model.md §3`
-- `docs/specification/09-api.md §2–§4`
+- `specification/03-configuration.md §2–§5`
+- `specification/04-auth-and-roles.md §6`
+- `specification/02-data-model.md §3`
+- `specification/09-api.md §2–§4`
 
 ## Scope
 - `env.ts`: zod `webEnv`, `workerEnv`, `containerEnv` with helpful errors; test that keys match each app's `.env.example`.

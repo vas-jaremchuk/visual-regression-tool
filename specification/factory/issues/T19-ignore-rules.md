@@ -4,10 +4,10 @@
 **Depends on:** T18
 
 ## Spec refs
-- `docs/specification/02-data-model.md ignore_rules`
-- `docs/specification/05-engine.md §3 step 7, §4 step 3, §8 step 3`
-- `docs/specification/07-features.md F-IGNORE-1..3, F-REVIEW-3`
-- `docs/specification/06-jobs.md §5 step 7`
+- `specification/02-data-model.md ignore_rules`
+- `specification/05-engine.md §3 step 7, §4 step 3, §8 step 3`
+- `specification/07-features.md F-IGNORE-1..3, F-REVIEW-3`
+- `specification/06-jobs.md §5 step 7`
 
 ## Scope
 - Ignore rules page with CRUD, enable toggle, pattern tester.
@@ -22,4 +22,4 @@
 - [ ] Definition of done in `AGENTS.md` satisfied.
 
 ## Out of scope
-- Anything not listed in Scope; see `docs/specification/12-delivery-plan.md` for the owning ticket.
+- Anything not listed in Scope; see `specification/12-delivery-plan.md` for the owning ticket.

@@ -1,0 +1,13 @@
+{
+  "name": "visual-regression-tool",
+  "mode": "vendored",
+  "agents": [
+    "claude-code",
+    "cursor",
+    "gemini",
+    "antigravity",
+    "copilot",
+    "copilot-vscode"
+  ],
+  "dependencies": {}
+}

@@ -1,0 +1,282 @@
+{
+  "version": 1,
+  "label": "tessl",
+  "waitingLabel": "tessl:waiting",
+  "milestones": [
+    {
+      "key": "M0",
+      "title": "M0 Foundations"
+    },
+    {
+      "key": "M1",
+      "title": "M1 Web basics"
+    },
+    {
+      "key": "M2",
+      "title": "M2 Capture"
+    },
+    {
+      "key": "M3",
+      "title": "M3 Compare"
+    },
+    {
+      "key": "M4",
+      "title": "M4 Review"
+    },
+    {
+      "key": "M5",
+      "title": "M5 Ops & release"
+    }
+  ],
+  "tickets": [
+    {
+      "id": "T01",
+      "title": "T01 — Monorepo scaffold, tooling and CI",
+      "file": "issues/T01-monorepo-scaffold.md",
+      "milestone": "M0 Foundations",
+      "dependsOn": []
+    },
+    {
+      "id": "T02",
+      "title": "T02 — Supabase schema, RLS, seed and generated types",
+      "file": "issues/T02-supabase-schema.md",
+      "milestone": "M0 Foundations",
+      "dependsOn": [
+        "T01"
+      ]
+    },
+    {
+      "id": "T03",
+      "title": "T03 — Shared package: contracts, env schemas, crypto, HMAC, R2 keys",
+      "file": "issues/T03-shared-package.md",
+      "milestone": "M0 Foundations",
+      "dependsOn": [
+        "T01"
+      ]
+    },
+    {
+      "id": "T04",
+      "title": "T04 — Engine package: port prototype logic with parity tests",
+      "file": "issues/T04-engine-port.md",
+      "milestone": "M0 Foundations",
+      "dependsOn": [
+        "T01"
+      ]
+    },
+    {
+      "id": "T05",
+      "title": "T05 — Storage package: R2 S3 client and bucket admin",
+      "file": "issues/T05-storage-package.md",
+      "milestone": "M0 Foundations",
+      "dependsOn": [
+        "T03"
+      ]
+    },
+    {
+      "id": "T06",
+      "title": "T06 — Web app skeleton with Supabase auth",
+      "file": "issues/T06-web-auth.md",
+      "milestone": "M1 Web basics",
+      "dependsOn": [
+        "T02",
+        "T03"
+      ]
+    },
+    {
+      "id": "T07",
+      "title": "T07 — Invitations, project members and user admin",
+      "file": "issues/T07-invitations-members.md",
+      "milestone": "M1 Web basics",
+      "dependsOn": [
+        "T06"
+      ]
+    },
+    {
+      "id": "T08",
+      "title": "T08 — Projects CRUD, settings tabs, viewports, .env import, bucket check",
+      "file": "issues/T08-projects-settings.md",
+      "milestone": "M1 Web basics",
+      "dependsOn": [
+        "T06",
+        "T05"
+      ]
+    },
+    {
+      "id": "T09",
+      "title": "T09 — Worker scaffold, HMAC API and deploy pipeline",
+      "file": "issues/T09-worker-scaffold.md",
+      "milestone": "M2 Capture",
+      "dependsOn": [
+        "T03"
+      ]
+    },
+    {
+      "id": "T10",
+      "title": "T10 — Sitemap workflow and sitemap UI",
+      "file": "issues/T10-sitemap.md",
+      "milestone": "M2 Capture",
+      "dependsOn": [
+        "T04",
+        "T08",
+        "T09"
+      ]
+    },
+    {
+      "id": "T11",
+      "title": "T11 — Browser Rendering capture consumer and limiter",
+      "file": "issues/T11-capture-consumer.md",
+      "milestone": "M2 Capture",
+      "dependsOn": [
+        "T04",
+        "T05",
+        "T09"
+      ]
+    },
+    {
+      "id": "T12",
+      "title": "T12 — Capture run workflow, run API, cancel and retry",
+      "file": "issues/T12-capture-workflow.md",
+      "milestone": "M2 Capture",
+      "dependsOn": [
+        "T10",
+        "T11"
+      ]
+    },
+    {
+      "id": "T13",
+      "title": "T13 — Runs UI with realtime progress",
+      "file": "issues/T13-runs-ui.md",
+      "milestone": "M2 Capture",
+      "dependsOn": [
+        "T12"
+      ]
+    },
+    {
+      "id": "T14",
+      "title": "T14 — Diff container service",
+      "file": "issues/T14-diff-container.md",
+      "milestone": "M3 Compare",
+      "dependsOn": [
+        "T04",
+        "T05"
+      ]
+    },
+    {
+      "id": "T15",
+      "title": "T15 — Compare workflow, diff consumer, files and redirects",
+      "file": "issues/T15-compare-workflow.md",
+      "milestone": "M3 Compare",
+      "dependsOn": [
+        "T12",
+        "T14"
+      ]
+    },
+    {
+      "id": "T16",
+      "title": "T16 — Report UI and item viewer",
+      "file": "issues/T16-report-ui.md",
+      "milestone": "M3 Compare",
+      "dependsOn": [
+        "T15"
+      ]
+    },
+    {
+      "id": "T17",
+      "title": "T17 — Static export, download and public share links",
+      "file": "issues/T17-export-share.md",
+      "milestone": "M3 Compare",
+      "dependsOn": [
+        "T16"
+      ]
+    },
+    {
+      "id": "T18",
+      "title": "T18 — Review actions, bulk review, baseline and keyboard shortcuts",
+      "file": "issues/T18-review-actions.md",
+      "milestone": "M4 Review",
+      "dependsOn": [
+        "T16"
+      ]
+    },
+    {
+      "id": "T19",
+      "title": "T19 — Ignore rules end-to-end",
+      "file": "issues/T19-ignore-rules.md",
+      "milestone": "M4 Review",
+      "dependsOn": [
+        "T18"
+      ]
+    },
+    {
+      "id": "T20",
+      "title": "T20 — Review memory (auto-approve repeated changes)",
+      "file": "issues/T20-review-memory.md",
+      "milestone": "M4 Review",
+      "dependsOn": [
+        "T18"
+      ]
+    },
+    {
+      "id": "T21",
+      "title": "T21 — Notifications: email and Slack",
+      "file": "issues/T21-notifications.md",
+      "milestone": "M5 Ops & release",
+      "dependsOn": [
+        "T15"
+      ]
+    },
+    {
+      "id": "T22",
+      "title": "T22 — Storage page and delete workflow",
+      "file": "issues/T22-storage-delete.md",
+      "milestone": "M5 Ops & release",
+      "dependsOn": [
+        "T12",
+        "T15"
+      ]
+    },
+    {
+      "id": "T23",
+      "title": "T23 — Legacy import of prototype runs",
+      "file": "issues/T23-legacy-import.md",
+      "milestone": "M5 Ops & release",
+      "dependsOn": [
+        "T12"
+      ]
+    },
+    {
+      "id": "T24",
+      "title": "T24 — Audit log and job health admin pages",
+      "file": "issues/T24-admin-audit-jobs.md",
+      "milestone": "M5 Ops & release",
+      "dependsOn": [
+        "T13",
+        "T15"
+      ]
+    },
+    {
+      "id": "T25",
+      "title": "T25 — Security hardening",
+      "file": "issues/T25-security-hardening.md",
+      "milestone": "M5 Ops & release",
+      "dependsOn": [
+        "T17"
+      ]
+    },
+    {
+      "id": "T26",
+      "title": "T26 — Staging smoke test, release acceptance and runbook",
+      "file": "issues/T26-release-acceptance.md",
+      "milestone": "M5 Ops & release",
+      "dependsOn": [
+        "T19",
+        "T20",
+        "T21",
+        "T22",
+        "T23",
+        "T24",
+        "T25"
+      ]
+    }
+  ]
+}

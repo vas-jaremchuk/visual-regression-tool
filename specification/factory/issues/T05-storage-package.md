@@ -4,9 +4,9 @@
 **Depends on:** T03
 
 ## Spec refs
-- `docs/specification/01-architecture.md ADR-3`
-- `docs/specification/05-engine.md §10 ObjectStore`
-- `docs/specification/10-non-functional.md NFR-9`
+- `specification/01-architecture.md ADR-3`
+- `specification/05-engine.md §10 ObjectStore`
+- `specification/10-non-functional.md NFR-9`
 
 ## Scope
 - `ObjectStore` implementation over R2 S3 endpoint with `aws4fetch`: put, get, head, list (paginated async iterator with prefix/delimiter), batch delete (DeleteObjects ≤ 1000 keys), presigned GET URL.
@@ -20,4 +20,4 @@
 - [ ] Definition of done in `AGENTS.md` satisfied.
 
 ## Out of scope
-- Anything not listed in Scope; see `docs/specification/12-delivery-plan.md` for the owning ticket.
+- Anything not listed in Scope; see `specification/12-delivery-plan.md` for the owning ticket.

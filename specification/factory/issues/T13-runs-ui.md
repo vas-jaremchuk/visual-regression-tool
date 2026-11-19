@@ -4,9 +4,9 @@
 **Depends on:** T12
 
 ## Spec refs
-- `docs/specification/07-features.md F-RUN-1..4`
-- `docs/specification/08-ui.md §3 Run detail`
-- `docs/specification/06-jobs.md §7`
+- `specification/07-features.md F-RUN-1..4`
+- `specification/08-ui.md §3 Run detail`
+- `specification/06-jobs.md §7`
 
 ## Scope
 - New run dialog (snapshot, viewports, scope, note, estimate, dry-run preview).
@@ -21,4 +21,4 @@
 - [ ] Definition of done in `AGENTS.md` satisfied.
 
 ## Out of scope
-- Anything not listed in Scope; see `docs/specification/12-delivery-plan.md` for the owning ticket.
+- Anything not listed in Scope; see `specification/12-delivery-plan.md` for the owning ticket.

@@ -4,10 +4,10 @@
 **Depends on:** T04, T05
 
 ## Spec refs
-- `docs/specification/05-engine.md §8`
-- `docs/specification/06-jobs.md §6`
-- `docs/specification/09-api.md §4`
-- `docs/specification/01-architecture.md ADR-2`
+- `specification/05-engine.md §8`
+- `specification/06-jobs.md §6`
+- `specification/09-api.md §4`
+- `specification/01-architecture.md ADR-2`
 
 ## Scope
 - Node HTTP server (`/health`, `POST /diff` bearer-auth) using engine `diffImages` and storage `ObjectStore`.
@@ -22,4 +22,4 @@
 - [ ] Definition of done in `AGENTS.md` satisfied.
 
 ## Out of scope
-- Anything not listed in Scope; see `docs/specification/12-delivery-plan.md` for the owning ticket.
+- Anything not listed in Scope; see `specification/12-delivery-plan.md` for the owning ticket.

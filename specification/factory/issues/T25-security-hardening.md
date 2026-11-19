@@ -4,8 +4,8 @@
 **Depends on:** T17
 
 ## Spec refs
-- `docs/specification/10-non-functional.md NFR-11..18`
-- `docs/specification/04-auth-and-roles.md`
+- `specification/10-non-functional.md NFR-11..18`
+- `specification/04-auth-and-roles.md`
 
 ## Scope
 - Review and close gaps: SSRF guard everywhere, rate limiting job endpoints, CSP and security headers, `server-only` audit, escaped exports, share token constant-time compare, secret redaction in logs.
@@ -17,4 +17,4 @@
 - [ ] Definition of done in `AGENTS.md` satisfied.
 
 ## Out of scope
-- Anything not listed in Scope; see `docs/specification/12-delivery-plan.md` for the owning ticket.
+- Anything not listed in Scope; see `specification/12-delivery-plan.md` for the owning ticket.

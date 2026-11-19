@@ -36,9 +36,12 @@ flowchart LR
 ├─ supabase/
 │  ├─ migrations/           SQL migrations (schema, RLS, functions)
 │  └─ seed.sql              local dev seed
-├─ docs/specification/      this specification
+├─ prototype/               original CLI (read-only reference, not part of the pnpm workspace)
+├─ specification/           this specification + factory kit
+├─ fixtures/                test fixtures (site, png pairs, urls)
+├─ .github/workflows/       ci.yml, deploy-worker.yml, tessl-release.yml
 ├─ .tessl/cloud-launch-setup.sh
-├─ AGENTS.md
+├─ tessl.json, AGENTS.md, CLAUDE.md
 └─ turbo.json, pnpm-workspace.yaml, package.json
 ```
 

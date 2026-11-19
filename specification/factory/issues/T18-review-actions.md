@@ -4,9 +4,9 @@
 **Depends on:** T16
 
 ## Spec refs
-- `docs/specification/07-features.md F-REVIEW-1, -2, -4, -5`
-- `docs/specification/09-api.md review endpoint, RPCs`
-- `docs/specification/08-ui.md §3`
+- `specification/07-features.md F-REVIEW-1, -2, -4, -5`
+- `specification/09-api.md review endpoint, RPCs`
+- `specification/08-ui.md §3`
 
 ## Scope
 - Approve/reject/ignore with note on item; bulk on filtered selection; `review_items` RPC; review counts live.
@@ -21,4 +21,4 @@
 - [ ] Definition of done in `AGENTS.md` satisfied.
 
 ## Out of scope
-- Anything not listed in Scope; see `docs/specification/12-delivery-plan.md` for the owning ticket.
+- Anything not listed in Scope; see `specification/12-delivery-plan.md` for the owning ticket.

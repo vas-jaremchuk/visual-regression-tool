@@ -4,9 +4,9 @@
 **Depends on:** T02, T03
 
 ## Spec refs
-- `docs/specification/04-auth-and-roles.md §1–§3`
-- `docs/specification/08-ui.md §1–§2, §4`
-- `docs/specification/03-configuration.md §2`
+- `specification/04-auth-and-roles.md §1–§3`
+- `specification/08-ui.md §1–§2, §4`
+- `specification/03-configuration.md §2`
 
 ## Scope
 - Next.js app with Tailwind + shadcn/ui, dark/light theme, layout (sidebar, top bar, user menu) per 08 §2.

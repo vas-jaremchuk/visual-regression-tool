@@ -4,11 +4,11 @@
 **Depends on:** T03
 
 ## Spec refs
-- `docs/specification/01-architecture.md §3, ADR-1`
-- `docs/specification/03-configuration.md §3`
-- `docs/specification/04-auth-and-roles.md §6`
-- `docs/specification/09-api.md §2`
-- `docs/specification/06-jobs.md §8`
+- `specification/01-architecture.md §3, ADR-1`
+- `specification/03-configuration.md §3`
+- `specification/04-auth-and-roles.md §6`
+- `specification/09-api.md §2`
+- `specification/06-jobs.md §8`
 
 ## Scope
 - `apps/worker` with `wrangler.jsonc` declaring all bindings in 03 §3 (Workflows/Queues classes may be stubs).

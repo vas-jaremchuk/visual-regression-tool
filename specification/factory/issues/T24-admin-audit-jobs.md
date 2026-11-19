@@ -4,9 +4,9 @@
 **Depends on:** T13, T15
 
 ## Spec refs
-- `docs/specification/07-features.md F-ADMIN-2, F-ADMIN-3`
-- `docs/specification/06-jobs.md §8`
-- `docs/specification/10-non-functional.md NFR-18, NFR-27`
+- `specification/07-features.md F-ADMIN-2, F-ADMIN-3`
+- `specification/06-jobs.md §8`
+- `specification/10-non-functional.md NFR-18, NFR-27`
 
 ## Scope
 - `/admin/audit` with filters + project-level audit tab for project admins.
@@ -18,4 +18,4 @@
 - [ ] Definition of done in `AGENTS.md` satisfied.
 
 ## Out of scope
-- Anything not listed in Scope; see `docs/specification/12-delivery-plan.md` for the owning ticket.
+- Anything not listed in Scope; see `specification/12-delivery-plan.md` for the owning ticket.

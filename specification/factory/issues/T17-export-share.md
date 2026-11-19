@@ -4,10 +4,10 @@
 **Depends on:** T16
 
 ## Spec refs
-- `docs/specification/01-architecture.md ADR-5`
-- `docs/specification/05-engine.md §9`
-- `docs/specification/04-auth-and-roles.md §5`
-- `docs/specification/07-features.md F-CMP-8`
+- `specification/01-architecture.md ADR-5`
+- `specification/05-engine.md §9`
+- `specification/04-auth-and-roles.md §5`
+- `specification/07-features.md F-CMP-8`
 
 ## Scope
 - Workflow export step writes `reports/<label>/index.html` when `r2_public_url` set; `GET /api/comparisons/:id/export.html` download for everyone with view access.
@@ -21,4 +21,4 @@
 - [ ] Definition of done in `AGENTS.md` satisfied.
 
 ## Out of scope
-- Anything not listed in Scope; see `docs/specification/12-delivery-plan.md` for the owning ticket.
+- Anything not listed in Scope; see `specification/12-delivery-plan.md` for the owning ticket.

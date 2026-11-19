@@ -4,8 +4,8 @@
 **Depends on:** T12, T15
 
 ## Spec refs
-- `docs/specification/07-features.md F-STORAGE-1..5, F-RUN-4, F-PROJ-6`
-- `docs/specification/06-jobs.md §1`
+- `specification/07-features.md F-STORAGE-1..5, F-RUN-4, F-PROJ-6`
+- `specification/06-jobs.md §1`
 
 ## Scope
 - Storage workflow (list bucket, group by prefix, cache result), project storage page, admin global storage.
@@ -19,4 +19,4 @@
 - [ ] Definition of done in `AGENTS.md` satisfied.
 
 ## Out of scope
-- Anything not listed in Scope; see `docs/specification/12-delivery-plan.md` for the owning ticket.
+- Anything not listed in Scope; see `specification/12-delivery-plan.md` for the owning ticket.

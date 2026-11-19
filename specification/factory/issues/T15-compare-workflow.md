@@ -4,10 +4,10 @@
 **Depends on:** T12, T14
 
 ## Spec refs
-- `docs/specification/05-engine.md §6–§7`
-- `docs/specification/06-jobs.md §5–§6`
-- `docs/specification/07-features.md F-CMP-1`
-- `docs/specification/09-api.md`
+- `specification/05-engine.md §6–§7`
+- `specification/06-jobs.md §5–§6`
+- `specification/07-features.md F-CMP-1`
+- `specification/09-api.md`
 
 ## Scope
 - `POST /api/projects/:id/comparisons` (validation, replace confirmation) → `CompareWorkflow` steps 1–9 of 06 §5 (export step calls engine renderer only if `r2_public_url`; notifications step calls a no-op notifier interface implemented in T21).

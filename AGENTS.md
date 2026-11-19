@@ -1,14 +1,22 @@
-# AGENTS.md — rules for coding agents in this repository
+
+
+# Agent Rules <!-- tessl-managed -->
+
+@.tessl/RULES.md follow the [instructions](.tessl/RULES.md)
+
+## Project rules — Visual Regression Tool
 
 You are implementing the **Visual Regression Tool** web app. The full specification is in
-`docs/specification/` — read `README.md` there, then the documents referenced by your ticket.
-A read-only copy of the original CLI prototype (JS sources only, no `.env`, no sitemaps) is in
-`docs/reference/prototype/`; its behaviour is restated normatively in
-`docs/specification/05-engine.md`. Never modify the reference copy; you may run its pure
-functions to generate golden fixtures.
+`specification/` — read `specification/README.md`, then the documents referenced by your ticket.
+The original CLI prototype is in `prototype/`; its behaviour is restated normatively in
+`specification/05-engine.md`. Never modify `prototype/` or `specification/factory/`; you may run
+the prototype's pure functions to generate golden fixtures. `prototype/` is not part of the pnpm
+workspace.
 
 ## Before you code
 
+0. Your ticket is a GitHub issue imported from `specification/factory/issues/Txx-*.md`. Its
+   *Depends on* issues are already merged; reuse what they built instead of re-creating it.
 1. Read the issue fully: *Spec refs*, *Scope*, *Acceptance criteria*, *Out of scope*.
 2. Read every spec section listed in *Spec refs*. If the spec and the issue conflict, the
    **issue wins for scope**, the **spec wins for behaviour**; mention the conflict in the PR.
@@ -25,7 +33,7 @@ Workflows, Queues, Browser Rendering (`@cloudflare/puppeteer`), Containers (apps
 
 ## Repository conventions
 
-* Layout per `docs/specification/01-architecture.md §2`. New packages need an issue.
+* Layout per `specification/01-architecture.md §2` (apps/, packages/, supabase/, fixtures/ at the repo root). New packages need an issue.
 * Shared types/schemas live in `packages/shared`; never duplicate a contract in two apps.
 * R2 keys are built only via `packages/shared/src/r2-keys.ts`.
 * Engine code (`packages/engine`) is pure: no `fetch`, no fs, no env — inject dependencies.
@@ -62,8 +70,11 @@ pnpm dev             # web + worker (wrangler dev) in parallel
 * `pnpm lint && pnpm typecheck && pnpm test` pass; `pnpm test:db` if migrations changed;
   `pnpm test:e2e` if UI changed.
 * No secrets, real customer URLs or credentials committed. Tests use `fixtures/`.
-* PR description: summary, `Implements: T.. (REQ-…, F-…)`, assumptions, screenshots for UI changes,
-  follow-ups (as a checklist — do not silently drop work).
+* PR description starts with `Closes #<issue number>` (this closes the issue on merge, which
+  releases the tickets it blocks), then: summary, `Implements: T.. (REQ-…, F-…)`, assumptions,
+  screenshots for UI changes, follow-ups (as a checklist — do not silently drop work).
+* One PR per ticket. If the ticket is too big, implement a coherent first part, list the rest as
+  follow-ups, and do not close the issue (`Refs #N` instead of `Closes #N`).
 
 ## Never
 

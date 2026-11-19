@@ -1,0 +1,19 @@
+{
+  "name": "@vrt/storage",
+  "version": "0.0.0",
+  "private": true,
+  "description": "R2 client (S3 API via aws4fetch) and bucket admin.",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "~6.0.3",
+    "vitest": "^5.1.1"
+  }
+}

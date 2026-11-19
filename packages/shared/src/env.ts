@@ -45,6 +45,15 @@ export const webEnv = z.object({
   SETTINGS_ENCRYPTION_KEY: encryptionKeys('SETTINGS_ENCRYPTION_KEY'),
   RESEND_API_KEY: required('RESEND_API_KEY'),
   EMAIL_FROM: required('EMAIL_FROM'),
+  // `mailpit` delivers app emails (invitations) to the local Supabase mail catcher instead of
+  // Resend; local development and e2e only.
+  EMAIL_TRANSPORT: z
+    .enum(['resend', 'mailpit'], { error: 'EMAIL_TRANSPORT must be resend or mailpit' })
+    .default('resend'),
+  MAILPIT_URL: z.preprocess(
+    (value) => (value === '' ? undefined : value),
+    z.url({ error: 'MAILPIT_URL must be an absolute URL' }).optional(),
+  ),
   // Shows the Google button on /login; the provider itself is configured in Supabase Auth (04 §1).
   GOOGLE_AUTH_ENABLED: z
     .stringbool({ error: 'GOOGLE_AUTH_ENABLED must be true or false' })

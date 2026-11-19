@@ -12,6 +12,15 @@ export async function clearMailbox(email: string) {
 }
 
 export async function getMagicLink(email: string): Promise<string> {
+  return findLink(email, /https?:\/\/[^\s"'<>]+\/auth\/v1\/verify\?[^\s"'<>]+/, 'magic link');
+}
+
+/** The /invite/<token> link of the latest invitation email to `email`. */
+export async function getInviteLink(email: string): Promise<string> {
+  return findLink(email, /https?:\/\/[^\s"'<>]+\/invite\/[A-Za-z0-9_-]+/, 'invitation');
+}
+
+async function findLink(email: string, pattern: RegExp, what: string): Promise<string> {
   let link: string | undefined;
   await expect
     .poll(
@@ -26,12 +35,10 @@ export async function getMagicLink(email: string): Promise<string> {
           HTML: string;
           Text: string;
         };
-        link = /https?:\/\/[^\s"'<>]+\/auth\/v1\/verify\?[^\s"'<>]+/.exec(
-          message.Text || message.HTML,
-        )?.[0];
+        link = pattern.exec(message.Text || message.HTML)?.[0];
         return link;
       },
-      { message: `magic link email for ${email}`, timeout: 15_000 },
+      { message: `${what} email for ${email}`, timeout: 15_000 },
     )
     .toBeTruthy();
   return link!.replace(/&amp;/g, '&');

@@ -1,6 +1,12 @@
 import { execFileSync } from 'node:child_process';
-import { adminClient, ensureUser, setDisabled } from './helpers/admin';
-import { E2E_ADMIN, E2E_DISABLED, OTHER_PROJECT } from './fixtures';
+import { adminClient, ensureUser, setDisabled, setMembership } from './helpers/admin';
+import {
+  E2E_ADMIN,
+  E2E_DISABLED,
+  E2E_PROJECT_ADMIN,
+  OTHER_PROJECT,
+  SEEDED_PROJECT,
+} from './fixtures';
 
 export default async function globalSetup() {
   const supabase = adminClient();
@@ -21,4 +27,9 @@ export default async function globalSetup() {
   execFileSync('pnpm', ['seed:admin', E2E_ADMIN], { stdio: 'inherit', env: process.env });
 
   await setDisabled(await ensureUser(E2E_DISABLED), false);
+
+  // Admin of the seeded project only (members.spec.ts).
+  const projectAdmin = await ensureUser(E2E_PROJECT_ADMIN);
+  await setDisabled(projectAdmin, false);
+  await setMembership(SEEDED_PROJECT.slug, projectAdmin, 'admin');
 }

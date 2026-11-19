@@ -4,7 +4,7 @@ import { defineConfig, devices } from '@playwright/test';
 
 /**
  * E2E against local Supabase (`pnpm db:start && pnpm db:reset`). Keys come from
- * `supabase status`; services the web app does not call yet (Cloudflare, Resend) get fakes.
+ * `supabase status`; services the web app does not call yet (Cloudflare) get fakes; app emails go to Mailpit.
  */
 const repoRoot = fileURLToPath(new URL('../..', import.meta.url));
 const statusOutput = execSync('pnpm exec supabase status -o json', {
@@ -33,6 +33,8 @@ const e2eEnv = {
   SETTINGS_ENCRYPTION_KEY: Buffer.alloc(32, 1).toString('base64'),
   RESEND_API_KEY: 're_e2e',
   EMAIL_FROM: 'Visual Regression <vrt@example.com>',
+  // Invitation emails land in Mailpit next to Supabase's magic links.
+  EMAIL_TRANSPORT: 'mailpit',
 };
 Object.assign(process.env, e2eEnv);
 

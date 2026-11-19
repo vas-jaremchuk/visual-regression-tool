@@ -1,0 +1,50 @@
+[
+  {
+    "name": "identical",
+    "a": "identical-a.png",
+    "b": "identical-b.png",
+    "diffPixels": 0,
+    "totalPixels": 3072,
+    "pct": 0
+  },
+  {
+    "name": "one-pixel",
+    "a": "one-pixel-a.png",
+    "b": "one-pixel-b.png",
+    "diffPixels": 1,
+    "totalPixels": 3072,
+    "pct": 0.03255208333333333
+  },
+  {
+    "name": "height-difference",
+    "a": "height-difference-a.png",
+    "b": "height-difference-b.png",
+    "diffPixels": 768,
+    "totalPixels": 3840,
+    "pct": 20
+  },
+  {
+    "name": "width-difference",
+    "a": "width-difference-a.png",
+    "b": "width-difference-b.png",
+    "diffPixels": 288,
+    "totalPixels": 3360,
+    "pct": 8.571428571428571
+  },
+  {
+    "name": "antialias",
+    "a": "antialias-a.png",
+    "b": "antialias-b.png",
+    "diffPixels": 0,
+    "totalPixels": 3072,
+    "pct": 0
+  },
+  {
+    "name": "block-change",
+    "a": "block-change-a.png",
+    "b": "block-change-b.png",
+    "diffPixels": 256,
+    "totalPixels": 3072,
+    "pct": 8.333333333333332
+  }
+]

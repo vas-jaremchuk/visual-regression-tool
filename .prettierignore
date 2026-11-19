@@ -22,3 +22,5 @@ tessl.json
 .gemini
 .vscode
 .github/mcp.json
+**/__snapshots__
+fixtures/golden

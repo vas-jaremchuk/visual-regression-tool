@@ -1,0 +1,2228 @@
+[
+  {
+    "url": "https://example.com",
+    "filename": "index.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "index.txt"
+  },
+  {
+    "url": "https://example.com/",
+    "filename": "index.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "index.txt"
+  },
+  {
+    "url": "https://example.com/about",
+    "filename": "about.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "about.txt"
+  },
+  {
+    "url": "https://example.com/about/",
+    "filename": "about_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "about_.txt"
+  },
+  {
+    "url": "https://example.com/about/people/",
+    "filename": "about_people_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "about_people_.txt"
+  },
+  {
+    "url": "https://example.com/about/people",
+    "filename": "about_people.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "about_people.txt"
+  },
+  {
+    "url": "https://example.com/about-people",
+    "filename": "about-people.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "about-people.txt"
+  },
+  {
+    "url": "https://example.com/about_people",
+    "filename": "about_people.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "about_people.txt"
+  },
+  {
+    "url": "https://example.com/en/",
+    "filename": "en_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "en_.txt"
+  },
+  {
+    "url": "https://example.com/en/products/widgets/",
+    "filename": "en_products_widgets_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "en_products_widgets_.txt"
+  },
+  {
+    "url": "https://example.com/en/products/widgets/blue-widget",
+    "filename": "en_products_widgets_blue-widget.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "en_products_widgets_blue-widget.txt"
+  },
+  {
+    "url": "https://example.com/de/produkte/übersicht/",
+    "filename": "de_produkte_C3_BCbersicht_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "de_produkte_C3_BCbersicht_.txt"
+  },
+  {
+    "url": "https://example.com/fr/caf%C3%A9/",
+    "filename": "fr_caf_C3_A9_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "fr_caf_C3_A9_.txt"
+  },
+  {
+    "url": "https://example.com/fr/café",
+    "filename": "fr_caf_C3_A9.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "fr_caf_C3_A9.txt"
+  },
+  {
+    "url": "https://example.com/ja/製品/",
+    "filename": "ja_E8_A3_BD_E5_93_81_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "ja_E8_A3_BD_E5_93_81_.txt"
+  },
+  {
+    "url": "https://example.com/emoji/🚀-launch/",
+    "filename": "emoji_F0_9F_9A_80-launch_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "emoji_F0_9F_9A_80-launch_.txt"
+  },
+  {
+    "url": "https://example.com/space%20here/",
+    "filename": "space_20here_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "space_20here_.txt"
+  },
+  {
+    "url": "https://example.com/a b/c",
+    "filename": "a_20b_c.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "a_20b_c.txt"
+  },
+  {
+    "url": "https://example.com/news/2026/11/19/hello-world/",
+    "filename": "news_2026_11_19_hello-world_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "news_2026_11_19_hello-world_.txt"
+  },
+  {
+    "url": "https://example.com/news/2026/11/19/hello-world",
+    "filename": "news_2026_11_19_hello-world.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "news_2026_11_19_hello-world.txt"
+  },
+  {
+    "url": "https://example.com/blog?page=2",
+    "filename": "blog_page_2.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "blog_page_2.txt"
+  },
+  {
+    "url": "https://example.com/blog/?page=2&sort=asc",
+    "filename": "blog_page_2_sort_asc.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "blog_page_2_sort_asc.txt"
+  },
+  {
+    "url": "https://example.com/search?q=visual+regression&lang=en",
+    "filename": "search_q_visual_regression_lang_en.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "search_q_visual_regression_lang_en.txt"
+  },
+  {
+    "url": "https://example.com/search?q=%3Cscript%3E",
+    "filename": "search_q_3Cscript_3E.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "search_q_3Cscript_3E.txt"
+  },
+  {
+    "url": "https://example.com/p?id=1#section",
+    "filename": "p_id_1.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "p_id_1.txt"
+  },
+  {
+    "url": "https://example.com/index.html",
+    "filename": "index.html.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "index.html.txt"
+  },
+  {
+    "url": "https://example.com/index.php?route=common/home",
+    "filename": "index.php_route_common_home.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "index.php_route_common_home.txt"
+  },
+  {
+    "url": "https://example.com/~user/home",
+    "filename": "_user_home.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "_user_home.txt"
+  },
+  {
+    "url": "https://example.com/path/with.dots/and..double",
+    "filename": "path_with.dots_and..double.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "path_with.dots_and..double.txt"
+  },
+  {
+    "url": "https://example.com/UPPER/Case/Path/",
+    "filename": "UPPER_Case_Path_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "UPPER_Case_Path_.txt"
+  },
+  {
+    "url": "https://example.com/plus+sign/",
+    "filename": "plus_sign_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "plus_sign_.txt"
+  },
+  {
+    "url": "https://example.com/at@sign/",
+    "filename": "at_sign_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "at_sign_.txt"
+  },
+  {
+    "url": "https://example.com/comma,separated/",
+    "filename": "comma_separated_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "comma_separated_.txt"
+  },
+  {
+    "url": "https://example.com/semi;colon/",
+    "filename": "semi_colon_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "semi_colon_.txt"
+  },
+  {
+    "url": "https://example.com/apos'trophe/",
+    "filename": "apos_trophe_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "apos_trophe_.txt"
+  },
+  {
+    "url": "https://example.com/paren(thesis)/",
+    "filename": "paren_thesis_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "paren_thesis_.txt"
+  },
+  {
+    "url": "https://example.com/under__score__/",
+    "filename": "under_score_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "under_score_.txt"
+  },
+  {
+    "url": "https://example.com/dash--dash/",
+    "filename": "dash--dash_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "dash--dash_.txt"
+  },
+  {
+    "url": "https://example.com/__leading",
+    "filename": "_leading.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "_leading.txt"
+  },
+  {
+    "url": "https://example.com/trailing__/",
+    "filename": "trailing_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "trailing_.txt"
+  },
+  {
+    "url": "https://example.com/multiple///slashes//",
+    "filename": "multiple_slashes_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "multiple_slashes_.txt"
+  },
+  {
+    "url": "https://example.com/foo/bar",
+    "filename": "foo_bar.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "foo_bar.txt"
+  },
+  {
+    "url": "https://example.com/foo_bar",
+    "filename": "foo_bar.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "foo_bar.txt"
+  },
+  {
+    "url": "https://example.com/foo?bar",
+    "filename": "foo_bar.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "foo_bar.txt"
+  },
+  {
+    "url": "https://example.com/x/y",
+    "filename": "x_y.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "x_y.txt"
+  },
+  {
+    "url": "https://example.com/x?y",
+    "filename": "x_y.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "x_y.txt"
+  },
+  {
+    "url": "https://example.com/x_y",
+    "filename": "x_y.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "x_y.txt"
+  },
+  {
+    "url": "https://example.com/downloads/report.pdf",
+    "filename": "downloads_report.pdf.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "downloads_report.pdf.txt"
+  },
+  {
+    "url": "https://example.com/downloads/Report.PDF",
+    "filename": "downloads_Report.PDF.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "downloads_Report.PDF.txt"
+  },
+  {
+    "url": "https://example.com/downloads/annual-report-2025.pdf?v=2",
+    "filename": "downloads_annual-report-2025.pdf_v_2.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "downloads_annual-report-2025.pdf_v_2.txt"
+  },
+  {
+    "url": "https://example.com/files/brochure.docx",
+    "filename": "files_brochure.docx.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "files_brochure.docx.txt"
+  },
+  {
+    "url": "https://example.com/files/sheet.xlsx",
+    "filename": "files_sheet.xlsx.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "files_sheet.xlsx.txt"
+  },
+  {
+    "url": "https://example.com/files/macro.xlsm",
+    "filename": "files_macro.xlsm.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "files_macro.xlsm.txt"
+  },
+  {
+    "url": "https://example.com/files/slides.pptx",
+    "filename": "files_slides.pptx.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "files_slides.pptx.txt"
+  },
+  {
+    "url": "https://example.com/files/archive.tar.gz",
+    "filename": "files_archive.tar.gz.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "files_archive.tar.gz.txt"
+  },
+  {
+    "url": "https://example.com/files/archive.zip",
+    "filename": "files_archive.zip.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "files_archive.zip.txt"
+  },
+  {
+    "url": "https://example.com/files/archive.7z",
+    "filename": "files_archive.7z.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "files_archive.7z.txt"
+  },
+  {
+    "url": "https://example.com/media/photo.jpeg",
+    "filename": "media_photo.jpeg.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "media_photo.jpeg.txt"
+  },
+  {
+    "url": "https://example.com/media/photo.JPG",
+    "filename": "media_photo.JPG.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "media_photo.JPG.txt"
+  },
+  {
+    "url": "https://example.com/media/logo.svg",
+    "filename": "media_logo.svg.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "media_logo.svg.txt"
+  },
+  {
+    "url": "https://example.com/media/clip.mp4",
+    "filename": "media_clip.mp4.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "media_clip.mp4.txt"
+  },
+  {
+    "url": "https://example.com/media/sound.mp3",
+    "filename": "media_sound.mp3.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "media_sound.mp3.txt"
+  },
+  {
+    "url": "https://example.com/data/feed.xml",
+    "filename": "data_feed.xml.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "data_feed.xml.txt"
+  },
+  {
+    "url": "https://example.com/data/export.json",
+    "filename": "data_export.json.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "data_export.json.txt"
+  },
+  {
+    "url": "https://example.com/data/table.csv",
+    "filename": "data_table.csv.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "data_table.csv.txt"
+  },
+  {
+    "url": "https://example.com/readme.txt",
+    "filename": "readme.txt.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "readme.txt.txt"
+  },
+  {
+    "url": "https://example.com/design/source.psd",
+    "filename": "design_source.psd.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "design_source.psd.txt"
+  },
+  {
+    "url": "https://example.com/design/vector.ai",
+    "filename": "design_vector.ai.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "design_vector.ai.txt"
+  },
+  {
+    "url": "https://example.com/design/print.eps",
+    "filename": "design_print.eps.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "design_print.eps.txt"
+  },
+  {
+    "url": "https://example.com/files/file.html",
+    "filename": "files_file.html.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "files_file.html.txt"
+  },
+  {
+    "url": "https://example.com/files/file.aspx",
+    "filename": "files_file.aspx.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "files_file.aspx.txt"
+  },
+  {
+    "url": "https://example.com/files/file.verylongext",
+    "filename": "files_file.verylongext.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "files_file.verylongext.txt"
+  },
+  {
+    "url": "https://example.com/files/noext",
+    "filename": "files_noext.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "files_noext.txt"
+  },
+  {
+    "url": "https://example.com/files/.hidden",
+    "filename": "files_.hidden.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "files_.hidden.txt"
+  },
+  {
+    "url": "https://example.com/files/archive.tar.gz/",
+    "filename": "files_archive.tar.gz_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "files_archive.tar.gz_.txt"
+  },
+  {
+    "url": "https://example.com/newsletter/2026-11_Newsletter.pdf",
+    "filename": "newsletter_2026-11_Newsletter.pdf.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "newsletter_2026-11_Newsletter.pdf.txt"
+  },
+  {
+    "url": "https://example.com/docs/Guide%20v2.pdf",
+    "filename": "docs_Guide_20v2.pdf.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "docs_Guide_20v2.pdf.txt"
+  },
+  {
+    "url": "https://www.example.org",
+    "filename": "index.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "index.txt"
+  },
+  {
+    "url": "https://www.example.org/",
+    "filename": "index.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "index.txt"
+  },
+  {
+    "url": "https://www.example.org/about",
+    "filename": "about.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "about.txt"
+  },
+  {
+    "url": "https://www.example.org/about/",
+    "filename": "about_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "about_.txt"
+  },
+  {
+    "url": "https://www.example.org/about/people/",
+    "filename": "about_people_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "about_people_.txt"
+  },
+  {
+    "url": "https://www.example.org/about/people",
+    "filename": "about_people.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "about_people.txt"
+  },
+  {
+    "url": "https://www.example.org/about-people",
+    "filename": "about-people.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "about-people.txt"
+  },
+  {
+    "url": "https://www.example.org/about_people",
+    "filename": "about_people.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "about_people.txt"
+  },
+  {
+    "url": "https://www.example.org/en/",
+    "filename": "en_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "en_.txt"
+  },
+  {
+    "url": "https://www.example.org/en/products/widgets/",
+    "filename": "en_products_widgets_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "en_products_widgets_.txt"
+  },
+  {
+    "url": "https://www.example.org/en/products/widgets/blue-widget",
+    "filename": "en_products_widgets_blue-widget.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "en_products_widgets_blue-widget.txt"
+  },
+  {
+    "url": "https://www.example.org/de/produkte/übersicht/",
+    "filename": "de_produkte_C3_BCbersicht_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "de_produkte_C3_BCbersicht_.txt"
+  },
+  {
+    "url": "https://www.example.org/fr/caf%C3%A9/",
+    "filename": "fr_caf_C3_A9_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "fr_caf_C3_A9_.txt"
+  },
+  {
+    "url": "https://www.example.org/fr/café",
+    "filename": "fr_caf_C3_A9.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "fr_caf_C3_A9.txt"
+  },
+  {
+    "url": "https://www.example.org/ja/製品/",
+    "filename": "ja_E8_A3_BD_E5_93_81_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "ja_E8_A3_BD_E5_93_81_.txt"
+  },
+  {
+    "url": "https://www.example.org/emoji/🚀-launch/",
+    "filename": "emoji_F0_9F_9A_80-launch_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "emoji_F0_9F_9A_80-launch_.txt"
+  },
+  {
+    "url": "https://www.example.org/space%20here/",
+    "filename": "space_20here_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "space_20here_.txt"
+  },
+  {
+    "url": "https://www.example.org/a b/c",
+    "filename": "a_20b_c.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "a_20b_c.txt"
+  },
+  {
+    "url": "https://www.example.org/news/2026/11/19/hello-world/",
+    "filename": "news_2026_11_19_hello-world_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "news_2026_11_19_hello-world_.txt"
+  },
+  {
+    "url": "https://www.example.org/news/2026/11/19/hello-world",
+    "filename": "news_2026_11_19_hello-world.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "news_2026_11_19_hello-world.txt"
+  },
+  {
+    "url": "https://www.example.org/blog?page=2",
+    "filename": "blog_page_2.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "blog_page_2.txt"
+  },
+  {
+    "url": "https://www.example.org/blog/?page=2&sort=asc",
+    "filename": "blog_page_2_sort_asc.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "blog_page_2_sort_asc.txt"
+  },
+  {
+    "url": "https://www.example.org/search?q=visual+regression&lang=en",
+    "filename": "search_q_visual_regression_lang_en.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "search_q_visual_regression_lang_en.txt"
+  },
+  {
+    "url": "https://www.example.org/search?q=%3Cscript%3E",
+    "filename": "search_q_3Cscript_3E.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "search_q_3Cscript_3E.txt"
+  },
+  {
+    "url": "https://www.example.org/p?id=1#section",
+    "filename": "p_id_1.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "p_id_1.txt"
+  },
+  {
+    "url": "https://www.example.org/index.html",
+    "filename": "index.html.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "index.html.txt"
+  },
+  {
+    "url": "https://www.example.org/index.php?route=common/home",
+    "filename": "index.php_route_common_home.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "index.php_route_common_home.txt"
+  },
+  {
+    "url": "https://www.example.org/~user/home",
+    "filename": "_user_home.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "_user_home.txt"
+  },
+  {
+    "url": "https://www.example.org/path/with.dots/and..double",
+    "filename": "path_with.dots_and..double.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "path_with.dots_and..double.txt"
+  },
+  {
+    "url": "https://www.example.org/UPPER/Case/Path/",
+    "filename": "UPPER_Case_Path_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "UPPER_Case_Path_.txt"
+  },
+  {
+    "url": "https://www.example.org/plus+sign/",
+    "filename": "plus_sign_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "plus_sign_.txt"
+  },
+  {
+    "url": "https://www.example.org/at@sign/",
+    "filename": "at_sign_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "at_sign_.txt"
+  },
+  {
+    "url": "https://www.example.org/comma,separated/",
+    "filename": "comma_separated_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "comma_separated_.txt"
+  },
+  {
+    "url": "https://www.example.org/semi;colon/",
+    "filename": "semi_colon_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "semi_colon_.txt"
+  },
+  {
+    "url": "https://www.example.org/apos'trophe/",
+    "filename": "apos_trophe_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "apos_trophe_.txt"
+  },
+  {
+    "url": "https://www.example.org/paren(thesis)/",
+    "filename": "paren_thesis_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "paren_thesis_.txt"
+  },
+  {
+    "url": "https://www.example.org/under__score__/",
+    "filename": "under_score_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "under_score_.txt"
+  },
+  {
+    "url": "https://www.example.org/dash--dash/",
+    "filename": "dash--dash_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "dash--dash_.txt"
+  },
+  {
+    "url": "https://www.example.org/__leading",
+    "filename": "_leading.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "_leading.txt"
+  },
+  {
+    "url": "https://www.example.org/trailing__/",
+    "filename": "trailing_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "trailing_.txt"
+  },
+  {
+    "url": "https://www.example.org/multiple///slashes//",
+    "filename": "multiple_slashes_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "multiple_slashes_.txt"
+  },
+  {
+    "url": "https://www.example.org/foo/bar",
+    "filename": "foo_bar.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "foo_bar.txt"
+  },
+  {
+    "url": "https://www.example.org/foo_bar",
+    "filename": "foo_bar.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "foo_bar.txt"
+  },
+  {
+    "url": "https://www.example.org/foo?bar",
+    "filename": "foo_bar.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "foo_bar.txt"
+  },
+  {
+    "url": "https://www.example.org/x/y",
+    "filename": "x_y.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "x_y.txt"
+  },
+  {
+    "url": "https://www.example.org/x?y",
+    "filename": "x_y.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "x_y.txt"
+  },
+  {
+    "url": "https://www.example.org/x_y",
+    "filename": "x_y.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "x_y.txt"
+  },
+  {
+    "url": "https://www.example.org/downloads/report.pdf",
+    "filename": "downloads_report.pdf.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "downloads_report.pdf.txt"
+  },
+  {
+    "url": "https://www.example.org/downloads/Report.PDF",
+    "filename": "downloads_Report.PDF.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "downloads_Report.PDF.txt"
+  },
+  {
+    "url": "https://www.example.org/downloads/annual-report-2025.pdf?v=2",
+    "filename": "downloads_annual-report-2025.pdf_v_2.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "downloads_annual-report-2025.pdf_v_2.txt"
+  },
+  {
+    "url": "https://www.example.org/files/brochure.docx",
+    "filename": "files_brochure.docx.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "files_brochure.docx.txt"
+  },
+  {
+    "url": "https://www.example.org/files/sheet.xlsx",
+    "filename": "files_sheet.xlsx.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "files_sheet.xlsx.txt"
+  },
+  {
+    "url": "https://www.example.org/files/macro.xlsm",
+    "filename": "files_macro.xlsm.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "files_macro.xlsm.txt"
+  },
+  {
+    "url": "https://www.example.org/files/slides.pptx",
+    "filename": "files_slides.pptx.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "files_slides.pptx.txt"
+  },
+  {
+    "url": "https://www.example.org/files/archive.tar.gz",
+    "filename": "files_archive.tar.gz.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "files_archive.tar.gz.txt"
+  },
+  {
+    "url": "https://www.example.org/files/archive.zip",
+    "filename": "files_archive.zip.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "files_archive.zip.txt"
+  },
+  {
+    "url": "https://www.example.org/files/archive.7z",
+    "filename": "files_archive.7z.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "files_archive.7z.txt"
+  },
+  {
+    "url": "https://www.example.org/media/photo.jpeg",
+    "filename": "media_photo.jpeg.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "media_photo.jpeg.txt"
+  },
+  {
+    "url": "https://www.example.org/media/photo.JPG",
+    "filename": "media_photo.JPG.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "media_photo.JPG.txt"
+  },
+  {
+    "url": "https://www.example.org/media/logo.svg",
+    "filename": "media_logo.svg.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "media_logo.svg.txt"
+  },
+  {
+    "url": "https://www.example.org/media/clip.mp4",
+    "filename": "media_clip.mp4.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "media_clip.mp4.txt"
+  },
+  {
+    "url": "https://www.example.org/media/sound.mp3",
+    "filename": "media_sound.mp3.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "media_sound.mp3.txt"
+  },
+  {
+    "url": "https://www.example.org/data/feed.xml",
+    "filename": "data_feed.xml.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "data_feed.xml.txt"
+  },
+  {
+    "url": "https://www.example.org/data/export.json",
+    "filename": "data_export.json.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "data_export.json.txt"
+  },
+  {
+    "url": "https://www.example.org/data/table.csv",
+    "filename": "data_table.csv.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "data_table.csv.txt"
+  },
+  {
+    "url": "https://www.example.org/readme.txt",
+    "filename": "readme.txt.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "readme.txt.txt"
+  },
+  {
+    "url": "https://www.example.org/design/source.psd",
+    "filename": "design_source.psd.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "design_source.psd.txt"
+  },
+  {
+    "url": "https://www.example.org/design/vector.ai",
+    "filename": "design_vector.ai.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "design_vector.ai.txt"
+  },
+  {
+    "url": "https://www.example.org/design/print.eps",
+    "filename": "design_print.eps.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "design_print.eps.txt"
+  },
+  {
+    "url": "https://www.example.org/files/file.html",
+    "filename": "files_file.html.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "files_file.html.txt"
+  },
+  {
+    "url": "https://www.example.org/files/file.aspx",
+    "filename": "files_file.aspx.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "files_file.aspx.txt"
+  },
+  {
+    "url": "https://www.example.org/files/file.verylongext",
+    "filename": "files_file.verylongext.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "files_file.verylongext.txt"
+  },
+  {
+    "url": "https://www.example.org/files/noext",
+    "filename": "files_noext.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "files_noext.txt"
+  },
+  {
+    "url": "https://www.example.org/files/.hidden",
+    "filename": "files_.hidden.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "files_.hidden.txt"
+  },
+  {
+    "url": "https://www.example.org/files/archive.tar.gz/",
+    "filename": "files_archive.tar.gz_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "files_archive.tar.gz_.txt"
+  },
+  {
+    "url": "https://www.example.org/newsletter/2026-11_Newsletter.pdf",
+    "filename": "newsletter_2026-11_Newsletter.pdf.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "newsletter_2026-11_Newsletter.pdf.txt"
+  },
+  {
+    "url": "https://www.example.org/docs/Guide%20v2.pdf",
+    "filename": "docs_Guide_20v2.pdf.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "docs_Guide_20v2.pdf.txt"
+  },
+  {
+    "url": "http://example.net",
+    "filename": "index.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "index.txt"
+  },
+  {
+    "url": "http://example.net/",
+    "filename": "index.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "index.txt"
+  },
+  {
+    "url": "http://example.net/about",
+    "filename": "about.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "about.txt"
+  },
+  {
+    "url": "http://example.net/about/",
+    "filename": "about_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "about_.txt"
+  },
+  {
+    "url": "http://example.net/about/people/",
+    "filename": "about_people_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "about_people_.txt"
+  },
+  {
+    "url": "http://example.net/about/people",
+    "filename": "about_people.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "about_people.txt"
+  },
+  {
+    "url": "http://example.net/about-people",
+    "filename": "about-people.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "about-people.txt"
+  },
+  {
+    "url": "http://example.net/about_people",
+    "filename": "about_people.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "about_people.txt"
+  },
+  {
+    "url": "http://example.net/en/",
+    "filename": "en_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "en_.txt"
+  },
+  {
+    "url": "http://example.net/en/products/widgets/",
+    "filename": "en_products_widgets_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "en_products_widgets_.txt"
+  },
+  {
+    "url": "http://example.net/en/products/widgets/blue-widget",
+    "filename": "en_products_widgets_blue-widget.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "en_products_widgets_blue-widget.txt"
+  },
+  {
+    "url": "http://example.net/de/produkte/übersicht/",
+    "filename": "de_produkte_C3_BCbersicht_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "de_produkte_C3_BCbersicht_.txt"
+  },
+  {
+    "url": "http://example.net/fr/caf%C3%A9/",
+    "filename": "fr_caf_C3_A9_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "fr_caf_C3_A9_.txt"
+  },
+  {
+    "url": "http://example.net/fr/café",
+    "filename": "fr_caf_C3_A9.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "fr_caf_C3_A9.txt"
+  },
+  {
+    "url": "http://example.net/ja/製品/",
+    "filename": "ja_E8_A3_BD_E5_93_81_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "ja_E8_A3_BD_E5_93_81_.txt"
+  },
+  {
+    "url": "http://example.net/emoji/🚀-launch/",
+    "filename": "emoji_F0_9F_9A_80-launch_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "emoji_F0_9F_9A_80-launch_.txt"
+  },
+  {
+    "url": "http://example.net/space%20here/",
+    "filename": "space_20here_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "space_20here_.txt"
+  },
+  {
+    "url": "http://example.net/a b/c",
+    "filename": "a_20b_c.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "a_20b_c.txt"
+  },
+  {
+    "url": "http://example.net/news/2026/11/19/hello-world/",
+    "filename": "news_2026_11_19_hello-world_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "news_2026_11_19_hello-world_.txt"
+  },
+  {
+    "url": "http://example.net/news/2026/11/19/hello-world",
+    "filename": "news_2026_11_19_hello-world.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "news_2026_11_19_hello-world.txt"
+  },
+  {
+    "url": "http://example.net/blog?page=2",
+    "filename": "blog_page_2.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "blog_page_2.txt"
+  },
+  {
+    "url": "http://example.net/blog/?page=2&sort=asc",
+    "filename": "blog_page_2_sort_asc.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "blog_page_2_sort_asc.txt"
+  },
+  {
+    "url": "http://example.net/search?q=visual+regression&lang=en",
+    "filename": "search_q_visual_regression_lang_en.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "search_q_visual_regression_lang_en.txt"
+  },
+  {
+    "url": "http://example.net/search?q=%3Cscript%3E",
+    "filename": "search_q_3Cscript_3E.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "search_q_3Cscript_3E.txt"
+  },
+  {
+    "url": "http://example.net/p?id=1#section",
+    "filename": "p_id_1.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "p_id_1.txt"
+  },
+  {
+    "url": "http://example.net/index.html",
+    "filename": "index.html.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "index.html.txt"
+  },
+  {
+    "url": "http://example.net/index.php?route=common/home",
+    "filename": "index.php_route_common_home.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "index.php_route_common_home.txt"
+  },
+  {
+    "url": "http://example.net/~user/home",
+    "filename": "_user_home.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "_user_home.txt"
+  },
+  {
+    "url": "http://example.net/path/with.dots/and..double",
+    "filename": "path_with.dots_and..double.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "path_with.dots_and..double.txt"
+  },
+  {
+    "url": "http://example.net/UPPER/Case/Path/",
+    "filename": "UPPER_Case_Path_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "UPPER_Case_Path_.txt"
+  },
+  {
+    "url": "http://example.net/plus+sign/",
+    "filename": "plus_sign_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "plus_sign_.txt"
+  },
+  {
+    "url": "http://example.net/at@sign/",
+    "filename": "at_sign_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "at_sign_.txt"
+  },
+  {
+    "url": "http://example.net/comma,separated/",
+    "filename": "comma_separated_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "comma_separated_.txt"
+  },
+  {
+    "url": "http://example.net/semi;colon/",
+    "filename": "semi_colon_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "semi_colon_.txt"
+  },
+  {
+    "url": "http://example.net/apos'trophe/",
+    "filename": "apos_trophe_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "apos_trophe_.txt"
+  },
+  {
+    "url": "http://example.net/paren(thesis)/",
+    "filename": "paren_thesis_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "paren_thesis_.txt"
+  },
+  {
+    "url": "http://example.net/under__score__/",
+    "filename": "under_score_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "under_score_.txt"
+  },
+  {
+    "url": "http://example.net/dash--dash/",
+    "filename": "dash--dash_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "dash--dash_.txt"
+  },
+  {
+    "url": "http://example.net/__leading",
+    "filename": "_leading.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "_leading.txt"
+  },
+  {
+    "url": "http://example.net/trailing__/",
+    "filename": "trailing_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "trailing_.txt"
+  },
+  {
+    "url": "http://example.net/multiple///slashes//",
+    "filename": "multiple_slashes_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "multiple_slashes_.txt"
+  },
+  {
+    "url": "http://example.net/foo/bar",
+    "filename": "foo_bar.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "foo_bar.txt"
+  },
+  {
+    "url": "http://example.net/foo_bar",
+    "filename": "foo_bar.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "foo_bar.txt"
+  },
+  {
+    "url": "http://example.net/foo?bar",
+    "filename": "foo_bar.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "foo_bar.txt"
+  },
+  {
+    "url": "http://example.net/x/y",
+    "filename": "x_y.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "x_y.txt"
+  },
+  {
+    "url": "http://example.net/x?y",
+    "filename": "x_y.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "x_y.txt"
+  },
+  {
+    "url": "http://example.net/x_y",
+    "filename": "x_y.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "x_y.txt"
+  },
+  {
+    "url": "http://example.net/downloads/report.pdf",
+    "filename": "downloads_report.pdf.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "downloads_report.pdf.txt"
+  },
+  {
+    "url": "http://example.net/downloads/Report.PDF",
+    "filename": "downloads_Report.PDF.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "downloads_Report.PDF.txt"
+  },
+  {
+    "url": "http://example.net/downloads/annual-report-2025.pdf?v=2",
+    "filename": "downloads_annual-report-2025.pdf_v_2.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "downloads_annual-report-2025.pdf_v_2.txt"
+  },
+  {
+    "url": "http://example.net/files/brochure.docx",
+    "filename": "files_brochure.docx.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "files_brochure.docx.txt"
+  },
+  {
+    "url": "http://example.net/files/sheet.xlsx",
+    "filename": "files_sheet.xlsx.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "files_sheet.xlsx.txt"
+  },
+  {
+    "url": "http://example.net/files/macro.xlsm",
+    "filename": "files_macro.xlsm.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "files_macro.xlsm.txt"
+  },
+  {
+    "url": "http://example.net/files/slides.pptx",
+    "filename": "files_slides.pptx.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "files_slides.pptx.txt"
+  },
+  {
+    "url": "http://example.net/files/archive.tar.gz",
+    "filename": "files_archive.tar.gz.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "files_archive.tar.gz.txt"
+  },
+  {
+    "url": "http://example.net/files/archive.zip",
+    "filename": "files_archive.zip.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "files_archive.zip.txt"
+  },
+  {
+    "url": "http://example.net/files/archive.7z",
+    "filename": "files_archive.7z.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "files_archive.7z.txt"
+  },
+  {
+    "url": "http://example.net/media/photo.jpeg",
+    "filename": "media_photo.jpeg.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "media_photo.jpeg.txt"
+  },
+  {
+    "url": "http://example.net/media/photo.JPG",
+    "filename": "media_photo.JPG.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "media_photo.JPG.txt"
+  },
+  {
+    "url": "http://example.net/media/logo.svg",
+    "filename": "media_logo.svg.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "media_logo.svg.txt"
+  },
+  {
+    "url": "http://example.net/media/clip.mp4",
+    "filename": "media_clip.mp4.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "media_clip.mp4.txt"
+  },
+  {
+    "url": "http://example.net/media/sound.mp3",
+    "filename": "media_sound.mp3.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "media_sound.mp3.txt"
+  },
+  {
+    "url": "http://example.net/data/feed.xml",
+    "filename": "data_feed.xml.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "data_feed.xml.txt"
+  },
+  {
+    "url": "http://example.net/data/export.json",
+    "filename": "data_export.json.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "data_export.json.txt"
+  },
+  {
+    "url": "http://example.net/data/table.csv",
+    "filename": "data_table.csv.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "data_table.csv.txt"
+  },
+  {
+    "url": "http://example.net/readme.txt",
+    "filename": "readme.txt.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "readme.txt.txt"
+  },
+  {
+    "url": "http://example.net/design/source.psd",
+    "filename": "design_source.psd.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "design_source.psd.txt"
+  },
+  {
+    "url": "http://example.net/design/vector.ai",
+    "filename": "design_vector.ai.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "design_vector.ai.txt"
+  },
+  {
+    "url": "http://example.net/design/print.eps",
+    "filename": "design_print.eps.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "design_print.eps.txt"
+  },
+  {
+    "url": "http://example.net/files/file.html",
+    "filename": "files_file.html.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "files_file.html.txt"
+  },
+  {
+    "url": "http://example.net/files/file.aspx",
+    "filename": "files_file.aspx.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "files_file.aspx.txt"
+  },
+  {
+    "url": "http://example.net/files/file.verylongext",
+    "filename": "files_file.verylongext.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "files_file.verylongext.txt"
+  },
+  {
+    "url": "http://example.net/files/noext",
+    "filename": "files_noext.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "files_noext.txt"
+  },
+  {
+    "url": "http://example.net/files/.hidden",
+    "filename": "files_.hidden.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "files_.hidden.txt"
+  },
+  {
+    "url": "http://example.net/files/archive.tar.gz/",
+    "filename": "files_archive.tar.gz_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "files_archive.tar.gz_.txt"
+  },
+  {
+    "url": "http://example.net/newsletter/2026-11_Newsletter.pdf",
+    "filename": "newsletter_2026-11_Newsletter.pdf.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "newsletter_2026-11_Newsletter.pdf.txt"
+  },
+  {
+    "url": "http://example.net/docs/Guide%20v2.pdf",
+    "filename": "docs_Guide_20v2.pdf.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "docs_Guide_20v2.pdf.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443",
+    "filename": "index.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "index.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/",
+    "filename": "index.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "index.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/about",
+    "filename": "about.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "about.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/about/",
+    "filename": "about_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "about_.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/about/people/",
+    "filename": "about_people_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "about_people_.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/about/people",
+    "filename": "about_people.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "about_people.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/about-people",
+    "filename": "about-people.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "about-people.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/about_people",
+    "filename": "about_people.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "about_people.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/en/",
+    "filename": "en_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "en_.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/en/products/widgets/",
+    "filename": "en_products_widgets_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "en_products_widgets_.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/en/products/widgets/blue-widget",
+    "filename": "en_products_widgets_blue-widget.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "en_products_widgets_blue-widget.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/de/produkte/übersicht/",
+    "filename": "de_produkte_C3_BCbersicht_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "de_produkte_C3_BCbersicht_.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/fr/caf%C3%A9/",
+    "filename": "fr_caf_C3_A9_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "fr_caf_C3_A9_.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/fr/café",
+    "filename": "fr_caf_C3_A9.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "fr_caf_C3_A9.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/ja/製品/",
+    "filename": "ja_E8_A3_BD_E5_93_81_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "ja_E8_A3_BD_E5_93_81_.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/emoji/🚀-launch/",
+    "filename": "emoji_F0_9F_9A_80-launch_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "emoji_F0_9F_9A_80-launch_.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/space%20here/",
+    "filename": "space_20here_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "space_20here_.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/a b/c",
+    "filename": "a_20b_c.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "a_20b_c.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/news/2026/11/19/hello-world/",
+    "filename": "news_2026_11_19_hello-world_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "news_2026_11_19_hello-world_.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/news/2026/11/19/hello-world",
+    "filename": "news_2026_11_19_hello-world.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "news_2026_11_19_hello-world.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/blog?page=2",
+    "filename": "blog_page_2.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "blog_page_2.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/blog/?page=2&sort=asc",
+    "filename": "blog_page_2_sort_asc.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "blog_page_2_sort_asc.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/search?q=visual+regression&lang=en",
+    "filename": "search_q_visual_regression_lang_en.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "search_q_visual_regression_lang_en.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/search?q=%3Cscript%3E",
+    "filename": "search_q_3Cscript_3E.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "search_q_3Cscript_3E.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/p?id=1#section",
+    "filename": "p_id_1.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "p_id_1.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/index.html",
+    "filename": "index.html.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "index.html.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/index.php?route=common/home",
+    "filename": "index.php_route_common_home.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "index.php_route_common_home.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/~user/home",
+    "filename": "_user_home.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "_user_home.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/path/with.dots/and..double",
+    "filename": "path_with.dots_and..double.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "path_with.dots_and..double.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/UPPER/Case/Path/",
+    "filename": "UPPER_Case_Path_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "UPPER_Case_Path_.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/plus+sign/",
+    "filename": "plus_sign_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "plus_sign_.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/at@sign/",
+    "filename": "at_sign_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "at_sign_.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/comma,separated/",
+    "filename": "comma_separated_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "comma_separated_.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/semi;colon/",
+    "filename": "semi_colon_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "semi_colon_.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/apos'trophe/",
+    "filename": "apos_trophe_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "apos_trophe_.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/paren(thesis)/",
+    "filename": "paren_thesis_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "paren_thesis_.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/under__score__/",
+    "filename": "under_score_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "under_score_.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/dash--dash/",
+    "filename": "dash--dash_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "dash--dash_.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/__leading",
+    "filename": "_leading.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "_leading.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/trailing__/",
+    "filename": "trailing_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "trailing_.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/multiple///slashes//",
+    "filename": "multiple_slashes_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "multiple_slashes_.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/foo/bar",
+    "filename": "foo_bar.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "foo_bar.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/foo_bar",
+    "filename": "foo_bar.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "foo_bar.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/foo?bar",
+    "filename": "foo_bar.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "foo_bar.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/x/y",
+    "filename": "x_y.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "x_y.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/x?y",
+    "filename": "x_y.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "x_y.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/x_y",
+    "filename": "x_y.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "x_y.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/downloads/report.pdf",
+    "filename": "downloads_report.pdf.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "downloads_report.pdf.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/downloads/Report.PDF",
+    "filename": "downloads_Report.PDF.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "downloads_Report.PDF.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/downloads/annual-report-2025.pdf?v=2",
+    "filename": "downloads_annual-report-2025.pdf_v_2.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "downloads_annual-report-2025.pdf_v_2.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/files/brochure.docx",
+    "filename": "files_brochure.docx.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "files_brochure.docx.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/files/sheet.xlsx",
+    "filename": "files_sheet.xlsx.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "files_sheet.xlsx.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/files/macro.xlsm",
+    "filename": "files_macro.xlsm.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "files_macro.xlsm.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/files/slides.pptx",
+    "filename": "files_slides.pptx.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "files_slides.pptx.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/files/archive.tar.gz",
+    "filename": "files_archive.tar.gz.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "files_archive.tar.gz.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/files/archive.zip",
+    "filename": "files_archive.zip.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "files_archive.zip.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/files/archive.7z",
+    "filename": "files_archive.7z.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "files_archive.7z.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/media/photo.jpeg",
+    "filename": "media_photo.jpeg.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "media_photo.jpeg.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/media/photo.JPG",
+    "filename": "media_photo.JPG.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "media_photo.JPG.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/media/logo.svg",
+    "filename": "media_logo.svg.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "media_logo.svg.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/media/clip.mp4",
+    "filename": "media_clip.mp4.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "media_clip.mp4.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/media/sound.mp3",
+    "filename": "media_sound.mp3.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "media_sound.mp3.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/data/feed.xml",
+    "filename": "data_feed.xml.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "data_feed.xml.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/data/export.json",
+    "filename": "data_export.json.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "data_export.json.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/data/table.csv",
+    "filename": "data_table.csv.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "data_table.csv.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/readme.txt",
+    "filename": "readme.txt.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "readme.txt.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/design/source.psd",
+    "filename": "design_source.psd.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "design_source.psd.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/design/vector.ai",
+    "filename": "design_vector.ai.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "design_vector.ai.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/design/print.eps",
+    "filename": "design_print.eps.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "design_print.eps.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/files/file.html",
+    "filename": "files_file.html.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "files_file.html.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/files/file.aspx",
+    "filename": "files_file.aspx.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "files_file.aspx.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/files/file.verylongext",
+    "filename": "files_file.verylongext.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "files_file.verylongext.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/files/noext",
+    "filename": "files_noext.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "files_noext.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/files/.hidden",
+    "filename": "files_.hidden.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "files_.hidden.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/files/archive.tar.gz/",
+    "filename": "files_archive.tar.gz_.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "files_archive.tar.gz_.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/newsletter/2026-11_Newsletter.pdf",
+    "filename": "newsletter_2026-11_Newsletter.pdf.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "newsletter_2026-11_Newsletter.pdf.txt"
+  },
+  {
+    "url": "https://staging.example.test:8443/docs/Guide%20v2.pdf",
+    "filename": "docs_Guide_20v2.pdf.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": true,
+    "fingerprintFilename": "docs_Guide_20v2.pdf.txt"
+  },
+  {
+    "url": "https://example.com/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "filename": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.txt"
+  },
+  {
+    "url": "https://example.com/segment-0/segment-1/segment-2/segment-3/segment-4/segment-5/segment-6/segment-7/segment-8/segment-9/segment-10/segment-11/segment-12/segment-13/segment-14/segment-15/segment-16/segment-17/segment-18/segment-19/segment-20/segment-21/segment-22/segment-23/segment-24/segment-25/segment-26/segment-27/segment-28/segment-29/",
+    "filename": "segment-0_segment-1_segment-2_segment-3_segment-4_segment-5_segment-6_segment-7_segment-8_segment-9_segment-10_segment-11_segment-12_segment-13_segment-14_segment-15_segment-16_segment-17_segment-18_s.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "segment-0_segment-1_segment-2_segment-3_segment-4_segment-5_segment-6_segment-7_segment-8_segment-9_segment-10_segment-11_segment-12_segment-13_segment-14_segment-15_segment-16_segment-17_segment-18_s.txt"
+  },
+  {
+    "url": "https://example.com/category/very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-end/",
+    "filename": "category_very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-s.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "category_very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-s.txt"
+  },
+  {
+    "url": "https://example.com/search?param0=value0&param1=value1&param2=value2&param3=value3&param4=value4&param5=value5&param6=value6&param7=value7&param8=value8&param9=value9&param10=value10&param11=value11&param12=value12&param13=value13&param14=value14&param15=value15&param16=value16&param17=value17&param18=value18&param19=value19&param20=value20&param21=value21&param22=value22&param23=value23&param24=value24",
+    "filename": "search_param0_value0_param1_value1_param2_value2_param3_value3_param4_value4_param5_value5_param6_value6_param7_value7_param8_value8_param9_value9_param10_value10_param11_value11_param12_value12_param.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "search_param0_value0_param1_value1_param2_value2_param3_value3_param4_value4_param5_value5_param6_value6_param7_value7_param8_value8_param9_value9_param10_value10_param11_value11_param12_value12_param.txt"
+  },
+  {
+    "url": "https://example.com/üüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüü/",
+    "filename": "_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C3_BC_C.txt"
+  },
+  {
+    "url": "https://example.com/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.pdf",
+    "filename": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx..png",
+    "isFileUrl": true,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx..txt"
+  },
+  {
+    "url": "https://example.com/yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy.pdf",
+    "filename": "yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy.png",
+    "isFileUrl": true,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy.txt"
+  },
+  {
+    "url": "https://www.example.org/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "filename": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.txt"
+  },
+  {
+    "url": "https://www.example.org/segment-0/segment-1/segment-2/segment-3/segment-4/segment-5/segment-6/segment-7/segment-8/segment-9/segment-10/segment-11/segment-12/segment-13/segment-14/segment-15/segment-16/segment-17/segment-18/segment-19/segment-20/segment-21/segment-22/segment-23/segment-24/segment-25/segment-26/segment-27/segment-28/segment-29/",
+    "filename": "segment-0_segment-1_segment-2_segment-3_segment-4_segment-5_segment-6_segment-7_segment-8_segment-9_segment-10_segment-11_segment-12_segment-13_segment-14_segment-15_segment-16_segment-17_segment-18_s.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "segment-0_segment-1_segment-2_segment-3_segment-4_segment-5_segment-6_segment-7_segment-8_segment-9_segment-10_segment-11_segment-12_segment-13_segment-14_segment-15_segment-16_segment-17_segment-18_s.txt"
+  },
+  {
+    "url": "https://www.example.org/category/very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-end/",
+    "filename": "category_very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-s.png",
+    "isFileUrl": false,
+    "isFileScreenshotName": false,
+    "fingerprintFilename": "category_very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-slug-very-long-s.txt"
+  }
+]

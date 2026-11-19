@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Visual Diff — Example &lt;Site&gt; — 2026-11-18_09-00-00 vs 2026-11-19_09-00-00</title>
+<style>
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+         background: #0f1117; color: #e2e8f0; line-height: 1.5; }
+  a { color: #60a5fa; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .topbar { background: #1e2433; border-bottom: 1px solid #2d3748; padding: 18px 32px; }
+  .topbar h1 { font-size: 1.25rem; font-weight: 700; color: #f0f4ff; }
+  .topbar h1 span { color: #818cf8; }
+  .topbar .breadcrumb { font-size: .8rem; color: #64748b; margin-bottom: 6px; }
+  .meta-row { display: flex; gap: 24px; flex-wrap: wrap; margin-top: 10px; font-size: .85rem; color: #94a3b8; }
+  .meta-row strong { color: #cbd5e1; }
+  .chip { padding: 6px 14px; border-radius: 99px; font-size: .8rem; font-weight: 600; }
+  .chip-total   { background: #1e2433; color: #94a3b8; border: 1px solid #2d3748; }
+  .chip-changed { background: #3b1f2b; color: #f87171; border: 1px solid #7f1d1d; }
+  .chip-ok      { background: #1a2e22; color: #4ade80; border: 1px solid #14532d; }
+  .chip-new     { background: #1c2c42; color: #60a5fa; border: 1px solid #1e40af; }
+  .chip-missing { background: #2a1f10; color: #fb923c; border: 1px solid #7c2d12; }
+  .chip-redirect { background: #261f3a; color: #a78bfa; border: 1px solid #5b21b6; }
+  .chip-file    { background: #2a2410; color: #facc15; border: 1px solid #713f12; }
+  .chip-error   { background: #3b1f2b; color: #fca5a5; border: 1px solid #7f1d1d; }
+  .summary { display: flex; gap: 12px; flex-wrap: wrap; padding: 20px 32px; }
+  @media (max-width: 900px) { .topbar, main, .summary { padding-left: 16px; padding-right: 16px; } }
+
+
+  .no-changes { margin: 24px 32px; padding: 20px 24px; background: #1a2e22;
+                border: 1px solid #14532d; border-radius: 8px; color: #4ade80; font-size: 1rem; font-weight: 500; }
+  main { padding: 0 32px 48px; }
+  .diff-block { background: #1a1f2e; border: 1px solid #2d3748; border-radius: 10px; margin-bottom: 28px; overflow: hidden; }
+  .diff-header { padding: 14px 18px; border-bottom: 1px solid #2d3748; }
+  .diff-title  { font-size: .95rem; font-weight: 600; word-break: break-all; margin-bottom: 8px; }
+  .diff-meta   { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; font-size: .8rem; }
+  .badge { padding: 3px 10px; border-radius: 99px; font-weight: 700; font-size: .75rem; }
+  .bar-high { background: #7f1d1d; color: #fca5a5; }
+  .bar-mid  { background: #78350f; color: #fcd34d; }
+  .bar-low  { background: #1e3a5f; color: #93c5fd; }
+  .review-pending  { background: #2d3748; color: #cbd5e1; }
+  .review-approved { background: #14532d; color: #4ade80; }
+  .review-rejected { background: #7f1d1d; color: #fca5a5; }
+  .review-ignored  { background: #374151; color: #9ca3af; }
+  .viewport { color: #94a3b8; }
+  .px-count { color: #64748b; }
+  .diff-bar-track { height: 4px; background: #2d3748; border-radius: 2px; margin-top: 10px; }
+  .diff-bar { height: 100%; border-radius: 2px; }
+  .diff-bar.bar-high { background: #ef4444; }
+  .diff-bar.bar-mid  { background: #f59e0b; }
+  .diff-bar.bar-low  { background: #3b82f6; }
+  .img-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: #2d3748; }
+  figure { background: #0f1117; padding: 10px; }
+  figcaption { font-size: .75rem; color: #64748b; margin-bottom: 6px; text-transform: uppercase; letter-spacing: .06em; font-weight: 600; }
+  figcaption small { font-size: .7rem; color: #475569; text-transform: none; letter-spacing: 0; }
+  figure img { width: 100%; height: auto; display: block; border-radius: 4px; border: 1px solid #2d3748; }
+  .extras { padding: 0 32px 32px; }
+  .extras h2 { font-size: .9rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: .07em; margin: 24px 0 10px; }
+  .extras ul { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  .extras li { font-size: .85rem; padding: 7px 12px; border-radius: 6px; }
+  .status-new     { background: #1c2c42; border-left: 3px solid #3b82f6; }
+  .status-missing { background: #2a1f10; border-left: 3px solid #f97316; }
+  .status-redirect { background: #261f3a; border-left: 3px solid #a78bfa; word-break: break-all; }
+  .status-error   { background: #3b1f2b; border-left: 3px solid #ef4444; word-break: break-all; }
+  .files { padding: 0 32px 24px; }
+  .files h2 { font-size: .9rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: .07em; margin: 8px 0 10px; }
+  .files h3 { font-size: .8rem; color: #94a3b8; margin: 16px 0 8px; }
+  .files ul { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  .files li { font-size: .85rem; padding: 7px 12px; border-radius: 6px; word-break: break-all; }
+  .fp-summary { font-size: .85rem; color: #94a3b8; margin-bottom: 12px; }
+  .fp-alert { background: #3b1f2b; border: 1px solid #7f1d1d; color: #fca5a5; padding: 10px 14px; border-radius: 8px; font-weight: 600; margin-bottom: 10px; }
+  .fp-ok { background: #1a2e22; border: 1px solid #14532d; color: #4ade80; padding: 10px 14px; border-radius: 8px; }
+  .fp-card { background: #1a1f2e; border: 1px solid #2d3748; border-left: 3px solid #ef4444; border-radius: 8px; padding: 12px 14px; margin-bottom: 10px; }
+  .fp-title { font-size: .9rem; font-weight: 600; word-break: break-all; margin-bottom: 8px; }
+  .fp-row { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; font-size: .8rem; margin-top: 4px; }
+  .fp-row span { width: 50px; color: #64748b; text-transform: uppercase; font-weight: 600; font-size: .7rem; }
+  .fp-row code { font-family: ui-monospace, Menlo, monospace; color: #e2e8f0; word-break: break-all; }
+  .fp-row em { color: #64748b; font-style: normal; }
+  @media (max-width: 900px) { .img-row { grid-template-columns: 1fr; } }
+
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="breadcrumb">Example &lt;Site&gt;</div>
+  <h1>Visual Diff — <span>Example &lt;Site&gt;</span></h1>
+  <div class="meta-row">
+    <div><strong>Before:</strong> 2026-11-18_09-00-00</div>
+    <div><strong>After:</strong> 2026-11-19_09-00-00</div>
+    <div><strong>Threshold:</strong> &gt;0.05% pixel change</div>
+    <div><strong>Generated:</strong> 2026-11-19 10:11:12 UTC</div>
+  </div>
+</div>
+<div class="summary">
+  <div class="chip chip-total">📄 4 compared</div>
+  <div class="chip chip-changed">🔴 3 changed</div>
+  <div class="chip chip-ok">✅ 1 unchanged</div>
+  <div class="chip chip-new">🆕 1 new</div>
+  <div class="chip chip-missing">⚠️ 1 missing</div>
+  <div class="chip chip-redirect">↪️ 1 redirected</div>
+  <div class="chip chip-error">❌ 1 errors</div>
+  <div class="chip chip-file">📎 1 / 4 files changed</div>
+</div>
+
+
+<section class="files">
+  <h2>Files — fingerprint check (4)</h2>
+  <p class="fp-summary">1 changed · 1 unchanged · 1 new · 1 missing</p>
+  <div class="fp-alert">🔔 1 file(s) have a different fingerprint</div>
+  <div class="fp-card">
+    <div class="fp-title">⚠️ <a href="https://example.com/r.pdf" target="_blank" rel="noopener">https://example.com/r.pdf</a> <span class="badge review-ignored">ignored</span></div>
+    <div class="fp-row"><span>Before</span><code>aaa</code><em>10 bytes</em></div>
+    <div class="fp-row"><span>After</span><code>bbb</code><em>12 bytes</em></div>
+  </div>
+  <h3>No fingerprint in before set (1)</h3><ul><li class="status-new"><a href="https://example.com/n.pdf" target="_blank" rel="noopener">https://example.com/n.pdf</a> <em>(new)</em></li></ul>
+  <h3>No fingerprint in after set (1)</h3><ul><li class="status-missing"><a href="https://example.com/m.pdf" target="_blank" rel="noopener">https://example.com/m.pdf</a> <em>(missing)</em></li></ul>
+</section>
+<main>
+<article class="diff-block">
+  <header class="diff-header">
+    <div class="diff-title"><a href="https://example.com/big" target="_blank" rel="noopener">https://example.com/big</a> <span class="viewport">[mobile]</span></div>
+    <div class="diff-meta">
+      <span class="badge bar-high">12.50% changed</span>
+      <span class="badge review-pending">pending</span>
+      <span class="px-count">41,000 px / 328,000 total</span>
+    </div>
+    <div class="diff-bar-track"><div class="diff-bar bar-high" style="width:100%"></div></div>
+  </header>
+  <div class="img-row">
+    <figure>
+      <figcaption>Before <small>(2026-11-18_09-00-00)</small></figcaption>
+      <img src="https://pub.example.com/screenshots/2026-11-18_09-00-00/mobile/big.png" loading="lazy" alt="before">
+    </figure>
+    <figure>
+      <figcaption>Diff <small>(changed pixels highlighted)</small></figcaption>
+      <img src="https://pub.example.com/diffs/2026-11-18_09-00-00_vs_2026-11-19_09-00-00/mobile/big.png" loading="lazy" alt="diff">
+    </figure>
+    <figure>
+      <figcaption>After <small>(2026-11-19_09-00-00)</small></figcaption>
+      <img src="https://pub.example.com/screenshots/2026-11-19_09-00-00/mobile/big.png" loading="lazy" alt="after">
+    </figure>
+  </div>
+</article>
+
+<article class="diff-block">
+  <header class="diff-header">
+    <div class="diff-title"><a href="https://example.com/mid" target="_blank" rel="noopener">https://example.com/mid</a> <span class="viewport">[desktop]</span></div>
+    <div class="diff-meta">
+      <span class="badge bar-mid">2.00% changed</span>
+      <span class="badge review-rejected">rejected</span>
+      <span class="px-count">23,040 px / 1,152,000 total</span>
+    </div>
+    <div class="diff-bar-track"><div class="diff-bar bar-mid" style="width:20%"></div></div>
+  </header>
+  <div class="img-row">
+    <figure>
+      <figcaption>Before <small>(2026-11-18_09-00-00)</small></figcaption>
+      <img src="https://pub.example.com/screenshots/2026-11-18_09-00-00/desktop/mid.png" loading="lazy" alt="before">
+    </figure>
+    <figure>
+      <figcaption>Diff <small>(changed pixels highlighted)</small></figcaption>
+      <img src="https://pub.example.com/diffs/2026-11-18_09-00-00_vs_2026-11-19_09-00-00/desktop/mid.png" loading="lazy" alt="diff">
+    </figure>
+    <figure>
+      <figcaption>After <small>(2026-11-19_09-00-00)</small></figcaption>
+      <img src="https://pub.example.com/screenshots/2026-11-19_09-00-00/desktop/mid.png" loading="lazy" alt="after">
+    </figure>
+  </div>
+</article>
+
+<article class="diff-block">
+  <header class="diff-header">
+    <div class="diff-title"><a href="https://example.com/small" target="_blank" rel="noopener">https://example.com/small</a> <span class="viewport">[desktop]</span></div>
+    <div class="diff-meta">
+      <span class="badge bar-low">0.50% changed</span>
+      <span class="badge review-approved">approved</span>
+      <span class="px-count">5,760 px / 1,152,000 total</span>
+    </div>
+    <div class="diff-bar-track"><div class="diff-bar bar-low" style="width:5%"></div></div>
+  </header>
+  <div class="img-row">
+    <figure>
+      <figcaption>Before <small>(2026-11-18_09-00-00)</small></figcaption>
+      <img src="https://pub.example.com/screenshots/2026-11-18_09-00-00/desktop/small.png" loading="lazy" alt="before">
+    </figure>
+    <figure>
+      <figcaption>Diff <small>(changed pixels highlighted)</small></figcaption>
+      <img src="https://pub.example.com/diffs/2026-11-18_09-00-00_vs_2026-11-19_09-00-00/desktop/small.png" loading="lazy" alt="diff">
+    </figure>
+    <figure>
+      <figcaption>After <small>(2026-11-19_09-00-00)</small></figcaption>
+      <img src="https://pub.example.com/screenshots/2026-11-19_09-00-00/desktop/small.png" loading="lazy" alt="after">
+    </figure>
+  </div>
+</article></main>
+
+<section class="extras">
+  <h2>Redirected pages — not compared (1)</h2><ul><li class="status-redirect"><strong>https://example.com/old</strong> <span class="viewport">[desktop]</span> … ↪️ redirect detected → <a href="https://example.com/new?a=1&amp;b=2" target="_blank" rel="noopener">https://example.com/new?a=1&amp;b=2</a></li></ul>
+  <h2>New pages (1)</h2><ul><li class="status-new"><a href="https://example.com/new" target="_blank" rel="noopener">https://example.com/new</a> <span class="viewport">[desktop]</span> <em>(not in before set)</em></li></ul>
+  <h2>Missing pages (1)</h2><ul><li class="status-missing"><span style="color:#64748b;font-style:italic">legacy_missing</span> <span class="viewport">[desktop]</span> <em>(missing in after set)</em></li></ul>
+  <h2>Pages with errors (1)</h2><ul><li class="status-error"><a href="https://example.com/broken" target="_blank" rel="noopener">https://example.com/broken</a> <span class="viewport">[desktop]</span> <em>Navigation timeout of 30000 ms exceeded</em></li></ul>
+</section>
+</body>
+</html>

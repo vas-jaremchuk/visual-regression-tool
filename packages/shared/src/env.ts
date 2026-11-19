@@ -45,8 +45,19 @@ export const webEnv = z.object({
   SETTINGS_ENCRYPTION_KEY: encryptionKeys('SETTINGS_ENCRYPTION_KEY'),
   RESEND_API_KEY: required('RESEND_API_KEY'),
   EMAIL_FROM: required('EMAIL_FROM'),
+  // Shows the Google button on /login; the provider itself is configured in Supabase Auth (04 §1).
+  GOOGLE_AUTH_ENABLED: z
+    .stringbool({ error: 'GOOGLE_AUTH_ENABLED must be true or false' })
+    .default(false),
 });
 export type WebEnv = z.infer<typeof webEnv>;
+
+/** The subset of `webEnv` the browser bundle may see. */
+export const webPublicEnv = webEnv.pick({
+  NEXT_PUBLIC_SUPABASE_URL: true,
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: true,
+});
+export type WebPublicEnv = z.infer<typeof webPublicEnv>;
 
 export const workerEnv = z.object({
   SUPABASE_URL: url('SUPABASE_URL'),

@@ -1161,6 +1161,7 @@ export type Database = {
       };
     };
     Functions: {
+      before_user_created_hook: { Args: { event: Json }; Returns: Json };
       can_admin: { Args: { p_project_id: string }; Returns: boolean };
       can_edit: { Args: { p_project_id: string }; Returns: boolean };
       can_view: { Args: { p_project_id: string }; Returns: boolean };

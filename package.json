@@ -13,11 +13,12 @@
     "format": "prettier --write .",
     "typecheck": "turbo run typecheck",
     "test": "vitest run",
-    "db:start": "echo \"db:start: not yet configured (T02)\"",
-    "db:reset": "echo \"db:reset: not yet configured (T02)\"",
-    "db:types": "echo \"db:types: not yet configured (T02)\"",
-    "test:db": "echo \"test:db: not yet configured (T02)\"",
-    "test:e2e": "echo \"test:e2e: not yet configured\""
+    "db:start": "supabase start",
+    "db:reset": "supabase db reset",
+    "db:types": "supabase gen types typescript --local --schema public > packages/db/src/database.types.ts && prettier --write packages/db/src/database.types.ts",
+    "seed:admin": "pnpm --filter web seed:admin",
+    "test:db": "supabase test db",
+    "test:e2e": "pnpm --filter web test:e2e"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
@@ -26,6 +27,7 @@
     "eslint-config-prettier": "^10.1.8",
     "globals": "^17.14.0",
     "prettier": "^3.10.1",
+    "supabase": "^3.2.0",
     "turbo": "^2.11.13",
     "typescript": "~6.0.3",
     "typescript-eslint": "^8.73.0",

@@ -27,3 +27,43 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm test
       - run: pnpm --filter @vrt/engine test:coverage
+
+  db:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm db:start -x studio,imgproxy,storage-api,edge-runtime,logflare,vector,supavisor,postgres-meta,mailpit
+      - run: pnpm db:reset
+      - run: pnpm test:db
+      - name: Generated types are up to date
+        run: pnpm db:types && git diff --exit-code
+
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm db:start -x studio,imgproxy,storage-api,edge-runtime,logflare,vector,supavisor,postgres-meta
+      - run: pnpm db:reset
+      - run: pnpm --filter web exec playwright install --with-deps chromium
+      - run: pnpm test:e2e
+      - name: Service role key not in client bundle
+        run: |
+          export SUPABASE_SERVICE_ROLE_KEY="$(pnpm exec supabase status -o json | jq -r .SERVICE_ROLE_KEY)"
+          pnpm --filter web check:bundle
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-results
+          path: apps/web/test-results

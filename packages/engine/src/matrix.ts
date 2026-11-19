@@ -1,5 +1,5 @@
 /** Comparison matrix (specification/05-engine.md §6, REQ-ENG-6). */
-import type { ItemKind } from './types';
+import type { CmpItemStatus, ItemKind, ItemStatus } from '@vrt/shared';
 
 /** Subset of a `run_items` row the matrix needs. */
 export interface MatrixRunItem {
@@ -8,7 +8,7 @@ export interface MatrixRunItem {
   /** null for files. Legacy run items use 'desktop'. */
   viewport_slug: string | null;
   filename: string;
-  status: string;
+  status: ItemStatus;
   sha256?: string | null;
   error?: string | null;
 }
@@ -17,7 +17,7 @@ export interface MatrixRunItem {
  * `pending` = both page captures are done; the caller runs the redirect check and pixel diff.
  * Files are settled here: equal sha256 → `unchanged`, different → `changed`.
  */
-export type MatrixStatus = 'pending' | 'new' | 'missing' | 'error' | 'changed' | 'unchanged';
+export type MatrixStatus = Exclude<CmpItemStatus, 'redirect'>;
 
 export interface MatrixEntry<T extends MatrixRunItem = MatrixRunItem> {
   kind: ItemKind;

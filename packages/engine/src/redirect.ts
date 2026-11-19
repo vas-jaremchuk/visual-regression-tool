@@ -1,9 +1,8 @@
 /** Redirect detection at compare time (specification/05-engine.md §7, REQ-ENG-7). */
+import { REDIRECT_MAX_HOPS, REDIRECT_TIMEOUT_MS } from '@vrt/shared';
 import type { Fetcher } from './types';
 import { discardBody } from './util';
 
-export const REDIRECT_TIMEOUT_MS = 15_000;
-export const MAX_REDIRECT_HOPS = 10;
 export const REDIRECT_USER_AGENT = 'Mozilla/5.0 (visual-test redirect check)';
 
 /** Same page = same host + path + query, ignoring protocol, "www." and trailing slash. */
@@ -38,7 +37,7 @@ export async function detectRedirect(
 ): Promise<string | null> {
   let current = url;
   try {
-    for (let hop = 0; hop < (opts.maxHops ?? MAX_REDIRECT_HOPS); hop++) {
+    for (let hop = 0; hop < (opts.maxHops ?? REDIRECT_MAX_HOPS); hop++) {
       const res = await fetcher(current, {
         method: 'GET',
         redirect: 'manual',

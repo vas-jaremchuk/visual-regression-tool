@@ -1,12 +1,13 @@
 /** Sitemap fetch and redirect check (specification/05-engine.md §3, REQ-ENG-3). */
+import {
+  REDIRECT_CHECK_CONCURRENCY,
+  SITEMAP_FETCH_TIMEOUT_MS,
+  SITEMAP_MAX_DEPTH,
+} from '@vrt/shared';
 import type { Fetcher } from './types';
 import { discardBody, errorReason, mapLimit } from './util';
 
-export const SITEMAP_TIMEOUT_MS = 15_000;
 export const SITEMAP_USER_AGENT = 'VisualTestBot/1.0 (visual-regression-test)';
-export const REDIRECT_CHECK_CONCURRENCY = 8;
-/** Max nesting of sitemap indexes (index → index → urlset). */
-export const SITEMAP_MAX_DEPTH = 3;
 
 export interface SitemapFetchOptions {
   fetcher: Fetcher;
@@ -50,7 +51,7 @@ async function getText(
 ): Promise<{ status: number; body: string }> {
   const res = await opts.fetcher(url, {
     redirect: 'follow',
-    signal: AbortSignal.timeout(opts.timeoutMs ?? SITEMAP_TIMEOUT_MS),
+    signal: AbortSignal.timeout(opts.timeoutMs ?? SITEMAP_FETCH_TIMEOUT_MS),
     headers: requestHeaders(opts.headers),
   });
   return { status: res.status, body: await res.text() };
@@ -137,7 +138,7 @@ async function checkStatus(
   const res = await opts.fetcher(url, {
     method,
     redirect: 'manual',
-    signal: AbortSignal.timeout(opts.timeoutMs ?? SITEMAP_TIMEOUT_MS),
+    signal: AbortSignal.timeout(opts.timeoutMs ?? SITEMAP_FETCH_TIMEOUT_MS),
     headers: requestHeaders(opts.headers),
   });
   await discardBody(res);

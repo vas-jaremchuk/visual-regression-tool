@@ -1,10 +1,9 @@
 /** File fingerprinting (specification/05-engine.md §5, REQ-ENG-5). Port of prototype/files.js. */
+import { FILE_FETCH_MAX_ATTEMPTS, FILE_FETCH_TIMEOUT_MS } from '@vrt/shared';
 import { Sha256 } from './sha256';
 import type { Fetcher } from './types';
 import { defaultSleep, discardBody, errorReason, type Sleep } from './util';
 
-export const FINGERPRINT_TIMEOUT_MS = 120_000;
-export const FINGERPRINT_RETRIES = 3;
 export const FINGERPRINT_USER_AGENT = 'Mozilla/5.0 (visual-test fingerprint)';
 const RETRY_STATUSES = [429, 500, 502, 503, 504];
 
@@ -37,8 +36,8 @@ export async function fingerprintUrl(
   fetcher: Fetcher,
   opts: FingerprintOptions = {},
 ): Promise<Fingerprint> {
-  const timeoutMs = opts.timeoutMs ?? FINGERPRINT_TIMEOUT_MS;
-  const retries = opts.retries ?? FINGERPRINT_RETRIES;
+  const timeoutMs = opts.timeoutMs ?? FILE_FETCH_TIMEOUT_MS;
+  const retries = opts.retries ?? FILE_FETCH_MAX_ATTEMPTS;
   const sleep = opts.sleep ?? defaultSleep;
   const now = opts.now ?? (() => new Date());
   let lastErr: unknown;

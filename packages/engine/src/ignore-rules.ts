@@ -3,7 +3,8 @@
  * `url_pattern` is a glob (`*` = any chars except `/`, `**` = any chars) matched against the
  * full URL, or a `re:`-prefixed regular expression.
  */
-import type { IgnoreRule, Region } from './types';
+import type { Region } from '@vrt/shared';
+import type { IgnoreRule } from './types';
 
 export type RulePhase = 'capture' | 'compare';
 

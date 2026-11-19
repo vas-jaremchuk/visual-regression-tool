@@ -11,7 +11,7 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test:coverage": "vitest run --coverage.enabled --coverage.include='src/**' --coverage.exclude='src/**/*.test.ts' --coverage.exclude='src/test/**' --coverage.thresholds.lines=90"
+    "test:coverage": "vitest run --coverage.enabled --coverage.include='src/**/*.ts' --coverage.exclude='src/**/*.test.ts' --coverage.exclude='src/test/**' --coverage.thresholds.lines=90"
   },
   "devDependencies": {
     "@types/node": "^24.19.2",
@@ -22,6 +22,7 @@
     "vitest": "^5.1.1"
   },
   "dependencies": {
+    "@vrt/shared": "workspace:*",
     "pixelmatch": "5.3.0",
     "pngjs": "^7.0.0"
   }

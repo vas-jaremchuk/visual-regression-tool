@@ -1,4 +1,5 @@
 /** Page capture helpers (specification/05-engine.md §4, REQ-ENG-4). Browser code lives in T11. */
+import { IMAGE_LOAD_TIMEOUT_MS } from '@vrt/shared';
 import { selectorsFor } from './ignore-rules';
 import type { CaptureCssSettings, IgnoreRule } from './types';
 
@@ -43,7 +44,6 @@ export function buildInjectedCss(
 
 export const LAZY_LOAD_STEP_PX = 600;
 export const LAZY_LOAD_DELAY_MS = 120;
-export const IMAGE_TIMEOUT_MS = 5000;
 
 export interface LazyLoadOptions {
   stepPx?: number;
@@ -59,7 +59,7 @@ export interface LazyLoadOptions {
 export function lazyLoadScript(opts: LazyLoadOptions = {}): string {
   const step = Number(opts.stepPx ?? LAZY_LOAD_STEP_PX);
   const delay = Number(opts.delayMs ?? LAZY_LOAD_DELAY_MS);
-  const imageTimeout = Number(opts.imageTimeoutMs ?? IMAGE_TIMEOUT_MS);
+  const imageTimeout = Number(opts.imageTimeoutMs ?? IMAGE_LOAD_TIMEOUT_MS);
   return `async () => {
   await new Promise(resolve => {
     const step = ${step}, delay = ${delay};

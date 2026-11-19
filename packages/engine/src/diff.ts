@@ -3,11 +3,9 @@
  * Exported from `@vrt/engine/diff` only, so runtimes that never diff do not bundle pngjs.
  */
 import pixelmatch from 'pixelmatch';
+import { PROJECT_DEFAULTS, type Region } from '@vrt/shared';
 import { PNG } from 'pngjs';
-import type { Region } from './types';
 
-export const DIFF_THRESHOLD = 0.1;
-export const CHANGE_THRESHOLD_PCT = 0.05;
 export const HIGHLIGHT_COLOR: readonly [number, number, number] = [255, 0, 128];
 /** Fill colour of masked `region` ignore rules (#7f7f7f). */
 export const REGION_MASK_COLOR: readonly [number, number, number] = [0x7f, 0x7f, 0x7f];
@@ -73,7 +71,10 @@ export function maskRegions(png: PNG, regions: readonly Region[]): void {
 export type DiffClass = 'changed' | 'unchanged';
 
 /** `changed` when `pct >= changeThresholdPct`. */
-export function classifyPct(pct: number, changeThresholdPct = CHANGE_THRESHOLD_PCT): DiffClass {
+export function classifyPct(
+  pct: number,
+  changeThresholdPct: number = PROJECT_DEFAULTS.changeThresholdPct,
+): DiffClass {
   return pct >= changeThresholdPct ? 'changed' : 'unchanged';
 }
 
@@ -90,7 +91,7 @@ export function diffImages(bufA: Uint8Array, bufB: Uint8Array, opts: DiffOptions
   maskRegions(b, opts.regions ?? []);
   const diffPng = new PNG({ width, height });
   const diffPixels = pixelmatch(a.data, b.data, diffPng.data, width, height, {
-    threshold: opts.threshold ?? DIFF_THRESHOLD,
+    threshold: opts.threshold ?? PROJECT_DEFAULTS.diffThreshold,
     includeAA: false,
     diffColor: [...HIGHLIGHT_COLOR],
   });

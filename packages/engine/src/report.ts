@@ -3,8 +3,7 @@
  * prototype `buildHtml`, but every dynamic value is HTML-escaped and images are absolute URLs
  * under the project's `r2_public_url`.
  */
-
-export type ReviewStatus = 'pending' | 'approved' | 'rejected' | 'ignored';
+import type { CmpItemStatus, ItemKind, ReviewStatus } from '@vrt/shared';
 
 export interface ReportComparison {
   label: string;
@@ -24,9 +23,9 @@ export interface ReportFingerprint {
 export interface ReportItem {
   url: string | null;
   name: string;
-  kind: 'page' | 'file';
+  kind: ItemKind;
   viewport_slug: string | null;
-  status: 'pending' | 'changed' | 'unchanged' | 'new' | 'missing' | 'redirect' | 'error';
+  status: CmpItemStatus;
   diff_pct?: number | null;
   diff_pixels?: number | null;
   total_pixels?: number | null;

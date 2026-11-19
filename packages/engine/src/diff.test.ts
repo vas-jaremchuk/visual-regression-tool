@@ -1,15 +1,7 @@
+import { PROJECT_DEFAULTS } from '@vrt/shared';
 import { PNG } from 'pngjs';
 import { describe, expect, it } from 'vitest';
-import {
-  CHANGE_THRESHOLD_PCT,
-  DIFF_THRESHOLD,
-  classifyPct,
-  decodePng,
-  diffImages,
-  encodePng,
-  maskRegions,
-  padPng,
-} from './diff';
+import { classifyPct, decodePng, diffImages, encodePng, maskRegions, padPng } from './diff';
 import { readFixture, readGolden } from './test/helpers';
 
 interface GoldenDiff {
@@ -37,7 +29,7 @@ describe('diffImages golden parity', () => {
     expect(res.diffPixels).toBe(g.diffPixels);
     expect(res.totalPixels).toBe(g.totalPixels);
     expect(res.pct).toBe(g.pct);
-    expect(res.changed).toBe(g.pct >= CHANGE_THRESHOLD_PCT);
+    expect(res.changed).toBe(g.pct >= PROJECT_DEFAULTS.changeThresholdPct);
   });
 
   it('reports padded size and original dimensions', () => {
@@ -62,7 +54,7 @@ describe('diffImages golden parity', () => {
     expect(
       diffImages(png('one-pixel-a.png'), png('one-pixel-b.png'), { threshold: 1 }).diffPixels,
     ).toBe(0);
-    expect(DIFF_THRESHOLD).toBe(0.1);
+    expect(PROJECT_DEFAULTS.diffThreshold).toBe(0.1);
   });
 });
 

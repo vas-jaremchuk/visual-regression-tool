@@ -65,6 +65,16 @@ describe('parseEnv', () => {
     expect(env).not.toHaveProperty('PATH');
   });
 
+  it('parses GOOGLE_AUTH_ENABLED as a boolean defaulting to false', () => {
+    expect(parseEnv(webEnv, validWeb, 'web').GOOGLE_AUTH_ENABLED).toBe(false);
+    expect(
+      parseEnv(webEnv, { ...validWeb, GOOGLE_AUTH_ENABLED: 'true' }, 'web').GOOGLE_AUTH_ENABLED,
+    ).toBe(true);
+    expect(() => parseEnv(webEnv, { ...validWeb, GOOGLE_AUTH_ENABLED: 'maybe' }, 'web')).toThrow(
+      /GOOGLE_AUTH_ENABLED/,
+    );
+  });
+
   it('accepts a worker env with bindings mixed in', () => {
     const env = parseEnv(workerEnv, { ...validWorker, BROWSER: {}, CAPTURE_QUEUE: {} }, 'worker');
     expect(env.DIFF_CONTAINER_SHARED_SECRET).toBe(secret);

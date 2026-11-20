@@ -245,6 +245,9 @@ importers:
       '@vrt/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@vrt/engine':
+        specifier: workspace:*
+        version: link:../../packages/engine
       '@vrt/shared':
         specifier: workspace:*
         version: link:../../packages/shared
@@ -336,6 +339,9 @@ importers:
       '@supabase/supabase-js':
         specifier: ^2.119.1
         version: 2.119.1
+      '@vrt/engine':
+        specifier: workspace:*
+        version: link:../../packages/engine
       '@vrt/shared':
         specifier: workspace:*
         version: link:../../packages/shared

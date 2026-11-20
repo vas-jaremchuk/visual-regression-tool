@@ -7,6 +7,7 @@ export * from './filename';
 export * from './files';
 export * from './fingerprint';
 export * from './sitemap';
+export * from './snapshot';
 export * from './capture';
 export * from './redirect';
 export * from './matrix';

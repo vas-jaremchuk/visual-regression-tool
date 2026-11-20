@@ -19,6 +19,9 @@ const url = (name: string) =>
 const sharedSecret = (name: string) =>
   required(name).pipe(z.string().min(32, `${name} must be at least 32 characters`));
 
+/** NFR-14: comma-separated hosts exempt from the SSRF guard; local development and tests only. */
+const ssrfAllowHosts = z.string().trim().default('');
+
 const encryptionKeys = (name: string) =>
   required(name).superRefine((value, ctx) => {
     try {
@@ -58,6 +61,7 @@ export const webEnv = z.object({
   GOOGLE_AUTH_ENABLED: z
     .stringbool({ error: 'GOOGLE_AUTH_ENABLED must be true or false' })
     .default(false),
+  SSRF_ALLOW_HOSTS: ssrfAllowHosts,
 });
 export type WebEnv = z.infer<typeof webEnv>;
 
@@ -81,6 +85,7 @@ export const workerEnv = z.object({
   EMAIL_FROM: required('EMAIL_FROM'),
   APP_URL: url('APP_URL'),
   DIFF_CONTAINER_SHARED_SECRET: sharedSecret('DIFF_CONTAINER_SHARED_SECRET'),
+  SSRF_ALLOW_HOSTS: ssrfAllowHosts,
 });
 export type WorkerEnv = z.infer<typeof workerEnv>;
 

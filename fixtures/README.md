@@ -6,7 +6,7 @@ tickets that first need them.
 
 | Folder | Planned contents |
 | ------ | ---------------- |
-| `site/` | Tiny static website served by a local server in tests: a sitemap index pointing to 2 child sitemaps, pages with lazy images, a cookie banner, an animation, a redirect, a 404, a PDF and a page protected by basic auth. |
+| `site/` | Tiny static website served by a local server in tests (`apps/worker/src/test/fixture-site.ts`; optional basic auth over the whole site): a sitemap index pointing to 2 child sitemaps, a redirect (`routes.json`), a 404, a PDF. `{{origin}}` in XML files is replaced with the server origin. Still to come with the capture tickets: lazy images, a cookie banner, an animation. |
 | `site/v2/` | Variant of `site/` that changes one heading, one image and the PDF bytes, adds a page and removes a page. |
 | `png/` | PNG pairs: identical, 1-pixel change, height difference, antialias-only change. |
 | `prototype-env/` | Sample prototype `.env` files for legacy import tests. |

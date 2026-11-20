@@ -910,6 +910,7 @@ export type Database = {
           created_at: string;
           error: string | null;
           error_count: number;
+          finished_at: string | null;
           id: string;
           project_id: string;
           redirect_count: number;
@@ -917,6 +918,8 @@ export type Database = {
           started_by: string | null;
           status: string;
           url_count: number;
+          urls_checked: number;
+          urls_total: number;
         };
         ComputedFields: never;
         Insert: {
@@ -924,6 +927,7 @@ export type Database = {
           created_at?: string;
           error?: string | null;
           error_count?: number;
+          finished_at?: string | null;
           id?: string;
           project_id: string;
           redirect_count?: number;
@@ -931,12 +935,15 @@ export type Database = {
           started_by?: string | null;
           status?: string;
           url_count?: number;
+          urls_checked?: number;
+          urls_total?: number;
         };
         Update: {
           child_sitemaps?: number;
           created_at?: string;
           error?: string | null;
           error_count?: number;
+          finished_at?: string | null;
           id?: string;
           project_id?: string;
           redirect_count?: number;
@@ -944,6 +951,8 @@ export type Database = {
           started_by?: string | null;
           status?: string;
           url_count?: number;
+          urls_checked?: number;
+          urls_total?: number;
         };
         Relationships: [
           {

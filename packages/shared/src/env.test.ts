@@ -75,6 +75,15 @@ describe('parseEnv', () => {
     );
   });
 
+  it('defaults EMAIL_TRANSPORT to resend and treats an empty MAILPIT_URL as unset', () => {
+    const env = parseEnv(webEnv, { ...validWeb, MAILPIT_URL: '' }, 'web');
+    expect(env.EMAIL_TRANSPORT).toBe('resend');
+    expect(env.MAILPIT_URL).toBeUndefined();
+    expect(() => parseEnv(webEnv, { ...validWeb, EMAIL_TRANSPORT: 'smtp' }, 'web')).toThrow(
+      /EMAIL_TRANSPORT/,
+    );
+  });
+
   it('accepts a worker env with bindings mixed in', () => {
     const env = parseEnv(workerEnv, { ...validWorker, BROWSER: {}, CAPTURE_QUEUE: {} }, 'worker');
     expect(env.DIFF_CONTAINER_SHARED_SECRET).toBe(secret);

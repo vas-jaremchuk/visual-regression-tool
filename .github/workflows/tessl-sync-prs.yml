@@ -34,15 +34,17 @@ jobs:
     env:
       GH_TOKEN: ${{ secrets.TESSL_SYNC_TOKEN || github.token }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
           token: ${{ secrets.TESSL_SYNC_TOKEN || github.token }}
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v5
         with:
           node-version-file: .nvmrc
-          cache: pnpm
+          # no dependency cache: most runs install nothing (no conflicting PRs), and saving
+          # a cache for a pnpm store that was never created fails the post-job step
+          package-manager-cache: false
       - name: Copy script out of the work tree (branches are switched while it runs)
         run: cp specification/factory/github/tessl-sync-prs.mjs "$RUNNER_TEMP/sync.mjs"
       - name: Sync conflicting PRs

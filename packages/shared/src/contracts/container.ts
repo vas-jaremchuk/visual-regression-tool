@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { PROJECT_LIMITS } from '../constants';
+import { PROJECT_DEFAULTS, PROJECT_LIMITS } from '../constants';
 import { region } from './common';
 
 /** Diff container `POST /diff` (09 §4), called by the worker with a bearer token. */
@@ -18,6 +18,12 @@ export const diffRequest = z.object({
     .min(PROJECT_LIMITS.changeThresholdPct.min)
     .max(PROJECT_LIMITS.changeThresholdPct.max),
   regions: z.array(region).default([]),
+  /** Project `max_page_height`; taller images are rejected instead of diffed. */
+  maxPageHeight: z
+    .int()
+    .min(PROJECT_LIMITS.maxPageHeight.min)
+    .max(PROJECT_LIMITS.maxPageHeight.max)
+    .default(PROJECT_DEFAULTS.maxPageHeight),
 });
 export type DiffRequest = z.input<typeof diffRequest>;
 

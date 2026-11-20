@@ -4,14 +4,21 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "node --watch src/main.ts",
-    "start": "node src/main.ts",
+    "build": "esbuild src/main.ts --bundle --platform=node --target=node24 --format=cjs --outfile=dist/main.cjs",
+    "dev": "pnpm build && node --env-file-if-exists=.env --enable-source-maps dist/main.cjs",
+    "start": "node dist/main.cjs",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",
+    "esbuild": "^0.28.2",
     "typescript": "~6.0.3",
     "vitest": "^5.1.1"
+  },
+  "dependencies": {
+    "@vrt/engine": "workspace:*",
+    "@vrt/shared": "workspace:*",
+    "@vrt/storage": "workspace:*"
   }
 }

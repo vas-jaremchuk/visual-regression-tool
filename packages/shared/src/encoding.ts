@@ -3,7 +3,8 @@
 const encoder = new TextEncoder();
 
 export function utf8(text: string): Uint8Array<ArrayBuffer> {
-  return encoder.encode(text);
+  // TextEncoder always allocates a fresh ArrayBuffer; Workers types widen it to ArrayBufferLike.
+  return encoder.encode(text) as Uint8Array<ArrayBuffer>;
 }
 
 export function toBase64(bytes: Uint8Array): string {

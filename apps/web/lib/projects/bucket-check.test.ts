@@ -22,7 +22,7 @@ function publicFetch(store: FakeObjectStore, bucket: string): typeof fetch {
   return (async (input: RequestInfo | URL) => {
     const key = new URL(String(input)).pathname.slice(1);
     try {
-      return new Response(await store.get(bucket, key));
+      return new Response(new TextDecoder().decode(await store.get(bucket, key)));
     } catch {
       return new Response('not found', { status: 404 });
     }

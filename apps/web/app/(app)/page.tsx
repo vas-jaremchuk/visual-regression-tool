@@ -1,16 +1,48 @@
-import { FolderOpen } from 'lucide-react';
+import { FolderOpen, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { getCurrentUser } from '@/lib/auth/session';
 import { listProjects } from '@/lib/projects';
 
-export default async function ProjectsPage() {
-  const [user, { projects }] = await Promise.all([getCurrentUser(), listProjects()]);
+/** Projects list (F-PROJ-2). Archived projects are hidden unless `?archived=1` (F-PROJ-6). */
+export default async function ProjectsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ archived?: string }>;
+}) {
+  const [user, { projects: all }, { archived }] = await Promise.all([
+    getCurrentUser(),
+    listProjects(),
+    searchParams,
+  ]);
+  const showArchived = archived === '1';
+  const projects = showArchived ? all : all.filter((project) => !project.archivedAt);
+  const archivedCount = all.length - all.filter((project) => !project.archivedAt).length;
 
   return (
     <div className="mx-auto grid max-w-5xl gap-6">
-      <h1 className="text-2xl font-semibold">Projects</h1>
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <h1 className="text-2xl font-semibold">Projects</h1>
+        <div className="flex flex-wrap items-center gap-2">
+          {archivedCount > 0 && (
+            <Button asChild variant="ghost">
+              <Link href={showArchived ? '/' : '/?archived=1'}>
+                {showArchived ? 'Hide archived' : `Show archived (${archivedCount})`}
+              </Link>
+            </Button>
+          )}
+          {user?.isPlatformAdmin && (
+            <Button asChild>
+              <Link href="/projects/new">
+                <Plus aria-hidden />
+                New project
+              </Link>
+            </Button>
+          )}
+        </div>
+      </div>
       {projects.length === 0 ? (
         <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed p-12 text-center">
           <FolderOpen className="size-10 text-muted-foreground" aria-hidden />

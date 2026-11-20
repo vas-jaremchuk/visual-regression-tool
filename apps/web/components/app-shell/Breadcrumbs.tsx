@@ -15,7 +15,7 @@ export function Breadcrumbs({ projects }: { projects: ProjectSummary[] }) {
   const segments = pathname.split('/').filter(Boolean);
   const crumbs = [{ href: '/', label: 'Projects' }];
   segments.forEach((segment, index) => {
-    if (index === 0 && segment === 'p') return;
+    if (index === 0 && (segment === 'p' || segment === 'projects')) return;
     const project =
       index === 1 && segments[0] === 'p' ? projects.find((p) => p.slug === segment) : undefined;
     crumbs.push({

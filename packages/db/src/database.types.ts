@@ -595,6 +595,7 @@ export type Database = {
           id: string;
           max_page_height: number;
           name: string;
+          notes: string | null;
           page_timeout_ms: number;
           r2_bucket: string;
           r2_public_url: string | null;
@@ -620,6 +621,7 @@ export type Database = {
           id?: string;
           max_page_height?: number;
           name: string;
+          notes?: string | null;
           page_timeout_ms?: number;
           r2_bucket: string;
           r2_public_url?: string | null;
@@ -644,6 +646,7 @@ export type Database = {
           id?: string;
           max_page_height?: number;
           name?: string;
+          notes?: string | null;
           page_timeout_ms?: number;
           r2_bucket?: string;
           r2_public_url?: string | null;
@@ -1086,6 +1089,7 @@ export type Database = {
           id: string;
           max_page_height: number;
           name: string;
+          notes: string | null;
           page_timeout_ms: number;
           r2_bucket: string;
           r2_public_url: string | null;
@@ -1111,6 +1115,7 @@ export type Database = {
           id?: string | null;
           max_page_height?: number | null;
           name?: string | null;
+          notes?: string | null;
           page_timeout_ms?: number | null;
           r2_bucket?: string | null;
           r2_public_url?: string | null;
@@ -1135,6 +1140,7 @@ export type Database = {
           id?: string | null;
           max_page_height?: number | null;
           name?: string | null;
+          notes?: string | null;
           page_timeout_ms?: number | null;
           r2_bucket?: string | null;
           r2_public_url?: string | null;

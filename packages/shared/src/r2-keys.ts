@@ -7,6 +7,7 @@ import { LEGACY_VIEWPORT_SLUG } from './constants';
  *   screenshots/<run.label>/_files/<filename>.txt            file fingerprint
  *   diffs/<cmp.label>/<viewport_slug>/<filename>.png         diff image
  *   reports/<cmp.label>/index.html                           static export
+ *   _vrt/probe.txt                                           bucket check probe (F-PROJ-5)
  *
  * Legacy prototype runs: screenshots/<ts>/<filename>.png and screenshots/<ts>/<filename>.txt.
  *
@@ -18,6 +19,8 @@ export const SCREENSHOTS_PREFIX = 'screenshots/';
 export const DIFFS_PREFIX = 'diffs/';
 export const REPORTS_PREFIX = 'reports/';
 export const FILES_DIR = '_files';
+/** Object written, read and deleted by *Check bucket* / *Test public URL* (F-PROJ-5). */
+export const PROBE_KEY = '_vrt/probe.txt';
 
 const RUN_LABEL_RE = /^\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}(?:-\d+)?$/;
 const VIEWPORT_SLUG_RE = /^[a-z0-9-]+$/;

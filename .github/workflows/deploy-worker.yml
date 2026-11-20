@@ -9,7 +9,9 @@ on:
     paths:
       - 'apps/worker/**'
       - 'apps/diff-container/**'
+      - 'packages/engine/**'
       - 'packages/shared/**'
+      - 'packages/storage/**'
       - 'pnpm-lock.yaml'
       - '.github/workflows/deploy-worker.yml'
   workflow_dispatch:

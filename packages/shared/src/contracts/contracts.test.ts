@@ -170,7 +170,9 @@ describe('worker, queue and container contracts', () => {
       regions: [{ x: 0, y: 0, width: 1280, height: 80 }],
     });
     expect(request.regions).toHaveLength(1);
+    expect(request.maxPageHeight).toBe(16_384);
     expect(diffRequest.safeParse({ ...request, threshold: 2 }).success).toBe(false);
+    expect(diffRequest.safeParse({ ...request, maxPageHeight: 40_000 }).success).toBe(false);
     expect(
       diffResponse.safeParse({
         changed: true,

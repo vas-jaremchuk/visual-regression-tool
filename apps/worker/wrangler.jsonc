@@ -45,7 +45,8 @@
     {
       "class_name": "DiffContainer",
       "image": "../diff-container/Dockerfile",
-      "image_build_context": "../diff-container",
+      // Repository root: the image bundles the workspace packages it imports.
+      "image_build_context": "../..",
       // ≥ 1 GiB RAM (ADR-2): standard-1 = 1/2 vCPU, 4 GiB
       "instance_type": "standard-1",
       "max_instances": 5,

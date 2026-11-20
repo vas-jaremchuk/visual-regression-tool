@@ -371,10 +371,23 @@ importers:
         version: 5.1.1(@types/node@24.19.2)(vite@8.3.8(@types/node@24.19.2)(esbuild@0.28.2))
 
   packages/storage:
+    dependencies:
+      '@vrt/shared':
+        specifier: workspace:*
+        version: link:../shared
+      aws4fetch:
+        specifier: ^1.0.20
+        version: 1.0.20
     devDependencies:
       '@types/node':
         specifier: ^24.0.0
         version: 24.19.2
+      esbuild:
+        specifier: ^0.28.2
+        version: 0.28.2
+      miniflare:
+        specifier: 5.20261118.0-beta
+        version: 5.20261118.0-beta(@types/node@24.19.2)
       typescript:
         specifier: ~6.0.3
         version: 6.0.3
@@ -2387,6 +2400,9 @@ packages:
   available-typed-arrays@1.0.7:
     resolution: {integrity: sha512-wvUjBtSGN7+7SjNpq/9M2Tg350UZD3q62IFZLbRAR1bSMlCo1ZaeW+BJ+D090e4hIIZLBcTDWe4Mh4jvUDajzQ==}
     engines: {node: '>= 0.4'}
+
+  aws4fetch@1.0.20:
+    resolution: {integrity: sha512-/djoAN709iY65ETD6LKCtyyEI04XIBP5xVvfmNxsEP0uJB5tyaGBztSryRr4HqMStr9R06PisQE7m9zDTXKu6g==}
 
   axe-core@4.14.1:
     resolution: {integrity: sha512-FHfa+lmNjQZfJz1q8wKqIDwC6DExcHt/pkjNQb09a3NPjCKg2rhu5qb2S4r76ASyFNNtuFooJpZe37OgudVGtQ==}
@@ -5861,6 +5877,8 @@ snapshots:
   available-typed-arrays@1.0.7:
     dependencies:
       possible-typed-array-names: 1.1.0
+
+  aws4fetch@1.0.20: {}
 
   axe-core@4.14.1: {}
 

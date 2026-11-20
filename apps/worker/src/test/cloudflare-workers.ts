@@ -12,3 +12,10 @@ export class WorkerEntrypoint<Env = unknown> {
     readonly env: Env,
   ) {}
 }
+
+export class WorkflowEntrypoint<Env = unknown> {
+  constructor(
+    readonly ctx: unknown,
+    readonly env: Env,
+  ) {}
+}

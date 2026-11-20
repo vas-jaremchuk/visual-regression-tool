@@ -7,19 +7,58 @@
   "observability": {
     "enabled": true,
   },
-  // Pixel diff container (ADR-2, 06 §6). standard-1 is 1/2 vCPU and 4 GiB: a 64 MP pair needs
-  // two padded RGBA images and a diff buffer of 256 MB each, plus the decoded PNGs.
+  // Binding names are part of the contract (specification/03-configuration.md §3).
+  // Secrets (03 §3 dotenv block) are set with `wrangler secret put` / `.dev.vars`, never here.
+  "browser": {
+    "binding": "BROWSER",
+  },
+  "workflows": [
+    { "binding": "CAPTURE_RUN", "name": "vrt-capture-run", "class_name": "CaptureRunWorkflow" },
+    { "binding": "COMPARE_RUN", "name": "vrt-compare-run", "class_name": "CompareWorkflow" },
+    { "binding": "SITEMAP_FETCH", "name": "vrt-sitemap-fetch", "class_name": "SitemapWorkflow" },
+  ],
+  "queues": {
+    "producers": [
+      { "binding": "CAPTURE_QUEUE", "queue": "vrt-capture" },
+      { "binding": "DIFF_QUEUE", "queue": "vrt-diff" },
+    ],
+    // Batch sizes and retries mirror CAPTURE_BATCH_SIZE / DIFF_BATCH_SIZE in @vrt/shared (see LIMITS.md).
+    "consumers": [
+      {
+        "queue": "vrt-capture",
+        "max_batch_size": 10,
+        "max_retries": 3,
+        "dead_letter_queue": "vrt-capture-dlq",
+      },
+      {
+        "queue": "vrt-diff",
+        "max_batch_size": 5,
+        "max_retries": 3,
+        "dead_letter_queue": "vrt-diff-dlq",
+      },
+    ],
+  },
+  "durable_objects": {
+    "bindings": [{ "name": "DIFF_CONTAINER", "class_name": "DiffContainer" }],
+  },
   "containers": [
     {
       "class_name": "DiffContainer",
       "image": "../diff-container/Dockerfile",
+      // Repository root: the image bundles the workspace packages it imports.
       "image_build_context": "../..",
+      // ≥ 1 GiB RAM (ADR-2): standard-1 = 1/2 vCPU, 4 GiB
       "instance_type": "standard-1",
-      "max_instances": 10,
+      "max_instances": 5,
     },
   ],
-  "durable_objects": {
-    "bindings": [{ "name": "DIFF_CONTAINER", "class_name": "DiffContainer" }],
-  },
   "migrations": [{ "tag": "v1", "new_sqlite_classes": ["DiffContainer"] }],
+  "version_metadata": {
+    "binding": "CF_VERSION_METADATA",
+  },
+  "dev": {
+    // Building the container image needs Docker; `pnpm dev` runs without it.
+    // Set to true (or pass --enable-containers) to run the diff container locally.
+    "enable_containers": false,
+  },
 }

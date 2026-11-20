@@ -1,0 +1,51 @@
+# Keeps open Tessl factory PRs mergeable when main moves.
+# Copy to .github/workflows/tessl-sync-prs.yml
+#
+# After every push to main it looks at open PRs from `tessl/*` branches that GitHub reports as
+# conflicting, merges main into them, auto-resolves pnpm-lock.yaml / package.json / barrel
+# index.ts conflicts, verifies (install + typecheck) and pushes. Real code conflicts get the
+# label `needs-conflict-resolution` and a comment asking the Tessl agent to resolve them.
+#
+# Secret TESSL_SYNC_TOKEN (strongly recommended): fine-grained PAT of a maintainer with
+# Contents: read & write, Pull requests: read & write, Issues: read & write on this repo.
+# Why: pushes made with the default GITHUB_TOKEN do not trigger CI on the PR, and on public repos
+# Tessl only reacts to comments from allow-listed users (the PAT makes the comment come from you).
+
+name: Sync Tessl PRs with main
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: tessl-sync-prs
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ secrets.TESSL_SYNC_TOKEN || github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.TESSL_SYNC_TOKEN || github.token }}
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - name: Copy script out of the work tree (branches are switched while it runs)
+        run: cp specification/factory/github/tessl-sync-prs.mjs "$RUNNER_TEMP/sync.mjs"
+      - name: Sync conflicting PRs
+        run: node "$RUNNER_TEMP/sync.mjs"
+        env:
+          BRANCH_PREFIX: tessl/

@@ -1,7 +1,9 @@
 import { createServerClient } from '@supabase/ssr';
 import type { Database } from '@vrt/db';
 import { NextResponse, type NextRequest } from 'next/server';
+import { forbiddenHtml } from '../auth/forbidden-response';
 import { isPublicPath } from '../auth/public-paths';
+import { adminSettingsSlug } from '../auth/settings-paths';
 import { publicEnv } from '../public-env';
 
 /**
@@ -55,6 +57,27 @@ export async function updateSession(request: NextRequest) {
       return redirectTo('/login', { error: 'disabled' });
     }
     if (pathname === '/login') return redirectTo('/', {});
+    // Settings are for project admins (04 §3). Checked here because a page that has started
+    // streaming cannot change its status any more; the pages check again with assertCan.
+    const settingsSlug = adminSettingsSlug(pathname);
+    if (settingsSlug) {
+      const { data: project } = await supabase
+        .from('projects_public')
+        .select('id')
+        .eq('slug', settingsSlug)
+        .maybeSingle();
+      if (project?.id) {
+        const { data: isAdmin } = await supabase.rpc('can_admin', { p_project_id: project.id });
+        if (!isAdmin) {
+          const forbidden = new NextResponse(forbiddenHtml(), {
+            status: 403,
+            headers: { 'content-type': 'text/html; charset=utf-8' },
+          });
+          for (const cookie of response.cookies.getAll()) forbidden.cookies.set(cookie);
+          return forbidden;
+        }
+      }
+    }
     return response;
   }
 

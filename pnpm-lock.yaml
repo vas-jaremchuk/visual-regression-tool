@@ -248,6 +248,9 @@ importers:
       '@vrt/shared':
         specifier: workspace:*
         version: link:../../packages/shared
+      '@vrt/storage':
+        specifier: workspace:*
+        version: link:../../packages/storage
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1

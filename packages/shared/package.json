@@ -4,6 +4,7 @@
   "private": true,
   "description": "Shared zod schemas, job contracts, enums, constants and R2 key builders.",
   "type": "module",
+  "sideEffects": false,
   "exports": {
     ".": "./src/index.ts"
   },

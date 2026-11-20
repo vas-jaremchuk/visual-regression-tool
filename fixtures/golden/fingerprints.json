@@ -1,0 +1,99 @@
+[
+  {
+    "input": {
+      "url": "https://example.com/downloads/report.pdf",
+      "finalUrl": "",
+      "status": 200,
+      "contentType": "application/pdf",
+      "lastModified": "Wed, 18 Nov 2026 10:00:00 GMT",
+      "etag": "\"abc123\"",
+      "fetchedAt": "2026-11-19T12:00:00.000Z",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    "text": "url: https://example.com/downloads/report.pdf\nsha256: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\nsize: 0\nstatus: 200\ncontent-type: application/pdf\nlast-modified: Wed, 18 Nov 2026 10:00:00 GMT\netag: \"abc123\"\nfetched-at: 2026-11-19T12:00:00.000Z\n",
+    "parsed": {
+      "url": "https://example.com/downloads/report.pdf",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": "0",
+      "status": "200",
+      "content-type": "application/pdf",
+      "last-modified": "Wed, 18 Nov 2026 10:00:00 GMT",
+      "etag": "\"abc123\"",
+      "fetched-at": "2026-11-19T12:00:00.000Z"
+    }
+  },
+  {
+    "input": {
+      "url": "https://example.com/files/brochure.docx",
+      "finalUrl": "https://cdn.example.com/brochure.docx",
+      "status": 200,
+      "contentType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "lastModified": "",
+      "etag": "",
+      "fetchedAt": "2026-11-19T12:00:01.000Z",
+      "sha256": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+      "size": 4
+    },
+    "text": "url: https://example.com/files/brochure.docx\nfinal-url: https://cdn.example.com/brochure.docx\nsha256: 9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08\nsize: 4\nstatus: 200\ncontent-type: application/vnd.openxmlformats-officedocument.wordprocessingml.document\nlast-modified: \netag: \nfetched-at: 2026-11-19T12:00:01.000Z\n",
+    "parsed": {
+      "url": "https://example.com/files/brochure.docx",
+      "final-url": "https://cdn.example.com/brochure.docx",
+      "sha256": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+      "size": "4",
+      "status": "200",
+      "content-type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "last-modified": "",
+      "etag": "",
+      "fetched-at": "2026-11-19T12:00:01.000Z"
+    }
+  },
+  {
+    "input": {
+      "url": "https://example.com/missing.pdf",
+      "finalUrl": "",
+      "status": 404,
+      "contentType": "text/html; charset=utf-8",
+      "lastModified": "",
+      "etag": "",
+      "fetchedAt": "2026-11-19T12:00:02.000Z",
+      "sha256": "ERROR HTTP 404",
+      "size": 0
+    },
+    "text": "url: https://example.com/missing.pdf\nsha256: ERROR HTTP 404\nsize: 0\nstatus: 404\ncontent-type: text/html; charset=utf-8\nlast-modified: \netag: \nfetched-at: 2026-11-19T12:00:02.000Z\n",
+    "parsed": {
+      "url": "https://example.com/missing.pdf",
+      "sha256": "ERROR HTTP 404",
+      "size": "0",
+      "status": "404",
+      "content-type": "text/html; charset=utf-8",
+      "last-modified": "",
+      "etag": "",
+      "fetched-at": "2026-11-19T12:00:02.000Z"
+    }
+  },
+  {
+    "input": {
+      "url": "https://example.com/unreachable.zip",
+      "finalUrl": "",
+      "status": 0,
+      "contentType": "",
+      "lastModified": "",
+      "etag": "",
+      "fetchedAt": "2026-11-19T12:00:03.000Z",
+      "sha256": "ERROR ECONNREFUSED",
+      "size": 0
+    },
+    "text": "url: https://example.com/unreachable.zip\nsha256: ERROR ECONNREFUSED\nsize: 0\nstatus: 0\ncontent-type: \nlast-modified: \netag: \nfetched-at: 2026-11-19T12:00:03.000Z\n",
+    "parsed": {
+      "url": "https://example.com/unreachable.zip",
+      "sha256": "ERROR ECONNREFUSED",
+      "size": "0",
+      "status": "0",
+      "content-type": "",
+      "last-modified": "",
+      "etag": "",
+      "fetched-at": "2026-11-19T12:00:03.000Z"
+    }
+  }
+]

@@ -11,10 +11,15 @@ Source: <https://developers.cloudflare.com/browser-rendering/limits/>
 
 | Limit                  | Workers Paid                        | Workers Free         | Used by                                                        |
 | ---------------------- | ----------------------------------- | -------------------- | -------------------------------------------------------------- |
-| Concurrent browsers    | 200 per account                     | 3 per account        | per-project `capture_concurrency` (max 10) + `ProjectLimiter`  |
+| Concurrent browsers    | 200 per account                     | 3 per account        | per-project `capture_concurrency` (max 10) + `ProjectLimiter`; global cap `BROWSER_MAX_SESSIONS` = 30 |
 | New browser instances  | 3 per second                        | 1 every 20 s         | session reuse (06 §3)                                          |
 | Browser idle timeout   | 60 s default, `keep_alive` ≤ 20 min | same                 | `BROWSER_SESSION_KEEP_ALIVE_MS` = 60 s                         |
 | Browser hours          | no limit (billed)                   | 10 min per day       | Free plan is not usable for real runs                          |
+
+`ProjectLimiter` leases expire after `LIMITER_LEASE_MS` = 15 min (the queue consumer wall-time
+limit), so a crashed consumer frees its slot. A capture message that finds no free slot is sent
+again after `LIMITER_BUSY_DELAY_MS` = 15 s instead of being retried, so waiting never moves it
+towards the DLQ.
 
 ## Workflows (`CAPTURE_RUN`, `COMPARE_RUN`, `SITEMAP_FETCH`)
 

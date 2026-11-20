@@ -74,6 +74,12 @@ export const JOB_POLL_INTERVAL_MS = 15 * SECOND_MS;
 export const RUN_HARD_TIMEOUT_MS = 6 * HOUR_MS;
 export const DIFF_MAX_ATTEMPTS = 3;
 export const BROWSER_SESSION_KEEP_ALIVE_MS = 60 * SECOND_MS;
+/** Global cap on concurrent Browser Rendering sessions across projects (`ProjectLimiter`). */
+export const BROWSER_MAX_SESSIONS = 30;
+/** A limiter slot is released after this long even if its holder never releases it. */
+export const LIMITER_LEASE_MS = 15 * MINUTE_MS;
+/** A capture message that finds no free slot is sent again after this delay. */
+export const LIMITER_BUSY_DELAY_MS = 15 * SECOND_MS;
 
 // R2 (NFR-9)
 export const R2_MAX_ATTEMPTS = 5;

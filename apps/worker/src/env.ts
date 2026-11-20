@@ -1,5 +1,6 @@
 import { parseEnv, workerEnv, type WorkerEnv } from '@vrt/shared';
 import type { DiffContainer } from './containers/diff-container';
+import type { ProjectLimiter } from './limiter/project-limiter';
 import type { CaptureMsg, DiffMsg } from '@vrt/shared';
 
 /** Cloudflare bindings declared in `wrangler.jsonc` (03 §3) plus the secrets validated by `workerEnv`. */
@@ -11,6 +12,7 @@ export interface Env extends Partial<Record<keyof WorkerEnv, string>> {
   CAPTURE_QUEUE: Queue<CaptureMsg>;
   DIFF_QUEUE: Queue<DiffMsg>;
   DIFF_CONTAINER: DurableObjectNamespace<DiffContainer>;
+  PROJECT_LIMITER: DurableObjectNamespace<ProjectLimiter>;
   CF_VERSION_METADATA?: WorkerVersionMetadata;
 }
 

@@ -7,4 +7,19 @@
   "observability": {
     "enabled": true,
   },
+  // Pixel diff container (ADR-2, 06 §6). standard-1 is 1/2 vCPU and 4 GiB: a 64 MP pair needs
+  // two padded RGBA images and a diff buffer of 256 MB each, plus the decoded PNGs.
+  "containers": [
+    {
+      "class_name": "DiffContainer",
+      "image": "../diff-container/Dockerfile",
+      "image_build_context": "../..",
+      "instance_type": "standard-1",
+      "max_instances": 10,
+    },
+  ],
+  "durable_objects": {
+    "bindings": [{ "name": "DIFF_CONTAINER", "class_name": "DiffContainer" }],
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["DiffContainer"] }],
 }

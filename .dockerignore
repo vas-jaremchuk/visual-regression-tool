@@ -1,0 +1,8 @@
+# Docker builds use the repository root as context (apps/diff-container/Dockerfile).
+**/node_modules
+**/dist
+**/.next
+**/.turbo
+**/.wrangler
+**/.env*
+.git

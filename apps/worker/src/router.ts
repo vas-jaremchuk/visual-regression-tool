@@ -27,6 +27,7 @@ function apiError(code: ApiErrorCode, message: string, details?: unknown): Respo
 }
 
 interface JobRequest {
+  env: Env;
   method: string;
   path: string;
   body: Uint8Array<ArrayBuffer>;
@@ -62,8 +63,27 @@ function startJob(job: string, schema: z.ZodType): JobHandler {
   };
 }
 
+/**
+ * POST /jobs/sitemap: one `SitemapWorkflow` instance per snapshot, named after it, so a repeated
+ * request does not start a second fetch.
+ */
+const startSitemap: JobHandler = async ({ env, body, log }) => {
+  const parsed = parseBody(startSitemapJob, body);
+  if (parsed instanceof Response) return parsed;
+  let instance: WorkflowInstance;
+  try {
+    instance = await env.SITEMAP_FETCH.create({ id: parsed.snapshotId, params: parsed });
+  } catch (error) {
+    if (!/already.exists/i.test(String(error))) throw error;
+    instance = await env.SITEMAP_FETCH.get(parsed.snapshotId);
+  }
+  const response: JobStartedResponse = { workflowId: instance.id };
+  log.info('sitemap workflow started', { ...parsed, ...response });
+  return json(response);
+};
+
 const routes: { method: string; pattern: RegExp; handler: JobHandler }[] = [
-  { method: 'POST', pattern: /^\/jobs\/sitemap$/, handler: startJob('sitemap', startSitemapJob) },
+  { method: 'POST', pattern: /^\/jobs\/sitemap$/, handler: startSitemap },
   { method: 'POST', pattern: /^\/jobs\/capture$/, handler: startJob('capture', startCaptureJob) },
   {
     method: 'POST',
@@ -89,7 +109,7 @@ const routes: { method: string; pattern: RegExp; handler: JobHandler }[] = [
   },
 ];
 
-async function handleJobs(request: Request, url: URL, config: WorkerEnv, log: Logger) {
+async function handleJobs(request: Request, url: URL, env: Env, config: WorkerEnv, log: Logger) {
   const path = url.pathname + url.search;
   const body = new Uint8Array(await request.arrayBuffer());
   const verified = await verifyRequest({
@@ -109,7 +129,7 @@ async function handleJobs(request: Request, url: URL, config: WorkerEnv, log: Lo
     if (!match) continue;
     if (route.method !== request.method) continue;
     return route.handler(
-      { method: request.method, path, body, log },
+      { env, method: request.method, path, body, log },
       match.slice(1).map(decodeURIComponent),
     );
   }
@@ -133,7 +153,7 @@ export async function handleRequest(request: Request, env: Env): Promise<Respons
       return json({ ok: true, version: workerVersion(env) });
     }
     if (url.pathname === '/jobs' || url.pathname.startsWith('/jobs/')) {
-      return await handleJobs(request, url, config, log);
+      return await handleJobs(request, url, env, config, log);
     }
     return apiError('not_found', 'Not found');
   } catch (error) {

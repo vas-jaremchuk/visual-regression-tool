@@ -210,10 +210,23 @@ importers:
         version: 5.1.1(@types/node@24.19.2)(@vitest/coverage-v8@5.1.1)(vite@8.3.8(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15))
 
   apps/diff-container:
+    dependencies:
+      '@vrt/engine':
+        specifier: workspace:*
+        version: link:../../packages/engine
+      '@vrt/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
+      '@vrt/storage':
+        specifier: workspace:*
+        version: link:../../packages/storage
     devDependencies:
       '@types/node':
         specifier: ^24.0.0
         version: 24.19.2
+      esbuild:
+        specifier: ^0.28.2
+        version: 0.28.2
       typescript:
         specifier: ~6.0.3
         version: 6.0.3
@@ -232,9 +245,15 @@ importers:
       '@vrt/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@vrt/engine':
+        specifier: workspace:*
+        version: link:../../packages/engine
       '@vrt/shared':
         specifier: workspace:*
         version: link:../../packages/shared
+      '@vrt/storage':
+        specifier: workspace:*
+        version: link:../../packages/storage
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1

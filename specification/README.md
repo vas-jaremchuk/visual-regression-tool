@@ -26,6 +26,7 @@ has an ID (`REQ-xxx`) so tickets, tests and PRs can reference it.
 | 10 | [Non-functional](10-non-functional.md) | Limits, performance, security, observability, cost |
 | 11 | [Testing & acceptance](11-testing.md) | Test strategy, fixtures, definition of done |
 | 12 | [Delivery plan](12-delivery-plan.md) | Milestones and ticket order |
+| 13 | [Deployment setup](13-deployment-setup.md) | Secrets for GitHub/Cloudflare/Vercel/Supabase and how they link |
 | — | [factory/](factory/) | Tessl factory kit: repo rules, setup hook, one issue file per ticket |
 
 ## Source of truth

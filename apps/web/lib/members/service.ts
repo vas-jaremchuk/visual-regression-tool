@@ -1,6 +1,6 @@
 import 'server-only';
-import type { Json } from '@vrt/db';
 import { DAY_MS, type ProjectRole } from '@vrt/shared';
+import { audit } from '../audit';
 import { assertCan } from '../auth/assert-can';
 import type { CurrentUser } from '../auth/session';
 import { emailSender } from '../email';
@@ -21,21 +21,6 @@ import { RequestError } from './errors';
 const INVITATION_TTL_MS = 7 * DAY_MS;
 
 type UserClient = Awaited<ReturnType<typeof createClient>>;
-
-/** Audit entry as the signed-in user (02 §2 audit_log). */
-async function audit(
-  supabase: UserClient,
-  action: string,
-  projectId: string | null,
-  details: Record<string, Json>,
-) {
-  const { error } = await supabase.rpc('write_audit_log', {
-    p_action: action,
-    p_details: details,
-    ...(projectId ? { p_project_id: projectId } : {}),
-  });
-  if (error) throw new Error(`Could not write the audit log: ${error.message}`);
-}
 
 function inviterName(user: CurrentUser): string {
   return user.fullName ?? user.email;

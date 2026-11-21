@@ -73,6 +73,8 @@ export const ITEM_RETRY_DELAY_MS = 10 * SECOND_MS;
 export const JOB_POLL_INTERVAL_MS = 15 * SECOND_MS;
 export const RUN_HARD_TIMEOUT_MS = 6 * HOUR_MS;
 export const DIFF_MAX_ATTEMPTS = 3;
+/** The diff container rejects pairs whose padded size exceeds this (64 MP). */
+export const DIFF_MAX_PIXELS = 64_000_000;
 export const BROWSER_SESSION_KEEP_ALIVE_MS = 60 * SECOND_MS;
 /** Global cap on concurrent Browser Rendering sessions across projects (`ProjectLimiter`). */
 export const BROWSER_MAX_SESSIONS = 30;

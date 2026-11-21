@@ -595,6 +595,7 @@ export type Database = {
           id: string;
           max_page_height: number;
           name: string;
+          notes: string | null;
           page_timeout_ms: number;
           r2_bucket: string;
           r2_public_url: string | null;
@@ -620,6 +621,7 @@ export type Database = {
           id?: string;
           max_page_height?: number;
           name: string;
+          notes?: string | null;
           page_timeout_ms?: number;
           r2_bucket: string;
           r2_public_url?: string | null;
@@ -644,6 +646,7 @@ export type Database = {
           id?: string;
           max_page_height?: number;
           name?: string;
+          notes?: string | null;
           page_timeout_ms?: number;
           r2_bucket?: string;
           r2_public_url?: string | null;
@@ -907,6 +910,7 @@ export type Database = {
           created_at: string;
           error: string | null;
           error_count: number;
+          finished_at: string | null;
           id: string;
           project_id: string;
           redirect_count: number;
@@ -914,6 +918,8 @@ export type Database = {
           started_by: string | null;
           status: string;
           url_count: number;
+          urls_checked: number;
+          urls_total: number;
         };
         ComputedFields: never;
         Insert: {
@@ -921,6 +927,7 @@ export type Database = {
           created_at?: string;
           error?: string | null;
           error_count?: number;
+          finished_at?: string | null;
           id?: string;
           project_id: string;
           redirect_count?: number;
@@ -928,12 +935,15 @@ export type Database = {
           started_by?: string | null;
           status?: string;
           url_count?: number;
+          urls_checked?: number;
+          urls_total?: number;
         };
         Update: {
           child_sitemaps?: number;
           created_at?: string;
           error?: string | null;
           error_count?: number;
+          finished_at?: string | null;
           id?: string;
           project_id?: string;
           redirect_count?: number;
@@ -941,6 +951,8 @@ export type Database = {
           started_by?: string | null;
           status?: string;
           url_count?: number;
+          urls_checked?: number;
+          urls_total?: number;
         };
         Relationships: [
           {
@@ -1086,6 +1098,7 @@ export type Database = {
           id: string;
           max_page_height: number;
           name: string;
+          notes: string | null;
           page_timeout_ms: number;
           r2_bucket: string;
           r2_public_url: string | null;
@@ -1111,6 +1124,7 @@ export type Database = {
           id?: string | null;
           max_page_height?: number | null;
           name?: string | null;
+          notes?: string | null;
           page_timeout_ms?: number | null;
           r2_bucket?: string | null;
           r2_public_url?: string | null;
@@ -1135,6 +1149,7 @@ export type Database = {
           id?: string | null;
           max_page_height?: number | null;
           name?: string | null;
+          notes?: string | null;
           page_timeout_ms?: number | null;
           r2_bucket?: string | null;
           r2_public_url?: string | null;

@@ -4,7 +4,8 @@ import { handleRequest } from './router';
 
 export { DiffContainer } from './containers/diff-container';
 export { ProjectLimiter } from './limiter/project-limiter';
-export { CaptureRunWorkflow, CompareWorkflow, SitemapWorkflow } from './workflows/stubs';
+export { SitemapWorkflow } from './workflows/sitemap';
+export { CaptureRunWorkflow, CompareWorkflow } from './workflows/stubs';
 
 export default {
   fetch: (request, env) => handleRequest(request, env),

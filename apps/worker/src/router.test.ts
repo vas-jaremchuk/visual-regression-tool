@@ -115,9 +115,54 @@ describe('HMAC middleware on /jobs/*', () => {
   });
 });
 
+describe('POST /jobs/sitemap', () => {
+  function workflowBinding() {
+    const instances = new Map<string, unknown>();
+    return {
+      instances,
+      create: vi.fn(async ({ id, params }: { id: string; params: unknown }) => {
+        if (instances.has(id)) throw new Error(`instance.already_exists: ${id}`);
+        instances.set(id, params);
+        return { id };
+      }),
+      get: vi.fn(async (id: string) => ({ id })),
+    };
+  }
+
+  it('starts a SitemapWorkflow instance named after the snapshot', async () => {
+    const binding = workflowBinding();
+    const env = makeEnv({ SITEMAP_FETCH: binding });
+    const res = await handleRequest(
+      await signed('POST', '/jobs/sitemap', { snapshotId: uuid }),
+      env,
+    );
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ workflowId: uuid });
+    expect(binding.instances.get(uuid)).toEqual({ snapshotId: uuid });
+  });
+
+  it('answers with the existing instance when the snapshot already has one', async () => {
+    const binding = workflowBinding();
+    const env = makeEnv({ SITEMAP_FETCH: binding });
+    await handleRequest(await signed('POST', '/jobs/sitemap', { snapshotId: uuid }), env);
+    const res = await handleRequest(
+      await signed('POST', '/jobs/sitemap', { snapshotId: uuid }),
+      env,
+    );
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ workflowId: uuid });
+    expect(binding.create).toHaveBeenCalledTimes(2);
+  });
+
+  it('rejects a body without a snapshot id', async () => {
+    const env = makeEnv({ SITEMAP_FETCH: workflowBinding() });
+    const res = await handleRequest(await signed('POST', '/jobs/sitemap', { runId: uuid }), env);
+    expect(res.status).toBe(400);
+  });
+});
+
 describe('signed job stubs', () => {
   it.each([
-    ['/jobs/sitemap', { snapshotId: uuid }],
     ['/jobs/capture', { runId: uuid }],
     ['/jobs/compare', { comparisonId: uuid }],
     ['/jobs/delete', { entity: 'run', id: uuid }],

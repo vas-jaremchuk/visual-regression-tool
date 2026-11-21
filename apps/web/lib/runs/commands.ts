@@ -229,8 +229,8 @@ export function createRunCommands(deps: RunCommandDeps) {
       const settings = {
         ...project.capture,
         viewports: requested.map((slug) => {
-          const { enabled: _enabled, ...viewport } = known.get(slug)!;
-          return { ...viewport };
+          const { width, height, deviceScaleFactor, isMobile } = known.get(slug)!;
+          return { slug, width, height, deviceScaleFactor, isMobile };
         }),
         ignoreRules: captureRules as unknown as Json,
         scope: input.scope,

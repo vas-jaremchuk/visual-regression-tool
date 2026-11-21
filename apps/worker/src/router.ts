@@ -14,8 +14,10 @@ import {
   type WorkerEnv,
 } from '@vrt/shared';
 import type { z } from 'zod';
+import { createRunJob } from './capture/run-job';
 import { getConfig, workerVersion, type Env } from './env';
 import { createLogger, type Logger } from './logger';
+import { runJobDeps } from './workflows/capture-run';
 
 /** Worker HTTP API (09 §2). `/jobs/*` requires a VRT-HMAC signature (04 §6); `/health` does not. */
 
@@ -82,18 +84,68 @@ const startSitemap: JobHandler = async ({ env, body, log }) => {
   return json(response);
 };
 
+/** Workflow instance statuses that will still make progress on their own. */
+const LIVE_STATUSES = new Set(['queued', 'running', 'paused', 'waiting', 'waitingForPause']);
+
+async function isLive(instance: WorkflowInstance): Promise<boolean> {
+  return LIVE_STATUSES.has((await instance.status()).status);
+}
+
+/**
+ * POST /jobs/capture: the first `CaptureRunWorkflow` instance of a run is named after it, so a
+ * repeated request does not start a second one while it is alive. Once it has ended, a request
+ * (retry failed, 06 §4) starts a new instance for the same run.
+ */
+const startCapture: JobHandler = async ({ env, body, log }) => {
+  const parsed = parseBody(startCaptureJob, body);
+  if (parsed instanceof Response) return parsed;
+  let instance: WorkflowInstance;
+  try {
+    instance = await env.CAPTURE_RUN.create({ id: parsed.runId, params: parsed });
+  } catch (error) {
+    if (!/already.exists/i.test(String(error))) throw error;
+    instance = await env.CAPTURE_RUN.get(parsed.runId);
+    if (!(await isLive(instance))) {
+      instance = await env.CAPTURE_RUN.create({
+        id: `${parsed.runId}-${Date.now().toString(36)}`,
+        params: parsed,
+      });
+    }
+  }
+  const response: JobStartedResponse = { workflowId: instance.id };
+  log.info('capture workflow started', { ...parsed, ...response });
+  return json(response);
+};
+
+/**
+ * POST /jobs/capture/:runId/cancel (06 §4): records the cancel; the live workflow finalises the
+ * run as `cancelled` at its next poll, or this request does when no workflow is alive.
+ */
+const cancelCapture: JobHandler = async ({ env, log }, [runId]) => {
+  if (!id.safeParse(runId).success) return apiError('validation_error', 'runId must be a UUID');
+  const job = createRunJob(runId!, runJobDeps(env));
+  try {
+    await job.cancel(async (workflowId) => {
+      try {
+        return await isLive(await env.CAPTURE_RUN.get(workflowId));
+      } catch {
+        return false;
+      }
+    });
+  } catch (error) {
+    if (error instanceof Error && error.name === 'RunNotFoundError') {
+      return apiError('not_found', error.message);
+    }
+    throw error;
+  }
+  log.info('capture cancel requested', { runId });
+  return new Response(null, { status: 202 });
+};
+
 const routes: { method: string; pattern: RegExp; handler: JobHandler }[] = [
   { method: 'POST', pattern: /^\/jobs\/sitemap$/, handler: startSitemap },
-  { method: 'POST', pattern: /^\/jobs\/capture$/, handler: startJob('capture', startCaptureJob) },
-  {
-    method: 'POST',
-    pattern: /^\/jobs\/capture\/([^/]+)\/cancel$/,
-    handler: ({ log }, [runId]) => {
-      if (!id.safeParse(runId).success) return apiError('validation_error', 'runId must be a UUID');
-      log.info('stub capture cancel', { runId });
-      return new Response(null, { status: 202 });
-    },
-  },
+  { method: 'POST', pattern: /^\/jobs\/capture$/, handler: startCapture },
+  { method: 'POST', pattern: /^\/jobs\/capture\/([^/]+)\/cancel$/, handler: cancelCapture },
   { method: 'POST', pattern: /^\/jobs\/compare$/, handler: startJob('compare', startCompareJob) },
   { method: 'POST', pattern: /^\/jobs\/delete$/, handler: startJob('delete', deleteJob) },
   {

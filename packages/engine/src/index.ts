@@ -9,6 +9,7 @@ export * from './fingerprint';
 export * from './sitemap';
 export * from './snapshot';
 export * from './capture';
+export * from './browser';
 export * from './redirect';
 export * from './matrix';
 export * from './report';

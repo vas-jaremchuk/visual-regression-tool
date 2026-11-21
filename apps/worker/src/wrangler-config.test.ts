@@ -43,4 +43,13 @@ describe('wrangler.jsonc', () => {
     const container = config.containers?.find((c) => c.class_name === 'DiffContainer');
     expect(container?.instance_type).not.toMatch(/^(lite|dev)$/);
   });
+
+  it('declares the ProjectLimiter Durable Object with a SQLite migration', () => {
+    expect(config.durable_objects?.bindings).toContainEqual({
+      name: 'PROJECT_LIMITER',
+      class_name: 'ProjectLimiter',
+    });
+    const migrated = (config.migrations ?? []).flatMap((m) => m.new_sqlite_classes ?? []);
+    expect(migrated).toContain('ProjectLimiter');
+  });
 });

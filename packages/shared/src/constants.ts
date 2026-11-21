@@ -76,6 +76,12 @@ export const DIFF_MAX_ATTEMPTS = 3;
 /** The diff container rejects pairs whose padded size exceeds this (64 MP). */
 export const DIFF_MAX_PIXELS = 64_000_000;
 export const BROWSER_SESSION_KEEP_ALIVE_MS = 60 * SECOND_MS;
+/** Global cap on concurrent Browser Rendering sessions across projects (`ProjectLimiter`). */
+export const BROWSER_MAX_SESSIONS = 30;
+/** A limiter slot is released after this long even if its holder never releases it. */
+export const LIMITER_LEASE_MS = 15 * MINUTE_MS;
+/** A capture message that finds no free slot is sent again after this delay. */
+export const LIMITER_BUSY_DELAY_MS = 15 * SECOND_MS;
 
 // R2 (NFR-9)
 export const R2_MAX_ATTEMPTS = 5;

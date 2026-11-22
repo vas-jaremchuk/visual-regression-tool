@@ -6,6 +6,7 @@ export { DiffContainer } from './containers/diff-container';
 export { ProjectLimiter } from './limiter/project-limiter';
 export { SitemapWorkflow } from './workflows/sitemap';
 export { CaptureRunWorkflow } from './workflows/capture-run';
+export { ImportWorkflow } from './workflows/import-legacy';
 export { CompareWorkflow } from './workflows/stubs';
 
 export default {

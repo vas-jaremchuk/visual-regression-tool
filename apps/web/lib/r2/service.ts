@@ -32,10 +32,14 @@ export function r2Store(): R2ObjectStore {
   });
 }
 
-/** The comparison with its run labels and bucket, as `supabase` may see it. */
+/**
+ * The comparison with its run labels and bucket, as `supabase` may see it. The service role reads
+ * `projects` (the `projects_public` view only shows projects of the signed-in user).
+ */
 async function loadSignComparison(
   supabase: SupabaseClient<Database>,
   comparisonId: string,
+  projectSource: 'projects' | 'projects_public' = 'projects_public',
 ): Promise<SignComparison | null> {
   const { data, error } = await supabase
     .from('comparisons')
@@ -49,16 +53,20 @@ async function loadSignComparison(
   if (error) throw new Error(`Could not load the comparison: ${error.message}`);
   if (!data) return null;
   const row = data as unknown as Record<string, unknown>;
-  const project = await supabase
-    .from('projects_public')
-    .select('r2_bucket')
-    .eq('id', row.project_id as string)
-    .maybeSingle();
+  const projectId = row.project_id as string;
+  const project =
+    projectSource === 'projects'
+      ? await supabase.from('projects').select('r2_bucket').eq('id', projectId).maybeSingle()
+      : await supabase
+          .from('projects_public')
+          .select('r2_bucket')
+          .eq('id', projectId)
+          .maybeSingle();
   if (project.error) throw new Error(`Could not load the project: ${project.error.message}`);
   if (!project.data?.r2_bucket) return null;
   return {
     id: row.id as string,
-    projectId: row.project_id as string,
+    projectId,
     label: row.label as string,
     beforeLabel: labelOf(row.before as Labels),
     afterLabel: labelOf(row.after as Labels),
@@ -96,7 +104,7 @@ export async function signSharedKey(input: {
   const store = r2Store();
   const gateway: SharedSignGateway = {
     resolveShareToken: (token) => resolveShareToken(admin, token),
-    loadComparison: (comparisonId) => loadSignComparison(admin, comparisonId),
+    loadComparison: (comparisonId) => loadSignComparison(admin, comparisonId, 'projects'),
     presignGet: (bucket, key, expiresInSeconds) => store.presignGet(bucket, key, expiresInSeconds),
   };
   return signSharedObject(gateway, input);

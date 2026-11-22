@@ -161,9 +161,56 @@ describe('POST /jobs/sitemap', () => {
   });
 });
 
+describe('POST /jobs/capture', () => {
+  function workflowBinding(status = 'running') {
+    const instances = new Map<string, unknown>();
+    return {
+      instances,
+      create: vi.fn(async ({ id, params }: { id: string; params: unknown }) => {
+        if (instances.has(id)) throw new Error(`instance.already_exists: ${id}`);
+        instances.set(id, params);
+        return { id };
+      }),
+      get: vi.fn(async (id: string) => ({ id, status: async () => ({ status }) })),
+    };
+  }
+
+  it('starts a CaptureRunWorkflow instance named after the run', async () => {
+    const binding = workflowBinding();
+    const env = makeEnv({ CAPTURE_RUN: binding });
+    const res = await handleRequest(await signed('POST', '/jobs/capture', { runId: uuid }), env);
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ workflowId: uuid });
+    expect(binding.instances.get(uuid)).toEqual({ runId: uuid });
+  });
+
+  it('answers with the live instance instead of starting a second one', async () => {
+    const binding = workflowBinding('waiting');
+    const env = makeEnv({ CAPTURE_RUN: binding });
+    await handleRequest(await signed('POST', '/jobs/capture', { runId: uuid }), env);
+    const res = await handleRequest(await signed('POST', '/jobs/capture', { runId: uuid }), env);
+    expect(await res.json()).toEqual({ workflowId: uuid });
+    expect(binding.instances.size).toBe(1);
+  });
+
+  it('starts a new instance for the same run once the first has ended (retry failed)', async () => {
+    const binding = workflowBinding('complete');
+    const env = makeEnv({ CAPTURE_RUN: binding });
+    await handleRequest(await signed('POST', '/jobs/capture', { runId: uuid }), env);
+    const res = await handleRequest(await signed('POST', '/jobs/capture', { runId: uuid }), env);
+    const { workflowId } = (await res.json()) as { workflowId: string };
+    expect(workflowId).toMatch(new RegExp(`^${uuid}-[a-z0-9]+$`));
+    expect(binding.instances.get(workflowId)).toEqual({ runId: uuid });
+  });
+
+  it('rejects a cancel for a run id that is not a UUID', async () => {
+    const res = await handleRequest(await signed('POST', '/jobs/capture/nope/cancel'), makeEnv());
+    expect(res.status).toBe(400);
+  });
+});
+
 describe('signed job stubs', () => {
   it.each([
-    ['/jobs/capture', { runId: uuid }],
     ['/jobs/compare', { comparisonId: uuid }],
     ['/jobs/delete', { entity: 'run', id: uuid }],
     ['/jobs/import-legacy', { projectId: uuid, labels: ['2026-08-07_10-00-00'] }],
@@ -173,14 +220,6 @@ describe('signed job stubs', () => {
     expect(res.status).toBe(200);
     const json = (await res.json()) as { workflowId: string };
     expect(json.workflowId).toMatch(/^stub-/);
-  });
-
-  it('POST /jobs/capture/:runId/cancel answers 202', async () => {
-    const res = await handleRequest(
-      await signed('POST', `/jobs/capture/${uuid}/cancel`),
-      makeEnv(),
-    );
-    expect(res.status).toBe(202);
   });
 
   it('GET /jobs/:workflowId answers 200 with a status', async () => {

@@ -6,6 +6,7 @@ export class RequestError extends Error {
     readonly status: number,
     readonly code: string,
     message: string,
+    readonly details?: unknown,
   ) {
     super(message);
     this.name = 'RequestError';
@@ -13,9 +14,15 @@ export class RequestError extends Error {
 }
 
 /** Status, code and user-facing message for an error thrown by a route or action. */
-export function describeError(error: unknown): { status: number; code: string; message: string } {
+export function describeError(error: unknown): {
+  status: number;
+  code: string;
+  message: string;
+  details?: unknown;
+} {
   if (error instanceof RequestError) {
-    return { status: error.status, code: error.code, message: error.message };
+    const { status, code, message, details } = error;
+    return details === undefined ? { status, code, message } : { status, code, message, details };
   }
   if (error instanceof ForbiddenError) {
     return { status: 403, code: 'forbidden', message: error.message };

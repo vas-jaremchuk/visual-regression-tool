@@ -11,8 +11,8 @@ export function errorResponse(error: unknown) {
       { status: 400 },
     );
   }
-  const { status, code, message } = describeError(error);
-  return NextResponse.json({ error: { code, message } }, { status });
+  const { status, ...body } = describeError(error);
+  return NextResponse.json({ error: body }, { status });
 }
 
 export function validationResponse(details: unknown) {

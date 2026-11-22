@@ -9,6 +9,8 @@ export interface Env extends Partial<Record<keyof WorkerEnv, string>> {
   CAPTURE_RUN: Workflow;
   COMPARE_RUN: Workflow;
   SITEMAP_FETCH: Workflow;
+  DELETE_JOB: Workflow;
+  STORAGE_USAGE: Workflow;
   LEGACY_IMPORT: Workflow;
   CAPTURE_QUEUE: Queue<CaptureMsg>;
   DIFF_QUEUE: Queue<DiffMsg>;

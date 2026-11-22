@@ -101,11 +101,13 @@ function sameFilter(a: ItemFilter, b: ItemFilter) {
   );
 }
 
+/** Text entry keeps its keys; sliders, buttons and checkboxes do not need letters or digits. */
+const NON_TEXT_INPUTS = new Set(['range', 'checkbox', 'radio', 'button', 'submit', 'reset']);
+
 function isTyping(target: EventTarget | null) {
-  return (
-    target instanceof HTMLElement &&
-    (target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName))
-  );
+  if (!(target instanceof HTMLElement)) return false;
+  if (target instanceof HTMLInputElement) return !NON_TEXT_INPUTS.has(target.type);
+  return target.isContentEditable || ['TEXTAREA', 'SELECT'].includes(target.tagName);
 }
 
 /** Report screen (08 §3): chips, viewport tabs, virtualised list and item viewer. */

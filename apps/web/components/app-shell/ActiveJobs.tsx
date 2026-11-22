@@ -13,10 +13,29 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { isActiveRun, percentOf, type ActiveJob } from '@/lib/runs/progress';
-import { createClient } from '@/lib/supabase/client';
 import type { ProjectSummary } from './types';
 
 type Row = Record<string, unknown> & { id: string; project_id: string; status: string };
+
+const runJob = (row: Row): ActiveJob => ({
+  kind: 'run',
+  id: row.id,
+  projectId: row.project_id,
+  label: String(row.label),
+  status: row.status,
+  done: Number(row.done_items) + Number(row.failed_items),
+  total: Number(row.total_items),
+});
+
+const snapshotJob = (row: Row): ActiveJob => ({
+  kind: 'snapshot',
+  id: row.id,
+  projectId: row.project_id,
+  label: 'Sitemap fetch',
+  status: row.status,
+  done: Number(row.urls_checked),
+  total: Number(row.urls_total),
+});
 
 function upsert(jobs: ActiveJob[], job: ActiveJob, active: boolean): ActiveJob[] {
   const rest = jobs.filter((j) => !(j.kind === job.kind && j.id === job.id));
@@ -24,72 +43,70 @@ function upsert(jobs: ActiveJob[], job: ActiveJob, active: boolean): ActiveJob[]
 }
 
 /**
- * 08 §2 / §4: global active-job indicator in the top bar. Starts from the server's list and
- * follows Realtime changes of `runs` and `sitemap_snapshots` rows (RLS limits them to the
- * user's projects), so it persists while the user navigates.
+ * 08 §2 / §4: global active-job indicator in the top bar. Loads the queued/running runs and
+ * running snapshots in the browser, then follows Realtime changes of `runs` and
+ * `sitemap_snapshots` rows (RLS limits both to the user's projects), so it persists while the
+ * user navigates.
  */
-export function ActiveJobs({
-  initial,
-  projects,
-}: {
-  initial: ActiveJob[];
-  projects: ProjectSummary[];
-}) {
-  const [jobs, setJobs] = useState(initial);
-
-  const [shown, setShown] = useState(initial);
-  if (initial !== shown) {
-    setShown(initial);
-    setJobs(initial);
-  }
+export function ActiveJobs({ projects }: { projects: ProjectSummary[] }) {
+  const [jobs, setJobs] = useState<ActiveJob[]>([]);
 
   useEffect(() => {
-    const supabase = createClient();
-    const channel = supabase
-      .channel('active-jobs')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'runs' }, (payload) => {
-        if (payload.eventType === 'DELETE') {
-          const id = (payload.old as { id?: string }).id;
-          setJobs((current) => current.filter((j) => !(j.kind === 'run' && j.id === id)));
-          return;
-        }
-        const row = payload.new as Row;
-        const job: ActiveJob = {
-          kind: 'run',
-          id: row.id,
-          projectId: row.project_id,
-          label: String(row.label),
-          status: row.status,
-          done: Number(row.done_items) + Number(row.failed_items),
-          total: Number(row.total_items),
-        };
-        setJobs((current) => upsert(current, job, isActiveRun(row.status)));
-      })
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'sitemap_snapshots' },
-        (payload) => {
+    let cancelled = false;
+    let unsubscribe: (() => void) | undefined;
+    void (async () => {
+      // Loaded lazily: keeps supabase-js out of the layout chunk, so hydration of every page is
+      // not delayed by the indicator.
+      const { createClient } = await import('@/lib/supabase/client');
+      if (cancelled) return;
+      const supabase = createClient();
+      const [runs, snapshots] = await Promise.all([
+        supabase
+          .from('runs')
+          .select('id, project_id, label, status, total_items, done_items, failed_items')
+          .in('status', ['queued', 'running'])
+          .limit(50),
+        supabase
+          .from('sitemap_snapshots')
+          .select('id, project_id, status, urls_checked, urls_total')
+          .eq('status', 'running')
+          .limit(50),
+      ]);
+      if (cancelled) return;
+      setJobs([
+        ...(runs.data ?? []).map((row) => runJob(row as Row)),
+        ...(snapshots.data ?? []).map((row) => snapshotJob(row as Row)),
+      ]);
+      const channel = supabase
+        .channel('active-jobs')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'runs' }, (payload) => {
           if (payload.eventType === 'DELETE') {
             const id = (payload.old as { id?: string }).id;
-            setJobs((current) => current.filter((j) => !(j.kind === 'snapshot' && j.id === id)));
+            setJobs((current) => current.filter((j) => !(j.kind === 'run' && j.id === id)));
             return;
           }
           const row = payload.new as Row;
-          const job: ActiveJob = {
-            kind: 'snapshot',
-            id: row.id,
-            projectId: row.project_id,
-            label: 'Sitemap fetch',
-            status: row.status,
-            done: Number(row.urls_checked),
-            total: Number(row.urls_total),
-          };
-          setJobs((current) => upsert(current, job, row.status === 'running'));
-        },
-      )
-      .subscribe();
+          setJobs((current) => upsert(current, runJob(row), isActiveRun(row.status)));
+        })
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'sitemap_snapshots' },
+          (payload) => {
+            if (payload.eventType === 'DELETE') {
+              const id = (payload.old as { id?: string }).id;
+              setJobs((current) => current.filter((j) => !(j.kind === 'snapshot' && j.id === id)));
+              return;
+            }
+            const row = payload.new as Row;
+            setJobs((current) => upsert(current, snapshotJob(row), row.status === 'running'));
+          },
+        )
+        .subscribe();
+      unsubscribe = () => void supabase.removeChannel(channel);
+    })();
     return () => {
-      void supabase.removeChannel(channel);
+      cancelled = true;
+      unsubscribe?.();
     };
   }, []);
 

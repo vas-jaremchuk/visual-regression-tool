@@ -5,13 +5,7 @@ import { R2ObjectStore } from '@vrt/storage';
 import { serverEnv } from '../env';
 import { publicObjectUrl } from '../projects/bucket-check';
 import { createClient } from '../supabase/server';
-import {
-  ACTIVE_RUN_STATUSES,
-  groupFailures,
-  type ActiveJob,
-  type FailureGroup,
-  type ItemStat,
-} from './progress';
+import { groupFailures, type FailureGroup, type ItemStat } from './progress';
 
 /** Read side of the runs UI (F-RUN-3, 08 §3), as the signed-in user (RLS). */
 
@@ -289,49 +283,6 @@ export async function averageItemMs(projectId: string): Promise<number | null> {
     items += processed;
   }
   return items > 0 ? Math.round(ms / items) : null;
-}
-
-/** Queued/running runs and running snapshots the user can see (08 §2 active-job indicator). */
-export async function listActiveJobs(): Promise<ActiveJob[]> {
-  const supabase = await createClient();
-  const [runs, snapshots] = await Promise.all([
-    supabase
-      .from('runs')
-      .select('id, project_id, label, status, total_items, done_items, failed_items')
-      .in('status', [...ACTIVE_RUN_STATUSES])
-      .order('created_at')
-      .limit(50),
-    supabase
-      .from('sitemap_snapshots')
-      .select('id, project_id, status, urls_checked, urls_total, created_at')
-      .eq('status', 'running')
-      .order('created_at')
-      .limit(50),
-  ]);
-  if (runs.error) throw new Error(`Could not load active runs: ${runs.error.message}`);
-  if (snapshots.error) {
-    throw new Error(`Could not load running snapshots: ${snapshots.error.message}`);
-  }
-  return [
-    ...runs.data.map((run) => ({
-      kind: 'run' as const,
-      id: run.id,
-      projectId: run.project_id,
-      label: run.label,
-      status: run.status,
-      done: run.done_items + run.failed_items,
-      total: run.total_items,
-    })),
-    ...snapshots.data.map((snapshot) => ({
-      kind: 'snapshot' as const,
-      id: snapshot.id,
-      projectId: snapshot.project_id,
-      label: 'Sitemap fetch',
-      status: snapshot.status,
-      done: snapshot.urls_checked,
-      total: snapshot.urls_total,
-    })),
-  ];
 }
 
 /** The project's baseline run id (02 §2 `projects.baseline_run_id`). */

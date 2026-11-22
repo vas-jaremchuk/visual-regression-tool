@@ -6,6 +6,12 @@ import { z } from 'zod';
 import { getCurrentUser } from '@/lib/auth/session';
 import { RequestError } from '@/lib/members/errors';
 import type { BucketCheckResult } from '@/lib/projects/bucket-check';
+import {
+  createChannel,
+  deleteChannel,
+  testChannel,
+  updateChannel,
+} from '@/lib/notifications/service';
 import { runFormAction, type FormResult } from '@/lib/projects/form-result';
 import {
   createViewport,
@@ -169,5 +175,52 @@ export async function checkProjectBucket(input: {
     const body = parse(z.object({ projectId: id, create: z.boolean() }), input);
     const result = await runBucketCheck(await getCurrentUser(), body.projectId, body.create);
     return { message: result.error ?? 'Bucket checked', data: result };
+  });
+}
+
+/** F-NOTIFY-1: adds an email or Slack channel. */
+export async function addNotificationChannel(input: {
+  projectId: string;
+  channel: unknown;
+}): Promise<FormResult> {
+  return runFormAction('Channel added', async () => {
+    const body = parse(z.object({ projectId: id, channel: z.unknown() }), input);
+    await createChannel(await getCurrentUser(), body.projectId, body.channel);
+    revalidateProject();
+  });
+}
+
+export async function editNotificationChannel(input: {
+  channelId: string;
+  channel: unknown;
+}): Promise<FormResult> {
+  return runFormAction('Channel saved', async () => {
+    const body = parse(z.object({ channelId: id, channel: z.unknown() }), input);
+    await updateChannel(await getCurrentUser(), body.channelId, body.channel);
+    revalidateProject();
+  });
+}
+
+export async function removeNotificationChannel(input: { channelId: string }): Promise<FormResult> {
+  return runFormAction('Channel deleted', async () => {
+    const body = parse(z.object({ channelId: id }), input);
+    await deleteChannel(await getCurrentUser(), body.channelId);
+    revalidateProject();
+  });
+}
+
+/** F-NOTIFY-2: sends a test message; the outcome also lands in the delivery log. */
+export async function sendTestNotification(input: { channelId: string }): Promise<FormResult> {
+  return runFormAction('Test sent', async () => {
+    const body = parse(z.object({ channelId: id }), input);
+    const result = await testChannel(await getCurrentUser(), body.channelId);
+    revalidateProject();
+    if (result.status === 'failed') {
+      throw new RequestError(
+        502,
+        'delivery_failed',
+        `Test failed: ${result.error ?? 'unknown error'}`,
+      );
+    }
   });
 }

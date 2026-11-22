@@ -117,6 +117,8 @@ values ('00000000-0000-0000-0000-0000000000b8', '00000000-0000-0000-0000-0000000
 insert into public.notification_log (id, channel_id, event, status)
 values ('00000000-0000-0000-0000-0000000000b9', '00000000-0000-0000-0000-0000000000b8', 'run_failed', 'sent');
 insert into public.storage_usage (project_id, bucket) values ('00000000-0000-0000-0000-0000000000a1', 'bucket');
+insert into public.notification_mutes (user_id, project_id)
+values ('00000000-0000-0000-0000-0000000000c3', '00000000-0000-0000-0000-0000000000a2');
 insert into public.audit_log (id, project_id, action)
 values ('00000000-0000-0000-0000-0000000000ba', '00000000-0000-0000-0000-0000000000a1', 'project.update');
 insert into public.invitations (id, email, project_id, role)
@@ -215,6 +217,10 @@ insert into matrix values
   ('notification_log', 'select', $$select 1 from public.notification_log where id = '00000000-0000-0000-0000-0000000000b9'$$, '{f,f,t,t,f}'),
   ('notification_log', 'insert', $$insert into public.notification_log (channel_id, event, status) values ('00000000-0000-0000-0000-0000000000b8', 'run_failed', 'sent') returning 1$$, '{f,f,f,f,f}'),
   ('notification_log', 'update', $$update public.notification_log set status = 'failed' where id = '00000000-0000-0000-0000-0000000000b9' returning 1$$, '{f,f,f,f,f}'),
+  ('notification_mutes', 'select', $$select 1 from public.notification_mutes where user_id = '00000000-0000-0000-0000-0000000000c3'$$, '{f,f,t,f,f}'),
+  ('notification_mutes', 'insert', $$insert into public.notification_mutes (user_id, project_id) values ((select auth.uid()), '00000000-0000-0000-0000-0000000000a1') returning 1$$, '{t,t,t,t,f}'),
+  ('notification_mutes', 'update', $$update public.notification_mutes set created_at = now() where user_id = '00000000-0000-0000-0000-0000000000c3' returning 1$$, '{f,f,f,f,f}'),
+  ('notification_mutes', 'delete', $$delete from public.notification_mutes where user_id = '00000000-0000-0000-0000-0000000000c3' returning 1$$, '{f,f,t,f,f}'),
   ('notification_log', 'delete', $$delete from public.notification_log where id = '00000000-0000-0000-0000-0000000000b9' returning 1$$, '{f,f,f,f,f}'),
 
   ('audit_log', 'select', $$select 1 from public.audit_log where id = '00000000-0000-0000-0000-0000000000ba'$$, '{f,f,t,t,f}'),

@@ -122,7 +122,7 @@ test('deleting a run lists its comparisons; a failed start leaves delete_failed 
 
 test('retention proposes older non-baseline runs only', async ({ page }) => {
   await signInWithMagicLink(page, E2E_PROJECT_ADMIN, `/p/${PROJECT.slug}/storage?keep=0`);
-  await expect(page.getByText('1 run (2.0 MB) could be deleted:')).toBeVisible();
+  await expect(page.getByRole('main').getByText('1 run (2.0 MB) could be deleted:')).toBeVisible();
 });
 
 test('editors cannot open the storage page', async ({ page }) => {

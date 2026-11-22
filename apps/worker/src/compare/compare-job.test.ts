@@ -6,6 +6,7 @@ import {
   compareEvent,
   createCompareJob,
   diffBatches,
+  reviewMemoryNote,
   type CompareProject,
   type CompareRun,
   type CompareRunItem,
@@ -46,7 +47,13 @@ class MemoryStore implements CompareStore {
   runItems = new Map<string, CompareRunItem[]>();
   items: Item[] = [];
   rules: IgnoreRule[] = [];
-  memory: { url: string; viewport: string | null; sha: string; review: ReviewStatus }[] = [];
+  memory: {
+    url: string;
+    viewport: string | null;
+    sha: string;
+    review: ReviewStatus;
+    label?: string;
+  }[] = [];
   audits: { action: string; details: Record<string, unknown> }[] = [];
   project: CompareProject = {
     id: PROJECT,
@@ -140,10 +147,8 @@ class MemoryStore implements CompareStore {
       .map((i) => ({ id: i.id, url: i.url, viewportSlug: i.viewport_slug, afterKey: i.after_key }));
   }
   async findReviewMemory(_p: string, url: string, viewport: string | null, sha: string) {
-    return (
-      this.memory.find((m) => m.url === url && m.viewport === viewport && m.sha === sha)?.review ??
-      null
-    );
+    const m = this.memory.find((m) => m.url === url && m.viewport === viewport && m.sha === sha);
+    return m ? { review: m.review, comparisonLabel: m.label ?? null } : null;
   }
   async setReview(ids: string[], review: ReviewStatus, note: string) {
     for (const i of this.items)
@@ -496,6 +501,50 @@ describe('CompareJob steps', () => {
     });
     expect(store.items.find((i) => i.url === `${o}/`)).toMatchObject({ review: 'approved' });
     expect(result.event).toBe('comparison_clean');
+  });
+
+  it('auto-approves a change approved earlier only when the after PNG hash is the same', async () => {
+    const store = new MemoryStore();
+    const { changed } = fixtureRuns(store, ['desktop', 'mobile']);
+    const o = site.origin;
+    store.memory = [
+      {
+        url: `${o}/`,
+        viewport: 'desktop',
+        sha: `desktop:${o}/`,
+        review: 'approved',
+        label: 'base_vs_r1',
+      },
+      {
+        url: `${o}/about/`,
+        viewport: 'desktop',
+        sha: 'f'.repeat(64),
+        review: 'approved',
+        label: 'base_vs_r1',
+      },
+      {
+        url: `${o}/`,
+        viewport: 'mobile',
+        sha: `mobile:${o}/`,
+        review: 'rejected',
+        label: 'base_vs_r1',
+      },
+    ];
+    await runAll(store, changed);
+    const item = (url: string, viewport: string) =>
+      store.items.find((i) => i.url === url && i.viewport_slug === viewport);
+    expect(item(`${o}/`, 'desktop')).toMatchObject({
+      review: 'approved',
+      review_note: 'auto: same as approved in base_vs_r1',
+    });
+    expect(item(`${o}/about/`, 'desktop')).toMatchObject({ review: 'pending', review_note: null });
+    expect(item(`${o}/`, 'mobile')).toMatchObject({ review: 'pending' });
+  });
+
+  it('notes an ignored memory without a comparison label as earlier', () => {
+    expect(reviewMemoryNote({ review: 'ignored', comparisonLabel: null })).toBe(
+      'auto: same as ignored earlier',
+    );
   });
 
   it('exports the static report only when the project has a public URL', async () => {

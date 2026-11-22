@@ -25,12 +25,26 @@ export interface ReportItem {
   afterDims: number[] | null;
   review: ReviewStatus;
   reviewNote: string | null;
+  /** Set by the compare workflow's auto-review (F-REVIEW-6, ignore rules), not by a person. */
+  autoReviewed: boolean;
   error: string | null;
+}
+
+/**
+ * The workflow reviews with the service role, so it leaves no reviewer and its notes start with
+ * `auto:` (`auto: same as approved in <label>`, `auto: ignore rule`).
+ */
+export function isAutoReviewed(
+  review: ReviewStatus,
+  reviewedBy: string | null,
+  note: string | null,
+): boolean {
+  return review !== 'pending' && reviewedBy === null && (note?.startsWith('auto:') ?? false);
 }
 
 export const REPORT_ITEM_COLUMNS =
   'id, url, name, viewport_slug, status, diff_pct, diff_pixels, total_pixels, before_key, ' +
-  'after_key, diff_key, before_dims, after_dims, review, review_note, error';
+  'after_key, diff_key, before_dims, after_dims, review, reviewed_by, review_note, error';
 
 type ItemRow = Pick<
   Database['public']['Tables']['comparison_items']['Row'],
@@ -48,6 +62,7 @@ type ItemRow = Pick<
   | 'before_dims'
   | 'after_dims'
   | 'review'
+  | 'reviewed_by'
   | 'review_note'
   | 'error'
 >;
@@ -69,6 +84,7 @@ export function toReportItem(row: ItemRow): ReportItem {
     afterDims: row.after_dims,
     review: row.review,
     reviewNote: row.review_note,
+    autoReviewed: isAutoReviewed(row.review, row.reviewed_by, row.review_note),
     error: row.error,
   };
 }

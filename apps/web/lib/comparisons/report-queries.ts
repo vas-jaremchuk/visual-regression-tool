@@ -1,10 +1,17 @@
 import 'server-only';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import type { Database } from '@vrt/db';
 import type { CmpItemStatus, ComparisonStatus } from '@vrt/shared';
 import { createClient } from '../supabase/server';
 import { viewportTabs, type ReportCounts, type ReviewCounts } from './report';
 import { REPORT_ITEM_COLUMNS, toReportItem, type ReportItem } from './report-items';
 
-/** Report page data (F-CMP-2, F-CMP-5, F-CMP-6) as the signed-in user sees it (RLS). */
+/**
+ * Report page data (F-CMP-2, F-CMP-5, F-CMP-6) as the signed-in user sees it (RLS). The share page
+ * passes the service-role client instead; every query here is filtered by the comparison id.
+ */
+
+type ReportClient = SupabaseClient<Database>;
 
 /** Rows per section below the list (files, redirected, new, missing). */
 export const SECTION_LIMIT = 500;
@@ -24,6 +31,8 @@ export interface ReportHeader {
   viewports: string[];
   createdAt: string;
   finishedAt: string | null;
+  /** The public share link (04 §5); the token itself is never stored. */
+  share: { active: boolean; expiresAt: string | null };
 }
 
 export interface Fingerprint {
@@ -70,16 +79,23 @@ function fingerprint(value: unknown): Fingerprint | null {
   };
 }
 
+function shareState(hash: string | null, expiresAt: string | null): ReportHeader['share'] {
+  const live = hash !== null && (expiresAt === null || new Date(expiresAt).getTime() > Date.now());
+  return { active: live, expiresAt: live ? expiresAt : null };
+}
+
 export async function getReportHeader(
   projectId: string,
   comparisonId: string,
+  client?: ReportClient,
 ): Promise<ReportHeader | null> {
-  const supabase = await createClient();
+  const supabase = client ?? (await createClient());
   const { data, error } = await supabase
     .from('comparisons')
     .select(
       'id, label, status, settings, counts, review_counts, created_at, finished_at, ' +
-        'before_run_id, after_run_id, before:runs!comparisons_project_id_before_run_id_fkey(label), ' +
+        'share_token_hash, share_expires_at, before_run_id, after_run_id, ' +
+        'before:runs!comparisons_project_id_before_run_id_fkey(label), ' +
         'after:runs!comparisons_project_id_after_run_id_fkey(label)',
     )
     .eq('project_id', projectId)
@@ -105,6 +121,10 @@ export async function getReportHeader(
     viewports: viewportTabs(settings.viewports, counts),
     createdAt: row.created_at as string,
     finishedAt: (row.finished_at as string | null) ?? null,
+    share: shareState(
+      (row.share_token_hash as string | null) ?? null,
+      (row.share_expires_at as string | null) ?? null,
+    ),
   };
 }
 
@@ -112,8 +132,9 @@ export async function getReportHeader(
 export async function getReportItem(
   comparisonId: string,
   itemId: string,
+  client?: ReportClient,
 ): Promise<ReportItem | null> {
-  const supabase = await createClient();
+  const supabase = client ?? (await createClient());
   const { data, error } = await supabase
     .from('comparison_items')
     .select(REPORT_ITEM_COLUMNS)
@@ -125,8 +146,11 @@ export async function getReportItem(
   return data ? toReportItem(data as unknown as Parameters<typeof toReportItem>[0]) : null;
 }
 
-export async function getReportSections(comparisonId: string): Promise<ReportSectionsData> {
-  const supabase = await createClient();
+export async function getReportSections(
+  comparisonId: string,
+  client?: ReportClient,
+): Promise<ReportSectionsData> {
+  const supabase = client ?? (await createClient());
   const pages = (status: CmpItemStatus) =>
     supabase
       .from('comparison_items')

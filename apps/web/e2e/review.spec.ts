@@ -224,3 +224,36 @@ test('bulk review of the filtered selection, fully reviewed banner and promote t
     String(CHANGED),
   );
 });
+
+test('an auto-reviewed item is marked and an editor can override it', async ({ page }) => {
+  const [first] = await itemIds();
+  const { error } = await adminClient()
+    .from('comparison_items')
+    .update({
+      review: 'approved',
+      review_note: 'auto: same as approved in base_vs_r1',
+      reviewed_at: new Date().toISOString(),
+    })
+    .eq('id', first!);
+  if (error) throw error;
+
+  await signInWithMagicLink(page, EDITOR, reportPath());
+  await page.getByLabel('Review', { exact: true }).selectOption('approved');
+  const row = page.getByTestId('item-list').getByRole('option').first();
+  await expect(row).toContainText('auto');
+  await row.click();
+  const state = page.getByTestId('review-state');
+  await expect(state).toContainText('approved automatically');
+  await expect(state).toContainText('“auto: same as approved in base_vs_r1”');
+
+  await page.getByTestId('review-toolbar').getByRole('button', { name: 'Reject' }).click();
+  await expect(state).toContainText('rejected');
+  await expect(state).not.toContainText('automatically');
+  const { data } = await adminClient()
+    .from('comparison_items')
+    .select('review, reviewed_by')
+    .eq('id', first!)
+    .single();
+  expect(data?.review).toBe('rejected');
+  expect(data?.reviewed_by).not.toBeNull();
+});

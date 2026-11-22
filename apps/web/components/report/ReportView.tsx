@@ -4,6 +4,7 @@ import type { ReviewStatus } from '@vrt/shared';
 import { Loader2 } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -21,6 +22,7 @@ import {
   DEFAULT_FILTER,
   itemPath,
   REPORT_PAGE_SIZE,
+  sharedItemsQuery,
   type ItemFilter,
   type ReportCounts,
   type ReviewCounts,
@@ -30,6 +32,7 @@ import {
   fetchChangedItemIds,
   fetchItemPage,
   fetchReviewCounts,
+  type ItemPage,
   type ReportItem,
 } from '@/lib/comparisons/report-items';
 import { createClient } from '@/lib/supabase/client';
@@ -54,6 +57,11 @@ export interface ReportViewProps {
   initialTotal: number;
   /** Deep-linked item (08 §1 item route), shown even when it is not in the loaded page. */
   initialItem: ReportItem | null;
+  /**
+   * Public share page (04 §5): list pages and images are loaded with this token instead of the
+   * session, and the address bar keeps the share URL.
+   */
+  shareToken?: string;
   reviewCounts: Partial<ReviewCounts>;
   /** Editor+: review toolbar, bulk review and keys a / r / i (F-REVIEW-1/2). */
   canReview: boolean;
@@ -175,9 +183,16 @@ function isTyping(target: EventTarget | null) {
   return target.isContentEditable || ['TEXTAREA', 'SELECT'].includes(target.tagName);
 }
 
+async function fetchSharedPage(token: string, filter: ItemFilter, offset: number) {
+  const res = await fetch(`/api/share/${token}/items?${sharedItemsQuery(filter, offset)}`);
+  if (res.status === 404) throw new Error('This share link has expired or was revoked.');
+  if (!res.ok) throw new Error('Could not load the items. Try again.');
+  return (await res.json()) as ItemPage;
+}
+
 /** Report screen (08 §3): chips, viewport tabs, virtualised list and item viewer. */
 export function ReportView(props: ReportViewProps) {
-  const { slug, comparisonId, counts, viewports } = props;
+  const { slug, comparisonId, counts, viewports, shareToken } = props;
   const [filter, setFilter] = useState<ItemFilter>(DEFAULT_FILTER);
   const [search, setSearch] = useState('');
   const [items, setItems] = useState(props.initialItems);
@@ -206,9 +221,11 @@ export function ReportView(props: ReportViewProps) {
       setLoading(true);
       setError(null);
       try {
-        const page = await fetchItemPage(createClient(), comparisonId, next, offset, {
-          count: offset === 0,
-        });
+        const page = shareToken
+          ? await fetchSharedPage(shareToken, next, offset)
+          : await fetchItemPage(createClient(), comparisonId, next, offset, {
+              count: offset === 0,
+            });
         if (token !== request.current) return;
         loadedFilter.current = next;
         setItems((prev) => (offset === 0 ? page.items : [...prev, ...page.items]));
@@ -219,7 +236,7 @@ export function ReportView(props: ReportViewProps) {
         if (token === request.current) setLoading(false);
       }
     },
-    [comparisonId],
+    [comparisonId, shareToken],
   );
 
   // A new filter reloads the list from the first page.
@@ -287,13 +304,14 @@ export function ReportView(props: ReportViewProps) {
     (item: ReportItem) => {
       setSelected(item);
       setNote(item.reviewNote ?? '');
+      if (shareToken) return;
       window.history.replaceState(
         null,
         '',
         `/p/${slug}/comparisons/${comparisonId}/items/${item.id}`,
       );
     },
-    [slug, comparisonId],
+    [slug, comparisonId, shareToken],
   );
 
   const canReviewSelected = props.canReview && selected?.status === 'changed';
@@ -305,7 +323,8 @@ export function ReportView(props: ReportViewProps) {
       try {
         await postReview(comparisonId, [selected.id], review, note);
         const reviewNote = review === 'pending' ? null : note.trim() || null;
-        const update = (i: ReportItem) => (i.id === selected.id ? { ...i, review, reviewNote } : i);
+        const update = (i: ReportItem) =>
+          i.id === selected.id ? { ...i, review, reviewNote, autoReviewed: false } : i;
         setItems((prev) => prev.map(update));
         setSelected((prev) => (prev ? update(prev) : prev));
         if (review === 'pending') setNote('');
@@ -330,7 +349,9 @@ export function ReportView(props: ReportViewProps) {
       await Promise.all([load(filterRef.current, 0), refreshCounts()]);
       const reviewed = new Set(ids);
       setSelected((prev) =>
-        prev && reviewed.has(prev.id) ? { ...prev, review, reviewNote: null } : prev,
+        prev && reviewed.has(prev.id)
+          ? { ...prev, review, reviewNote: null, autoReviewed: false }
+          : prev,
       );
     } catch (e) {
       toast.error(e instanceof Error ? e.message : 'The review could not be saved');
@@ -615,6 +636,15 @@ export function ReportView(props: ReportViewProps) {
                         title={`Review: ${item.review}`}
                       />
                       <span className="sr-only">Review {item.review}.</span>
+                      {item.autoReviewed && (
+                        <Badge
+                          variant="outline"
+                          className="px-1 py-0 text-[10px]"
+                          title={item.reviewNote ?? undefined}
+                        >
+                          auto
+                        </Badge>
+                      )}
                       <span
                         className="min-w-0 flex-1 truncate font-mono text-xs"
                         title={item.url ?? item.name}
@@ -668,6 +698,7 @@ export function ReportView(props: ReportViewProps) {
               publicUrl={props.publicUrl}
               beforeLabel={props.beforeLabel}
               afterLabel={props.afterLabel}
+              shareToken={shareToken}
               mode={mode}
               onModeChange={setMode}
             />

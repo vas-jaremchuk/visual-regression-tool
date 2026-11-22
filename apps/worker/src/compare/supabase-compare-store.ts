@@ -248,7 +248,7 @@ export function supabaseCompareStore(db: SupabaseClient): CompareStore {
     async findReviewMemory(projectId, url, viewportSlug, afterSha256) {
       let query = db
         .from('review_memory')
-        .select('review')
+        .select('review, comparison_label')
         .eq('project_id', projectId)
         .eq('url', url)
         .eq('after_sha256', afterSha256);
@@ -256,7 +256,10 @@ export function supabaseCompareStore(db: SupabaseClient): CompareStore {
         ? query.eq('viewport_slug', viewportSlug)
         : query.is('viewport_slug', null);
       const rows = check('load review memory', await query.limit(1));
-      return ((rows ?? [])[0]?.review as ReviewStatus | undefined) ?? null;
+      const row = (rows ?? [])[0];
+      return row
+        ? { review: row.review as ReviewStatus, comparisonLabel: row.comparison_label }
+        : null;
     },
 
     async setReview(itemIds, review, note) {

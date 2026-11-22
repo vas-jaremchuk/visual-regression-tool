@@ -41,7 +41,12 @@ export interface ReportItem {
 
 export interface ReportOptions {
   /** `projects.r2_public_url`; image `src` are `<publicUrl>/<r2 key>`. */
-  publicUrl: string;
+  publicUrl?: string | null;
+  /**
+   * Absolute image URL of an R2 key, for projects without a public URL (e.g. a presigned URL in a
+   * downloaded export, F-CMP-8). Takes precedence over `publicUrl`.
+   */
+  imageUrl?: (key: string) => string;
   /** Defaults to now; injectable for deterministic output. */
   generatedAt?: Date;
 }
@@ -180,14 +185,20 @@ function buildFileSection(files: ReportItem[]): string {
 </section>`;
 }
 
+function publicImageUrl(publicUrl: string | null | undefined): (key: string) => string {
+  if (!publicUrl) throw new Error('renderStaticReport needs a publicUrl or an imageUrl');
+  const base = publicUrl.replace(/\/+$/, '');
+  return (key) => `${base}/${key}`;
+}
+
 /** Renders one self-contained HTML document for a comparison. */
 export function renderStaticReport(
   comparison: ReportComparison,
   items: readonly ReportItem[],
   opts: ReportOptions,
 ): string {
-  const base = opts.publicUrl.replace(/\/+$/, '');
-  const img = (key: string | null | undefined) => esc(key ? `${base}/${key}` : '');
+  const imageUrl = opts.imageUrl ?? publicImageUrl(opts.publicUrl);
+  const img = (key: string | null | undefined) => esc(key ? imageUrl(key) : '');
   const pages = items.filter((i) => i.kind === 'page');
   const files = items.filter((i) => i.kind === 'file');
 

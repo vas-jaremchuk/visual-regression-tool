@@ -1,8 +1,9 @@
 import { id } from '@vrt/shared';
-import { Flag } from 'lucide-react';
+import { Download, Flag } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { requireUser } from '@/lib/auth/session';
 import { DEFAULT_FILTER } from '@/lib/comparisons/report';
 import { fetchItemPage } from '@/lib/comparisons/report-items';
@@ -17,6 +18,7 @@ import { getBaselineRunId } from '@/lib/runs/queries';
 import { createClient } from '@/lib/supabase/server';
 import { RediffButton } from './RediffButton';
 import { ReportSections } from './ReportSections';
+import { ShareDialog } from './ShareDialog';
 import { ReportView } from './ReportView';
 
 const STATUS_CLASS: Record<string, string> = {
@@ -65,6 +67,7 @@ export async function ReportPage({
     canStart,
     canManageRules,
     viewports,
+    canShare,
   ] = await Promise.all([
     fetchItemPage(await createClient(), comparisonId, DEFAULT_FILTER, 0, { count: true }),
     getReportSections(comparisonId),
@@ -75,6 +78,7 @@ export async function ReportPage({
     canDo(user, 'comparison.start', project.id),
     canDo(user, 'ignore_rule.manage', project.id),
     listViewports(project.id),
+    canDo(user, 'share_link.manage', project.id),
   ]);
   const archived = Boolean(project.archivedAt);
   const running = header.status === 'queued' || header.status === 'running';
@@ -96,7 +100,26 @@ export async function ReportPage({
             {header.afterRunId === baselineRunId && <BaselineBadge />}
           </h1>
           <Badge className={STATUS_CLASS[header.status]}>{header.status}</Badge>
-          {canStart && <RediffButton comparisonId={comparisonId} disabled={running || archived} />}
+          <div className="ml-auto flex flex-wrap gap-2">
+            {canStart && (
+              <RediffButton comparisonId={comparisonId} disabled={running || archived} />
+            )}
+            {canShare && (
+              <ShareDialog
+                comparisonId={comparisonId}
+                active={header.share.active}
+                expiresAt={header.share.expiresAt}
+              />
+            )}
+            {header.status === 'completed' && (
+              <Button asChild variant="outline" size="sm">
+                <a href={`/api/comparisons/${comparisonId}/export.html`} download>
+                  <Download aria-hidden />
+                  Download HTML
+                </a>
+              </Button>
+            )}
+          </div>
         </div>
         <p className="text-sm text-muted-foreground">
           Threshold: &gt;{header.changeThresholdPct ?? 0}% pixel change

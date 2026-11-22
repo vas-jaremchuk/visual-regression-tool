@@ -101,12 +101,29 @@ export function itemPath(url: string | null, name: string): string {
 
 /**
  * Image URL of an R2 object (09 §1): `${r2_public_url}/${key}` when the project has a public URL,
- * else the signing endpoint, which redirects to a short-lived signed URL.
+ * else the signing endpoint, which redirects to a short-lived signed URL. Share viewers sign with
+ * the share token instead of a session (04 §5).
  */
-export function imageSrc(publicUrl: string | null, comparisonId: string, key: string): string {
+export function imageSrc(
+  publicUrl: string | null,
+  comparisonId: string,
+  key: string,
+  shareToken?: string,
+): string {
   if (publicUrl) return `${publicUrl.replace(/\/+$/, '')}/${key}`;
   const query = new URLSearchParams({ comparison: comparisonId, key, redirect: '1' });
+  if (shareToken) query.set('token', shareToken);
   return `/api/r2/sign?${query.toString()}`;
+}
+
+/** Query of `GET /api/share/:token/items` for a list page of the shared report. */
+export function sharedItemsQuery(filter: ItemFilter, offset: number): string {
+  const query = new URLSearchParams({ status: filter.status, offset: String(offset) });
+  if (filter.viewport !== null) query.set('viewport', filter.viewport);
+  if (filter.review !== null) query.set('review', filter.review);
+  if (filter.search.trim()) query.set('search', filter.search.trim());
+  if (filter.maxPct !== null) query.set('maxPct', String(filter.maxPct));
+  return query.toString();
 }
 
 export interface ComparisonKeyScope {

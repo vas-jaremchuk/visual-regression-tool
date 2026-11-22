@@ -1,22 +1,42 @@
 'use client';
 
+import type { ReviewStatus } from '@vrt/shared';
 import { Loader2 } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
+  chunk,
   countsFor,
   DEFAULT_FILTER,
   itemPath,
   REPORT_PAGE_SIZE,
   type ItemFilter,
   type ReportCounts,
+  type ReviewCounts,
   type StatusFilter,
 } from '@/lib/comparisons/report';
-import { fetchItemPage, type ReportItem } from '@/lib/comparisons/report-items';
+import {
+  fetchChangedItemIds,
+  fetchItemPage,
+  fetchReviewCounts,
+  type ReportItem,
+} from '@/lib/comparisons/report-items';
 import { createClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils';
 import { ItemViewer, VIEWER_MODES, type ViewerMode } from './ItemViewer';
+import { REVIEW_ACTIONS, ReviewToolbar } from './ReviewToolbar';
+import { ReviewSummary } from './ReviewSummary';
 import { SeverityBadge } from './SeverityBadge';
 
 export interface ReportViewProps {
@@ -33,6 +53,12 @@ export interface ReportViewProps {
   initialTotal: number;
   /** Deep-linked item (08 §1 item route), shown even when it is not in the loaded page. */
   initialItem: ReportItem | null;
+  reviewCounts: Partial<ReviewCounts>;
+  /** Editor+: review toolbar, bulk review and keys a / r / i (F-REVIEW-1/2). */
+  canReview: boolean;
+  canSetBaseline: boolean;
+  afterRunId: string;
+  afterIsBaseline: boolean;
 }
 
 const ROW_HEIGHT = 44;
@@ -97,8 +123,41 @@ function sameFilter(a: ItemFilter, b: ItemFilter) {
     a.status === b.status &&
     a.viewport === b.viewport &&
     a.review === b.review &&
-    a.search === b.search
+    a.search === b.search &&
+    a.maxPct === b.maxPct
   );
+}
+
+/** `reviewRequest` takes at most 1000 ids; larger selections are sent in batches. */
+const REVIEW_BATCH = 1000;
+
+const BULK_VERB: Record<Exclude<ReviewStatus, 'pending'>, string> = {
+  approved: 'Approve',
+  rejected: 'Reject',
+  ignored: 'Ignore',
+};
+
+type ApiError = { error?: { message?: string } } | null;
+
+/** POST /api/comparisons/:id/review in batches; returns how many items changed. */
+async function postReview(
+  comparisonId: string,
+  itemIds: string[],
+  review: ReviewStatus,
+  note: string,
+): Promise<number> {
+  let updated = 0;
+  for (const batch of chunk(itemIds, REVIEW_BATCH)) {
+    const res = await fetch(`/api/comparisons/${comparisonId}/review`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ itemIds: batch, review, ...(note.trim() ? { note } : {}) }),
+    });
+    const body = (await res.json().catch(() => null)) as ({ updated?: number } & ApiError) | null;
+    if (!res.ok) throw new Error(body?.error?.message ?? 'The review could not be saved');
+    updated += body?.updated ?? 0;
+  }
+  return updated;
 }
 
 /** Text entry keeps its keys; sliders, buttons and checkboxes do not need letters or digits. */
@@ -123,6 +182,12 @@ export function ReportView(props: ReportViewProps) {
     props.initialItem ?? props.initialItems[0] ?? null,
   );
   const [mode, setMode] = useState<ViewerMode>('side-by-side');
+  const [reviewCounts, setReviewCounts] = useState(props.reviewCounts);
+  const [note, setNote] = useState(selected?.reviewNote ?? '');
+  const [reviewing, setReviewing] = useState<ReviewStatus | null>(null);
+  const [bulk, setBulk] = useState<Exclude<ReviewStatus, 'pending'> | null>(null);
+  const [bulkPending, setBulkPending] = useState(false);
+  const [maxPct, setMaxPct] = useState('');
   const [scrollTop, setScrollTop] = useState(0);
   const listRef = useRef<HTMLDivElement>(null);
   const request = useRef(0);
@@ -165,15 +230,57 @@ export function ReportView(props: ReportViewProps) {
     [load],
   );
 
-  // The URL search is applied after typing pauses.
+  // The URL search and the diff limit are applied after typing pauses.
   useEffect(() => {
-    const timer = setTimeout(() => applyFilter((f) => ({ ...f, search })), 300);
+    const limit = maxPct.trim() === '' ? null : Number(maxPct);
+    const timer = setTimeout(
+      () =>
+        applyFilter((f) => ({
+          ...f,
+          search,
+          maxPct: limit !== null && Number.isFinite(limit) && limit >= 0 ? limit : null,
+        })),
+      300,
+    );
     return () => clearTimeout(timer);
-  }, [search, applyFilter]);
+  }, [search, maxPct, applyFilter]);
+
+  // Review counts stay live while others review (Realtime on the comparison row).
+  useEffect(() => {
+    const supabase = createClient();
+    const channel = supabase
+      .channel(`comparison-${comparisonId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'comparisons',
+          filter: `id=eq.${comparisonId}`,
+        },
+        (payload) => {
+          const row = payload.new as { review_counts?: Partial<ReviewCounts> | null };
+          if (row.review_counts) setReviewCounts(row.review_counts);
+        },
+      )
+      .subscribe();
+    return () => {
+      void supabase.removeChannel(channel);
+    };
+  }, [comparisonId]);
+
+  const refreshCounts = useCallback(async () => {
+    try {
+      setReviewCounts(await fetchReviewCounts(createClient(), comparisonId));
+    } catch {
+      // Realtime or the next reload brings the counts.
+    }
+  }, [comparisonId]);
 
   const select = useCallback(
     (item: ReportItem) => {
       setSelected(item);
+      setNote(item.reviewNote ?? '');
       window.history.replaceState(
         null,
         '',
@@ -182,6 +289,49 @@ export function ReportView(props: ReportViewProps) {
     },
     [slug, comparisonId],
   );
+
+  const canReviewSelected = props.canReview && selected?.status === 'changed';
+
+  const reviewSelected = useCallback(
+    async (review: ReviewStatus) => {
+      if (!selected || selected.status !== 'changed' || reviewing) return;
+      setReviewing(review);
+      try {
+        await postReview(comparisonId, [selected.id], review, note);
+        const reviewNote = review === 'pending' ? null : note.trim() || null;
+        const update = (i: ReportItem) => (i.id === selected.id ? { ...i, review, reviewNote } : i);
+        setItems((prev) => prev.map(update));
+        setSelected((prev) => (prev ? update(prev) : prev));
+        if (review === 'pending') setNote('');
+        toast.success(review === 'pending' ? 'Review reset' : `Item ${review}`);
+        await refreshCounts();
+      } catch (e) {
+        toast.error(e instanceof Error ? e.message : 'The review could not be saved');
+      } finally {
+        setReviewing(null);
+      }
+    },
+    [selected, reviewing, comparisonId, note, refreshCounts],
+  );
+
+  const reviewFiltered = async (review: Exclude<ReviewStatus, 'pending'>) => {
+    setBulkPending(true);
+    try {
+      const ids = await fetchChangedItemIds(createClient(), comparisonId, filterRef.current);
+      const updated = ids.length === 0 ? 0 : await postReview(comparisonId, ids, review, '');
+      toast.success(`${updated} ${updated === 1 ? 'item' : 'items'} ${review}`);
+      setBulk(null);
+      await Promise.all([load(filterRef.current, 0), refreshCounts()]);
+      const reviewed = new Set(ids);
+      setSelected((prev) =>
+        prev && reviewed.has(prev.id) ? { ...prev, review, reviewNote: null } : prev,
+      );
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'The review could not be saved');
+    } finally {
+      setBulkPending(false);
+    }
+  };
 
   const scrollIntoList = useCallback((index: number) => {
     const list = listRef.current;
@@ -193,7 +343,7 @@ export function ReportView(props: ReportViewProps) {
     }
   }, []);
 
-  // Keyboard (F-CMP-4): j/k next/prev, 1-4 viewer modes. Review keys come with review actions.
+  // Keyboard (F-CMP-4, F-REVIEW-1): j/k next/prev, a/r/i approve/reject/ignore, 1-4 viewer modes.
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey) return;
@@ -213,6 +363,13 @@ export function ReportView(props: ReportViewProps) {
         }
         return;
       }
+      const action = REVIEW_ACTIONS.find((a) => a.key === event.key);
+      if (action) {
+        if (!canReviewSelected) return;
+        event.preventDefault();
+        void reviewSelected(action.review);
+        return;
+      }
       const modeIndex = Number(event.key) - 1;
       const next = VIEWER_MODES[modeIndex];
       if (Number.isInteger(modeIndex) && next) {
@@ -222,7 +379,7 @@ export function ReportView(props: ReportViewProps) {
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [items, selected, select, scrollIntoList]);
+  }, [items, selected, select, scrollIntoList, canReviewSelected, reviewSelected]);
 
   const tabCounts = countsFor(counts, filter.viewport);
   const start = Math.max(0, Math.floor(scrollTop / ROW_HEIGHT) - OVERSCAN);
@@ -237,11 +394,20 @@ export function ReportView(props: ReportViewProps) {
     if (last >= items.length - OVERSCAN) void load(filter, items.length);
   };
 
-  const filtered = filter.review !== null || filter.search !== '';
+  const filtered = filter.review !== null || filter.search !== '' || filter.maxPct !== null;
+  const canBulk = props.canReview && filter.status === 'changed' && total > 0;
   const threshold = props.changeThresholdPct ?? 0;
 
   return (
     <div className="grid gap-4">
+      <ReviewSummary
+        reviewCounts={reviewCounts}
+        afterRunId={props.afterRunId}
+        afterLabel={props.afterLabel}
+        afterIsBaseline={props.afterIsBaseline}
+        canSetBaseline={props.canSetBaseline}
+      />
+
       <div role="group" aria-label="Summary" className="flex flex-wrap gap-2">
         {CHIPS.filter((c) => c.status !== 'error' || tabCounts.error > 0).map((chip) => (
           <button
@@ -332,7 +498,45 @@ export function ReportView(props: ReportViewProps) {
                 <option value="ignored">Ignored</option>
               </select>
             </div>
+            <div className="grid w-20 gap-1">
+              <Label htmlFor="item-max-pct" className="text-xs">
+                Diff &lt; %
+              </Label>
+              <Input
+                id="item-max-pct"
+                type="number"
+                min={0}
+                step="0.1"
+                inputMode="decimal"
+                value={maxPct}
+                onChange={(e) => setMaxPct(e.target.value)}
+                placeholder="any"
+                className="h-8"
+              />
+            </div>
           </div>
+          {canBulk && (
+            <div
+              role="group"
+              aria-label="Bulk review"
+              className="flex flex-wrap items-center gap-1"
+            >
+              <span className="text-xs text-muted-foreground">All {total} filtered:</span>
+              {REVIEW_ACTIONS.map(({ review, icon: Icon }) => (
+                <Button
+                  key={review}
+                  size="sm"
+                  variant="outline"
+                  className="h-7"
+                  disabled={bulkPending || loading}
+                  onClick={() => setBulk(review)}
+                >
+                  <Icon aria-hidden />
+                  {BULK_VERB[review]} all
+                </Button>
+              ))}
+            </div>
+          )}
           <p className="flex items-center gap-2 text-xs text-muted-foreground" aria-live="polite">
             <span className="tabular-nums">
               {total} {total === 1 ? 'item' : 'items'}
@@ -431,7 +635,16 @@ export function ReportView(props: ReportViewProps) {
           )}
         </section>
 
-        <div className="min-w-0">
+        <div className="grid min-w-0 content-start gap-3">
+          {selected && canReviewSelected && (
+            <ReviewToolbar
+              item={selected}
+              note={note}
+              onNoteChange={setNote}
+              pending={reviewing}
+              onReview={(review) => void reviewSelected(review)}
+            />
+          )}
           {selected ? (
             <ItemViewer
               item={selected}
@@ -449,6 +662,29 @@ export function ReportView(props: ReportViewProps) {
           )}
         </div>
       </div>
+
+      <Dialog open={bulk !== null} onOpenChange={(open) => !open && !bulkPending && setBulk(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {bulk ? `${BULK_VERB[bulk]} ${total} items?` : 'Review items'}
+            </DialogTitle>
+            <DialogDescription>
+              Every changed item matching the current filters is set to {bulk}, including items not
+              loaded in the list yet. Earlier reviews and notes of these items are replaced.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setBulk(null)} disabled={bulkPending}>
+              Cancel
+            </Button>
+            <Button onClick={() => bulk && void reviewFiltered(bulk)} disabled={bulkPending}>
+              {bulkPending && <Loader2 className="animate-spin" aria-hidden />}
+              {bulk ? `${BULK_VERB[bulk]} ${total}` : 'Confirm'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

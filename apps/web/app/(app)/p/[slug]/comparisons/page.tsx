@@ -1,3 +1,4 @@
+import { Flag } from 'lucide-react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -47,12 +48,50 @@ function CountsText({ counts }: { counts: ComparisonSummary['counts'] }) {
   return <span className="tabular-nums">{parts.join(' · ')}</span>;
 }
 
+function BaselineBadge() {
+  return (
+    <span className="ml-1 inline-flex items-center gap-1 font-sans text-xs text-primary">
+      <Flag className="size-3" aria-hidden />
+      baseline
+    </span>
+  );
+}
+
+/** "12/40 reviewed" with a bar; changed items with a review other than pending (F-REVIEW-4). */
+function ReviewProgress({ counts }: { counts: ComparisonSummary['reviewCounts'] }) {
+  const progress = reviewProgress(counts);
+  if (progress.total === 0) return <span className="text-muted-foreground">—</span>;
+  const done = progress.reviewed === progress.total;
+  return (
+    <div className="grid min-w-28 gap-1">
+      <span>
+        {progress.reviewed}/{progress.total} reviewed{done && ' ✅'}
+      </span>
+      <div
+        role="progressbar"
+        aria-label="Review progress"
+        aria-valuemin={0}
+        aria-valuemax={progress.total}
+        aria-valuenow={progress.reviewed}
+        className="h-1.5 overflow-hidden rounded-full bg-muted"
+      >
+        <div
+          className={done ? 'h-full bg-emerald-600' : 'h-full bg-blue-600'}
+          style={{ width: `${(progress.reviewed / progress.total) * 100}%` }}
+        />
+      </div>
+    </div>
+  );
+}
+
 function ComparisonTable({
   slug,
   comparisons,
+  baselineRunId,
 }: {
   slug: string;
   comparisons: ComparisonSummary[];
+  baselineRunId: string | null;
 }) {
   return (
     <div className="overflow-x-auto rounded-md border">
@@ -79,13 +118,15 @@ function ComparisonTable({
         </thead>
         <tbody>
           {comparisons.map((cmp) => {
-            const progress = reviewProgress(cmp.reviewCounts);
             return (
               <tr key={cmp.id} className="border-t align-top">
                 <td className="px-3 py-2 font-mono">
                   <Link href={`/p/${slug}/comparisons/${cmp.id}`} className="hover:underline">
                     {cmp.beforeLabel} → {cmp.afterLabel}
                   </Link>
+                  {(cmp.beforeRunId === baselineRunId || cmp.afterRunId === baselineRunId) && (
+                    <BaselineBadge />
+                  )}
                 </td>
                 <td className="px-3 py-2">
                   <StatusBadge status={cmp.status} />
@@ -94,7 +135,7 @@ function ComparisonTable({
                   <CountsText counts={cmp.counts} />
                 </td>
                 <td className="px-3 py-2 tabular-nums">
-                  {progress.total === 0 ? '—' : `${progress.reviewed}/${progress.total} reviewed`}
+                  <ReviewProgress counts={cmp.reviewCounts} />
                 </td>
                 <td className="px-3 py-2">
                   <time dateTime={cmp.createdAt}>{formatTime(cmp.createdAt)}</time>
@@ -177,7 +218,7 @@ export default async function ComparisonsPage({ params }: { params: Params }) {
           <h2 id="comparisons-heading" className="sr-only">
             Comparisons
           </h2>
-          <ComparisonTable slug={slug} comparisons={comparisons} />
+          <ComparisonTable slug={slug} comparisons={comparisons} baselineRunId={baselineRunId} />
           {comparisons.length === COMPARISON_LIST_LIMIT && (
             <p className="text-sm text-muted-foreground">
               Showing the newest {COMPARISON_LIST_LIMIT} comparisons.

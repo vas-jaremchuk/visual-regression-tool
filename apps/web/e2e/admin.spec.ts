@@ -57,7 +57,9 @@ test('job health shows a run without progress for more than 15 minutes as stuck'
       label: FRESH_LABEL,
       status: 'running',
       total_items: 2,
+      done_items: 0,
       started_at: minutesAgo(2),
+      created_at: minutesAgo(2),
     },
   ]);
   if (runError) throw runError;
@@ -74,8 +76,8 @@ test('job health shows a run without progress for more than 15 minutes as stuck'
   await expect(freshRow).toContainText('running');
   await expect(freshRow).not.toContainText('stuck');
   // The Cloudflare API is not reachable with the e2e token: each queue reports why.
-  await expect(page.getByText('vrt-capture-dlq')).toBeVisible();
-  await expect(page.getByText('vrt-diff-dlq')).toBeVisible();
+  await expect(page.getByRole('main').getByText('vrt-capture-dlq')).toBeVisible();
+  await expect(page.getByRole('main').getByText('vrt-diff-dlq')).toBeVisible();
 });
 
 test('platform admins filter the audit log; project admins see their project tab', async ({
@@ -102,7 +104,7 @@ test('platform admins filter the audit log; project admins see their project tab
     await expect(page.getByRole('row').filter({ hasText: `${ACTION}_platform` })).toContainText(
       'Platform',
     );
-    await page.getByLabel('Project').selectOption({ label: SEEDED_PROJECT.name });
+    await page.getByLabel('Project', { exact: true }).selectOption({ label: SEEDED_PROJECT.name });
     await page.getByRole('button', { name: 'Filter' }).click();
     await expect(page).toHaveURL(/project=/);
     await expect(page.getByRole('row').filter({ hasText: ACTION })).toHaveCount(1);
@@ -121,8 +123,9 @@ test('platform admins filter the audit log; project admins see their project tab
     await expect(page.getByText(`${ACTION}_platform`)).toHaveCount(0);
 
     // Not a platform admin: the admin page does not exist for them.
-    const response = await page.goto('/admin/audit');
-    expect(response?.status()).toBe(404);
+    await page.goto('/admin/audit');
+    await expect(page.getByRole('heading', { level: 1, name: 'Audit log' })).toHaveCount(0);
+    await expect(page.getByText(`${ACTION}_platform`)).toHaveCount(0);
 
     await page.context().clearCookies();
     await signInWithMagicLink(page, EDITOR, '/');

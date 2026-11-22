@@ -27,6 +27,9 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm test
       - run: pnpm --filter @vrt/engine test:coverage
+      # NFR-11..18 (T25): fail on known high or critical advisories in any dependency.
+      - name: Dependency audit
+        run: pnpm audit --audit-level high
 
   db:
     runs-on: ubuntu-latest

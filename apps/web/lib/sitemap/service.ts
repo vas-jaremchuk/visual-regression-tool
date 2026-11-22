@@ -1,18 +1,11 @@
 import 'server-only';
-import { lookup } from 'node:dns/promises';
-import {
-  MINUTE_MS,
-  SsrfBlockedError,
-  assertPublicUrl,
-  httpUrl,
-  parseAllowHosts,
-} from '@vrt/shared';
+import { MINUTE_MS, SsrfBlockedError, assertPublicUrl, httpUrl } from '@vrt/shared';
 import { z } from 'zod';
 import { audit } from '../audit';
 import { assertCan } from '../auth/assert-can';
 import type { CurrentUser } from '../auth/session';
-import { serverEnv } from '../env';
 import { RequestError } from '../members/errors';
+import { webSsrfOptions } from '../ssrf';
 import { createClient } from '../supabase/server';
 import { workerClient } from '../worker-client';
 
@@ -25,11 +18,6 @@ const manualUrlInput = z.object({
   url: httpUrl.max(2_048),
   note: z.string().trim().max(500).optional(),
 });
-
-async function resolveHost(hostname: string): Promise<string[]> {
-  const addresses = await lookup(hostname, { all: true });
-  return addresses.map((entry) => entry.address);
-}
 
 async function loadProject(supabase: UserClient, projectId: string) {
   const { data, error } = await supabase
@@ -48,10 +36,7 @@ async function loadProject(supabase: UserClient, projectId: string) {
 /** NFR-14: the sitemap index must point to a public host before the worker fetches it. */
 async function assertFetchable(url: string) {
   try {
-    await assertPublicUrl(url, {
-      resolve: resolveHost,
-      allowHosts: parseAllowHosts(serverEnv().SSRF_ALLOW_HOSTS),
-    });
+    await assertPublicUrl(url, webSsrfOptions());
   } catch (error) {
     if (error instanceof SsrfBlockedError) {
       throw new RequestError(422, 'business_rule', error.message);

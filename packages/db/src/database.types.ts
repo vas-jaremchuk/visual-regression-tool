@@ -712,6 +712,28 @@ export type Database = {
           },
         ];
       };
+      rate_limit_hits: {
+        Row: {
+          bucket: string;
+          created_at: string;
+          id: number;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          bucket: string;
+          created_at?: string;
+          id?: never;
+          user_id: string;
+        };
+        Update: {
+          bucket?: string;
+          created_at?: string;
+          id?: never;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       review_memory: {
         Row: {
           after_sha256: string;
@@ -1308,6 +1330,10 @@ export type Database = {
       can_view: { Args: { p_project_id: string }; Returns: boolean };
       channel_project_id: { Args: { p_channel_id: string }; Returns: string };
       comparison_project_id: { Args: { p_comparison_id: string }; Returns: string };
+      consume_rate_limit: {
+        Args: { p_bucket: string; p_limit: number; p_window_seconds: number };
+        Returns: number;
+      };
       is_platform_admin: { Args: Record<PropertyKey, never>; Returns: boolean };
       project_role: {
         Args: { p_project_id: string };

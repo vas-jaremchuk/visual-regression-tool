@@ -2,6 +2,7 @@ import { id, importLegacyRequest, importLegacyResponse } from '@vrt/shared';
 import { NextResponse, type NextRequest } from 'next/server';
 import { getCurrentUser } from '@/lib/auth/session';
 import { errorResponse, validationResponse } from '@/lib/http';
+import { limitJobStart } from '@/lib/rate-limit/service';
 import { importLegacyLabels, listLegacyLabels } from '@/lib/legacy/service';
 
 /**
@@ -20,6 +21,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
         importLegacyResponse.parse(await listLegacyLabels(user, projectId.data)),
       );
     }
+    await limitJobStart(user);
     const result = await importLegacyLabels(user, projectId.data, body.data.labels);
     return NextResponse.json(importLegacyResponse.parse(result), { status: 202 });
   } catch (error) {

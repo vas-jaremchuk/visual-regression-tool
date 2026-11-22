@@ -1,4 +1,4 @@
-import { PROBE_KEY } from '@vrt/shared';
+import { guardedFetch, PROBE_KEY } from '@vrt/shared';
 import { FakeObjectStore } from '@vrt/storage/testing';
 import { describe, expect, it } from 'vitest';
 import { checkBucket, publicObjectUrl, type BucketExistence } from './bucket-check';
@@ -48,6 +48,23 @@ describe('checkBucket', () => {
       publicUrl: 'ok',
     });
     expect(await store.head('site-vrt', PROBE_KEY)).toBeNull();
+  });
+
+  it('never probes a private public URL through the SSRF guard (NFR-14)', async () => {
+    const store = new FakeObjectStore();
+    const requested: string[] = [];
+    const inner = publicFetch(store, 'site-vrt');
+    const fetchFn = guardedFetch(async (input, init) => {
+      requested.push(String(input));
+      return inner(input, init);
+    }) as typeof fetch;
+    const result = await checkBucket(
+      { buckets: new FakeBuckets(new Set(['site-vrt'])), store, fetch: fetchFn },
+      { ...project, r2PublicUrl: 'http://127.0.0.1:8080/' },
+      { create: false },
+    );
+    expect(result).toMatchObject({ canReadWriteDelete: true, publicUrl: 'failed' });
+    expect(requested).toEqual([]);
   });
 
   it('reports a missing bucket and creates it on request', async () => {

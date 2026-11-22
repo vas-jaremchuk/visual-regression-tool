@@ -23,6 +23,8 @@ interface Props {
   publicUrl: string | null;
   beforeLabel: string;
   afterLabel: string;
+  /** Public share token: images are signed with it instead of a session. */
+  shareToken?: string;
   mode: ViewerMode;
   onModeChange: (mode: ViewerMode) => void;
 }
@@ -37,6 +39,7 @@ export function ItemViewer({
   publicUrl,
   beforeLabel,
   afterLabel,
+  shareToken,
   mode,
   onModeChange,
 }: Props) {
@@ -61,7 +64,8 @@ export function ItemViewer({
     });
   }, []);
 
-  const src = (key: string | null) => (key ? imageSrc(publicUrl, comparisonId, key) : null);
+  const src = (key: string | null) =>
+    key ? imageSrc(publicUrl, comparisonId, key, shareToken) : null;
   const label = itemPath(item.url, item.name);
   const before = src(item.beforeKey);
   const after = src(item.afterKey);

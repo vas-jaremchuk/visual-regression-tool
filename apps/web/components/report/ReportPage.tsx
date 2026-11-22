@@ -1,7 +1,9 @@
 import { id } from '@vrt/shared';
+import { Download } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { requireUser } from '@/lib/auth/session';
 import { DEFAULT_FILTER } from '@/lib/comparisons/report';
 import { fetchItemPage } from '@/lib/comparisons/report-items';
@@ -11,9 +13,11 @@ import {
   getReportSections,
 } from '@/lib/comparisons/report-queries';
 import { reviewProgress } from '@/lib/comparisons/queries';
+import { canDo } from '@/lib/projects/access';
 import { getProjectDetail } from '@/lib/projects/queries';
 import { createClient } from '@/lib/supabase/server';
 import { ReportSections } from './ReportSections';
+import { ShareDialog } from './ShareDialog';
 import { ReportView } from './ReportView';
 
 const STATUS_CLASS: Record<string, string> = {
@@ -36,17 +40,18 @@ export async function ReportPage({
   comparisonId: string;
   itemId?: string;
 }) {
-  await requireUser();
+  const user = await requireUser();
   if (!id.safeParse(comparisonId).success) notFound();
   if (itemId !== undefined && !id.safeParse(itemId).success) notFound();
   const project = await getProjectDetail(slug);
   if (!project) notFound();
   const header = await getReportHeader(project.id, comparisonId);
   if (!header) notFound();
-  const [firstPage, sections, item] = await Promise.all([
+  const [firstPage, sections, item, canShare] = await Promise.all([
     fetchItemPage(await createClient(), comparisonId, DEFAULT_FILTER, 0, { count: true }),
     getReportSections(comparisonId),
     itemId ? getReportItem(comparisonId, itemId) : Promise.resolve(null),
+    canDo(user, 'share_link.manage', project.id),
   ]);
   if (itemId && !item) notFound();
   const progress = reviewProgress(header.reviewCounts);
@@ -65,6 +70,23 @@ export async function ReportPage({
             </Link>
           </h1>
           <Badge className={STATUS_CLASS[header.status]}>{header.status}</Badge>
+          <div className="ml-auto flex flex-wrap gap-2">
+            {canShare && (
+              <ShareDialog
+                comparisonId={comparisonId}
+                active={header.share.active}
+                expiresAt={header.share.expiresAt}
+              />
+            )}
+            {header.status === 'completed' && (
+              <Button asChild variant="outline" size="sm">
+                <a href={`/api/comparisons/${comparisonId}/export.html`} download>
+                  <Download aria-hidden />
+                  Download HTML
+                </a>
+              </Button>
+            )}
+          </div>
         </div>
         <p className="text-sm text-muted-foreground">
           Threshold: &gt;{header.changeThresholdPct ?? 0}% pixel change

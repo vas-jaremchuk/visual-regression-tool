@@ -9,11 +9,12 @@ import {
   DEFAULT_FILTER,
   itemPath,
   REPORT_PAGE_SIZE,
+  sharedItemsQuery,
   type ItemFilter,
   type ReportCounts,
   type StatusFilter,
 } from '@/lib/comparisons/report';
-import { fetchItemPage, type ReportItem } from '@/lib/comparisons/report-items';
+import { fetchItemPage, type ItemPage, type ReportItem } from '@/lib/comparisons/report-items';
 import { createClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils';
 import { ItemViewer, VIEWER_MODES, type ViewerMode } from './ItemViewer';
@@ -33,6 +34,11 @@ export interface ReportViewProps {
   initialTotal: number;
   /** Deep-linked item (08 §1 item route), shown even when it is not in the loaded page. */
   initialItem: ReportItem | null;
+  /**
+   * Public share page (04 §5): list pages and images are loaded with this token instead of the
+   * session, and the address bar keeps the share URL.
+   */
+  shareToken?: string;
 }
 
 const ROW_HEIGHT = 44;
@@ -110,9 +116,16 @@ function isTyping(target: EventTarget | null) {
   return target.isContentEditable || ['TEXTAREA', 'SELECT'].includes(target.tagName);
 }
 
+async function fetchSharedPage(token: string, filter: ItemFilter, offset: number) {
+  const res = await fetch(`/api/share/${token}/items?${sharedItemsQuery(filter, offset)}`);
+  if (res.status === 404) throw new Error('This share link has expired or was revoked.');
+  if (!res.ok) throw new Error('Could not load the items. Try again.');
+  return (await res.json()) as ItemPage;
+}
+
 /** Report screen (08 §3): chips, viewport tabs, virtualised list and item viewer. */
 export function ReportView(props: ReportViewProps) {
-  const { slug, comparisonId, counts, viewports } = props;
+  const { slug, comparisonId, counts, viewports, shareToken } = props;
   const [filter, setFilter] = useState<ItemFilter>(DEFAULT_FILTER);
   const [search, setSearch] = useState('');
   const [items, setItems] = useState(props.initialItems);
@@ -135,9 +148,11 @@ export function ReportView(props: ReportViewProps) {
       setLoading(true);
       setError(null);
       try {
-        const page = await fetchItemPage(createClient(), comparisonId, next, offset, {
-          count: offset === 0,
-        });
+        const page = shareToken
+          ? await fetchSharedPage(shareToken, next, offset)
+          : await fetchItemPage(createClient(), comparisonId, next, offset, {
+              count: offset === 0,
+            });
         if (token !== request.current) return;
         loadedFilter.current = next;
         setItems((prev) => (offset === 0 ? page.items : [...prev, ...page.items]));
@@ -148,7 +163,7 @@ export function ReportView(props: ReportViewProps) {
         if (token === request.current) setLoading(false);
       }
     },
-    [comparisonId],
+    [comparisonId, shareToken],
   );
 
   // A new filter reloads the list from the first page.
@@ -174,13 +189,14 @@ export function ReportView(props: ReportViewProps) {
   const select = useCallback(
     (item: ReportItem) => {
       setSelected(item);
+      if (shareToken) return;
       window.history.replaceState(
         null,
         '',
         `/p/${slug}/comparisons/${comparisonId}/items/${item.id}`,
       );
     },
-    [slug, comparisonId],
+    [slug, comparisonId, shareToken],
   );
 
   const scrollIntoList = useCallback((index: number) => {
@@ -439,6 +455,7 @@ export function ReportView(props: ReportViewProps) {
               publicUrl={props.publicUrl}
               beforeLabel={props.beforeLabel}
               afterLabel={props.afterLabel}
+              shareToken={shareToken}
               mode={mode}
               onModeChange={setMode}
             />

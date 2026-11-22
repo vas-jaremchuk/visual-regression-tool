@@ -83,6 +83,21 @@ describe('renderStaticReport', () => {
     expect(html).toMatch(/<strong>Generated:<\/strong> \d{4}-\d\d-\d\d \d\d:\d\d:\d\d UTC/);
   });
 
+  it('builds image URLs with imageUrl when given, escaped', () => {
+    const html = renderStaticReport(comparison, items, {
+      ...opts,
+      imageUrl: (key) => `https://r2.example.com/b/${key}?X-Amz-Signature=a&b=1`,
+    });
+    expect(html).toContain(
+      `src="https://r2.example.com/b/diffs/${comparison.label}/mobile/big.png?X-Amz-Signature=a&amp;b=1"`,
+    );
+    expect(html).not.toContain('https://pub.example.com/');
+  });
+
+  it('needs a publicUrl or an imageUrl', () => {
+    expect(() => renderStaticReport(comparison, items, { publicUrl: null })).toThrow(/publicUrl/);
+  });
+
   it('shows the all-match banner when no file changed', () => {
     expect(renderStaticReport(comparison, [items[9]!], opts)).toContain(
       'All file fingerprints match.',

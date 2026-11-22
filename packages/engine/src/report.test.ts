@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { escapeHtml, renderStaticReport, type ReportComparison, type ReportItem } from './report';
+import {
+  escapeHtml,
+  renderStaticReport,
+  safeHref,
+  type ReportComparison,
+  type ReportItem,
+} from './report';
 
 const comparison: ReportComparison = {
   label: '2026-11-18_09-00-00_vs_2026-11-19_09-00-00',
@@ -71,6 +77,26 @@ describe('renderStaticReport', () => {
     expect(html).not.toContain('<b>');
     expect(html).toContain('&lt;script&gt;alert(1)&lt;/script&gt;');
     expect(html).toContain('&quot;&gt;&lt;script&gt;');
+  });
+
+  it('links only http(s) URLs, never javascript: (NFR-15)', () => {
+    const js = 'javascript:alert(document.cookie)';
+    const html = renderStaticReport(
+      comparison,
+      [
+        { url: js, name: 'js', kind: 'page', viewport_slug: 'desktop', status: 'changed', diff_pct: 1, diff_pixels: 1, total_pixels: 100, before_key: null, after_key: null, diff_key: null },
+        { url: 'https://example.com/a', name: 'a', kind: 'page', viewport_slug: 'desktop', status: 'redirect', redirect_to: ' JavaScript:alert(1)' },
+      ], // prettier-ignore
+      opts,
+    );
+    expect(html).not.toMatch(/href="\s*javascript:/i);
+    expect(html).toContain('href="#"');
+    expect(safeHref('https://example.com/?a=1&b="2"')).toBe(
+      'https://example.com/?a=1&amp;b=&quot;2&quot;',
+    );
+    expect(safeHref('HTTP://example.com/')).toBe('HTTP://example.com/');
+    expect(safeHref('data:text/html,<script>')).toBe('#');
+    expect(safeHref(null)).toBe('#');
   });
 
   it('shows the no-changes banner and no file section when there is nothing to report', () => {

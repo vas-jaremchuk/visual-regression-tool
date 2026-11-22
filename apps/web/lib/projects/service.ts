@@ -3,6 +3,7 @@ import type { TablesInsert, TablesUpdate } from '@vrt/db';
 import {
   DEFAULT_VIEWPORT,
   encryptSecret,
+  guardedFetch,
   projectSecretsSchema,
   slugify,
   viewportSchema,
@@ -16,6 +17,7 @@ import { assertCan } from '../auth/assert-can';
 import type { CurrentUser } from '../auth/session';
 import { serverEnv } from '../env';
 import { RequestError } from '../members/errors';
+import { webSsrfOptions } from '../ssrf';
 import { createClient } from '../supabase/server';
 import { checkBucket, type BucketCheckResult } from './bucket-check';
 import { SETTINGS_SELECT, rowToSettings, settingsToRow } from './columns';
@@ -410,7 +412,8 @@ export async function runBucketCheck(
         accessKeyId: env.R2_ACCESS_KEY_ID,
         secretAccessKey: env.R2_SECRET_ACCESS_KEY,
       }),
-      fetch,
+      // The public URL is admin-supplied: only public hosts (NFR-14).
+      fetch: guardedFetch(fetch, webSsrfOptions()) as typeof fetch,
     },
     project.settings,
     { create },

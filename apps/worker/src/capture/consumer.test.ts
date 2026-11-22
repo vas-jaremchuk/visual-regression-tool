@@ -1,5 +1,5 @@
 import { NORMALISE_CSS, sha256Hex, type BrowserProvider, type CaptureJob } from '@vrt/engine';
-import type { CaptureMsg } from '@vrt/shared';
+import { assertPublicUrl, type CaptureMsg } from '@vrt/shared';
 import { FakeObjectStore } from '@vrt/storage/testing';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { createLogger } from '../logger';
@@ -195,6 +195,7 @@ beforeEach(() => {
         status: 200,
         headers: { 'content-type': 'application/pdf', etag: '"v1"' },
       })) as typeof fetch,
+    assertUrl: async () => undefined,
     enqueue: async (msg, delaySeconds) => {
       enqueued.push({ msg, delaySeconds });
     },
@@ -333,6 +334,19 @@ describe('processCaptureMessage', () => {
       attempts: 1,
       error: 'Viewport "tablet" not found in project',
     });
+    expect(enqueued).toEqual([]);
+  });
+
+  it('never opens a private page URL in the browser (SSRF guard, NFR-14)', async () => {
+    db.row('run_items', HOME).url = 'http://169.254.169.254/latest/meta-data/';
+    deps.assertUrl = (url) => assertPublicUrl(url);
+    await processCaptureMessage(msg(HOME), deps);
+    expect(db.row('run_items', HOME)).toMatchObject({
+      status: 'failed',
+      attempts: 1,
+      error: expect.stringContaining('169.254.169.254 is a private address'),
+    });
+    expect(browser.jobs).toEqual([]);
     expect(enqueued).toEqual([]);
   });
 

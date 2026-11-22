@@ -59,6 +59,11 @@ export function escapeHtml(s: unknown): string {
 }
 
 const esc = escapeHtml;
+
+/** Link target for a user-supplied URL: only http(s) links, anything else (`javascript:`) is `#`. */
+export function safeHref(url: unknown): string {
+  return /^https?:\/\//i.test(String(url ?? '').trim()) ? esc(url) : '#';
+}
 const num = (n: number | null | undefined) => (n ?? 0).toLocaleString('en-US');
 
 const BASE_CSS = `
@@ -141,7 +146,7 @@ const PAGE_CSS = `
 
 function link(item: ReportItem): string {
   return item.url
-    ? `<a href="${esc(item.url)}" target="_blank" rel="noopener">${esc(item.url)}</a>`
+    ? `<a href="${safeHref(item.url)}" target="_blank" rel="noopener">${esc(item.url)}</a>`
     : `<span style="color:#64748b;font-style:italic">${esc(item.name)}</span>`;
 }
 
@@ -259,7 +264,7 @@ export function renderStaticReport(
   const redirectItems = redirects
     .map(
       (r) =>
-        `<li class="status-redirect"><strong>${esc(r.url ?? r.name)}</strong>${viewportTag(r)} … ↪️ redirect detected → <a href="${esc(r.redirect_to)}" target="_blank" rel="noopener">${esc(r.redirect_to)}</a></li>`,
+        `<li class="status-redirect"><strong>${esc(r.url ?? r.name)}</strong>${viewportTag(r)} … ↪️ redirect detected → <a href="${safeHref(r.redirect_to)}" target="_blank" rel="noopener">${esc(r.redirect_to)}</a></li>`,
     )
     .join('\n');
 

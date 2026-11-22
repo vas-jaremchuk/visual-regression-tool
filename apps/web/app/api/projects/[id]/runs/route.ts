@@ -2,6 +2,7 @@ import { id, startRunRequest, startRunResponse } from '@vrt/shared';
 import { NextResponse, type NextRequest } from 'next/server';
 import { getCurrentUser } from '@/lib/auth/session';
 import { errorResponse, validationResponse } from '@/lib/http';
+import { limitJobStart } from '@/lib/rate-limit/service';
 import { startRun } from '@/lib/runs/service';
 
 /**
@@ -14,7 +15,10 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   const body = startRunRequest.safeParse(await request.json().catch(() => null));
   if (!body.success) return validationResponse(body.error.issues);
   try {
-    const result = await startRun(await getCurrentUser(), projectId.data, body.data);
+    const user = await getCurrentUser();
+    // A dry run lists items without starting a job.
+    if (!body.data.dryRun) await limitJobStart(user);
+    const result = await startRun(user, projectId.data, body.data);
     return NextResponse.json(startRunResponse.parse(result), {
       status: result.dryRun ? 200 : 202,
     });

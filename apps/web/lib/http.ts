@@ -2,6 +2,7 @@ import 'server-only';
 import { NextResponse } from 'next/server';
 import { describeError } from './members/errors';
 import { FormError } from './projects/form-result';
+import { RateLimitedError } from './rate-limit/limit';
 
 /** Error response in the shape every custom endpoint uses (09). */
 export function errorResponse(error: unknown) {
@@ -12,7 +13,11 @@ export function errorResponse(error: unknown) {
     );
   }
   const { status, ...body } = describeError(error);
-  return NextResponse.json({ error: body }, { status });
+  const headers =
+    error instanceof RateLimitedError
+      ? { 'retry-after': String(error.retryAfterSeconds) }
+      : undefined;
+  return NextResponse.json({ error: body }, { status, headers });
 }
 
 export function validationResponse(details: unknown) {

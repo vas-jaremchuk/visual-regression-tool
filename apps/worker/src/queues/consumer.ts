@@ -1,7 +1,14 @@
 import { getRandom } from '@cloudflare/containers';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@vrt/db';
-import { captureMsg, decryptSecret, diffMsg, type WorkerEnv } from '@vrt/shared';
+import {
+  assertPublicUrl,
+  captureMsg,
+  decryptSecret,
+  diffMsg,
+  guardedFetch,
+  type WorkerEnv,
+} from '@vrt/shared';
 import { R2ObjectStore } from '@vrt/storage';
 import { BrowserRenderingProvider } from '../capture/browser-rendering-provider';
 import { processCaptureMessage, type CaptureDeps } from '../capture/consumer';
@@ -11,6 +18,7 @@ import { supabaseDiffRepo } from '../compare/supabase-compare-store';
 import type { Env } from '../env';
 import { durableLimiter } from '../limiter/limiter';
 import { createLogger, type Logger } from '../logger';
+import { ssrfOptions } from '../ssrf';
 import { createServiceClient } from '../supabase';
 
 /** Queue consumer for `vrt-capture` and `vrt-diff` (03 §3). */
@@ -84,7 +92,8 @@ function captureDeps(env: Env, config: WorkerEnv, logger: Logger = log): Capture
       secretAccessKey: config.R2_SECRET_ACCESS_KEY,
     }),
     limiter: durableLimiter(env.PROJECT_LIMITER),
-    fetcher: fetch,
+    fetcher: guardedFetch((input, init) => fetch(input, init), ssrfOptions(config)) as typeof fetch,
+    assertUrl: (url) => assertPublicUrl(url, ssrfOptions(config)),
     enqueue: async (msg, delaySeconds) => {
       await env.CAPTURE_QUEUE.send(msg, { delaySeconds });
     },

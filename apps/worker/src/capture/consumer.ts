@@ -4,6 +4,7 @@ import {
   LIMITER_BUSY_DELAY_MS,
   SECOND_MS,
   runItemKey,
+  SsrfBlockedError,
   type CaptureMsg,
   type ObjectStore,
 } from '@vrt/shared';
@@ -38,7 +39,10 @@ export interface CaptureDeps {
   browser: BrowserProvider;
   store: ObjectStore;
   limiter: Limiter;
+  /** Fetches file links; wrapped in the SSRF guard (NFR-14). */
   fetcher: Fetcher;
+  /** SSRF guard for page URLs before the browser opens them (NFR-14); throws `SsrfBlockedError`. */
+  assertUrl(url: string): Promise<unknown>;
   /** Sends a message to `vrt-capture`. */
   enqueue(msg: CaptureMsg, delaySeconds: number): Promise<void>;
   /** Decrypts `projects.basic_auth_pass_enc`. */
@@ -206,6 +210,12 @@ async function capturePage(
   }
   const url = urlOf(item);
   const key = keyFor(item, ctx.run);
+  try {
+    await deps.assertUrl(url);
+  } catch (err) {
+    if (err instanceof SsrfBlockedError) throw new PermanentItemError(err.message);
+    throw err;
+  }
   const { png, truncated } = await session.capture({
     url,
     viewport: {

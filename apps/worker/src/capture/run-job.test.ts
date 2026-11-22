@@ -6,6 +6,7 @@ import {
   finalStatus,
   MAX_POLLS,
   RunNotFoundError,
+  runEvent,
   type ItemCounts,
   type PendingItem,
   type RunPatch,
@@ -54,6 +55,7 @@ function setup(run: Partial<RunRow> = {}, items: Partial<Item>[] = []) {
     audits: [] as { action: string; details: Record<string, unknown> }[],
     buckets: [] as string[],
     sent: [] as CaptureMsg[],
+    notified: [] as { event: string; context: Record<string, unknown> }[],
   };
   const store: RunStore = {
     loadRun: async (id) => (id === state.run.id ? { ...state.run } : null),
@@ -89,6 +91,11 @@ function setup(run: Partial<RunRow> = {}, items: Partial<Item>[] = []) {
     },
     enqueue: async (messages) => {
       state.sent.push(...messages);
+    },
+    notifier: {
+      notify: async (event, context) => {
+        state.notified.push({ event, context });
+      },
     },
     now: () => NOW,
   });
@@ -148,6 +155,39 @@ describe('finalStatus', () => {
     expect(finalStatus(base, false)).toBe('completed');
     expect(finalStatus({ ...base, failed: 1 }, false)).toBe('completed_with_errors');
     expect(finalStatus({ ...base, skipped: 2 }, true)).toBe('cancelled');
+  });
+});
+
+describe('run notifications (06 §2 step 4)', () => {
+  it('maps the final status to an event; a cancelled run notifies nobody', () => {
+    expect(runEvent('completed')).toBe('run_completed');
+    expect(runEvent('completed_with_errors')).toBe('run_completed');
+    expect(runEvent('failed')).toBe('run_failed');
+    expect(runEvent('cancelled')).toBeNull();
+  });
+
+  it('notifies run_completed once when the run finalises', async () => {
+    const { state, job } = setup({}, [{ status: 'done' }]);
+    await runWorkflow(job);
+    await job.finalise();
+    expect(state.notified).toEqual([
+      { event: 'run_completed', context: { projectId: PROJECT_ID, runId: RUN_ID } },
+    ]);
+  });
+
+  it('notifies run_failed with the reason on a fatal error', async () => {
+    const { state, job } = setup({ status: 'running' }, [{ status: 'pending' }]);
+    await job.fail(new Error('boom'));
+    expect(state.notified).toEqual([
+      { event: 'run_failed', context: { projectId: PROJECT_ID, runId: RUN_ID, error: 'boom' } },
+    ]);
+  });
+
+  it('a cancelled run sends nothing', async () => {
+    const { state, job } = setup({ status: 'running', cancelRequestedAt: NOW.toISOString() });
+    await job.finalise();
+    expect(state.run.status).toBe('cancelled');
+    expect(state.notified).toEqual([]);
   });
 });
 

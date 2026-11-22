@@ -184,7 +184,7 @@ export interface CompareStore {
 
 export type CompareEvent = 'comparison_changed' | 'comparison_clean';
 
-/** Notification hook (06 §5 step 9). T21 implements it with the project's channels. */
+/** Notification hook (06 §5 step 9): the event goes to the project's channels. */
 export interface Notifier {
   notify(
     event: CompareEvent,

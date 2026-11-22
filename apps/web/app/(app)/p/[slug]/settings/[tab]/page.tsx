@@ -1,12 +1,15 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { AuditLogView } from '@/components/admin/AuditLogView';
 import { AccessPassword } from '@/components/projects/AccessPassword';
 import { BucketChecks } from '@/components/projects/BucketChecks';
 import { DangerZone } from '@/components/projects/DangerZone';
 import { SettingsForm } from '@/components/projects/SettingsForm';
 import { ViewportsPanel } from '@/components/projects/ViewportsPanel';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { parseAuditFilters } from '@/lib/admin/audit-filters';
+import { listActorOptions, listAuditLog } from '@/lib/admin/queries';
 import { canDo, requireProjectSettings } from '@/lib/projects/access';
 import { listViewports } from '@/lib/projects/queries';
 import { isSettingsGroup, settingsToForm } from '@/lib/projects/settings-groups';
@@ -30,11 +33,18 @@ const DESCRIPTIONS: Record<string, string> = {
   capture: 'How pages are loaded and captured. Changes apply to new runs only.',
   viewports: 'Screen sizes every run captures. Disabled viewports are skipped.',
   diff: 'How sensitive comparisons are.',
+  audit: 'Changes made in this project, newest first.',
   danger: 'Archive or delete the project.',
 };
 
 /** Project settings tabs (03 §6, 08 §1). Project admins only; others get a 403. */
-export default async function SettingsTabPage({ params }: { params: Params }) {
+export default async function SettingsTabPage({
+  params,
+  searchParams,
+}: {
+  params: Params;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
   const { slug, tab } = await params;
   const entry = tabOf(tab);
   if (!entry) notFound();
@@ -64,6 +74,22 @@ export default async function SettingsTabPage({ params }: { params: Params }) {
         projectId={project.id}
         viewports={await listViewports(project.id)}
         disabled={archived}
+      />
+    );
+  } else if (entry.tab === 'audit') {
+    // F-ADMIN-2 for project admins: the project filter is fixed to this project.
+    const filters = { ...parseAuditFilters(await searchParams), project: project.id };
+    const [{ entries, hasMore }, actors] = await Promise.all([
+      listAuditLog(filters),
+      listActorOptions(),
+    ]);
+    body = (
+      <AuditLogView
+        path={`/p/${slug}/settings/audit`}
+        filters={filters}
+        entries={entries}
+        hasMore={hasMore}
+        actors={actors}
       />
     );
   } else if (entry.tab === 'danger') {
@@ -103,7 +129,7 @@ export default async function SettingsTabPage({ params }: { params: Params }) {
   return (
     <div className="grid gap-4">
       <h1 className="text-2xl font-semibold">Settings</h1>
-      {archived && entry.tab !== 'danger' && (
+      {archived && entry.tab !== 'danger' && entry.tab !== 'audit' && (
         <p role="status" className="rounded-md border p-3 text-sm text-muted-foreground">
           This project is archived and read-only. Unarchive it in the Danger zone to make changes.
         </p>

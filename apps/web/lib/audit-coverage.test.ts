@@ -48,6 +48,23 @@ const MUTATIONS: Record<string, Row> = {
     chain: ['lib/projects/service.ts#createProject'],
     actions: ['project.create'],
   },
+  'DELETE /api/comparisons/[id]': {
+    chain: ['lib/storage/service.ts#deleteComparison', 'lib/storage/commands.ts#deleteComparison'],
+    actions: ['comparison.delete'],
+  },
+  'POST /api/comparisons/[id]/review': {
+    chain: ['lib/comparisons/service.ts#reviewItems', 'lib/comparisons/review.ts#review'],
+    actions: ['comparison.review'],
+    rpc: { file: 'lib/comparisons/service.ts', name: 'review_items' },
+  },
+  'POST /api/projects/[id]/storage/refresh': {
+    chain: ['lib/storage/service.ts#refreshStorage', 'lib/storage/commands.ts#refreshStorage'],
+    actions: ['storage.refresh'],
+  },
+  'DELETE /api/runs/[id]': {
+    chain: ['lib/storage/service.ts#deleteRun', 'lib/storage/commands.ts#deleteRun'],
+    actions: ['run.delete'],
+  },
   'POST /api/projects/import-env': { exempt: 'parses .env text and writes nothing' },
   'POST /api/projects/[id]/check-bucket': {
     chain: ['lib/projects/service.ts#runBucketCheck'],
@@ -146,6 +163,10 @@ const MUTATIONS: Record<string, Row> = {
   'app/(app)/p/[slug]/settings/actions.ts#archiveProject': {
     chain: ['lib/projects/service.ts#setProjectArchived'],
     actions: ['project.archive', 'project.unarchive'],
+  },
+  'app/(app)/p/[slug]/settings/actions.ts#deleteProjectAction': {
+    chain: ['lib/storage/service.ts#deleteProject', 'lib/storage/commands.ts#deleteProject'],
+    actions: ['project.delete'],
   },
   'app/(app)/p/[slug]/settings/actions.ts#checkProjectBucket': {
     chain: ['lib/projects/service.ts#runBucketCheck'],

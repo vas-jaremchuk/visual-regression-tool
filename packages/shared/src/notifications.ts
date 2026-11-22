@@ -54,12 +54,12 @@ export function emailChannelTarget(
 }
 
 export class NotificationInputError extends Error {
-  constructor(
-    readonly field: string,
-    message: string,
-  ) {
+  readonly field: string;
+
+  constructor(field: string, message: string) {
     super(message);
     this.name = 'NotificationInputError';
+    this.field = field;
   }
 }
 

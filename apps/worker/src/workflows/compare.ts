@@ -8,15 +8,11 @@ import {
   type StartCompareJob,
 } from '@vrt/shared';
 import { R2ObjectStore } from '@vrt/storage';
-import {
-  createCompareJob,
-  MAX_POLLS,
-  noopNotifier,
-  type CompareJobDeps,
-} from '../compare/compare-job';
+import { createCompareJob, MAX_POLLS, type CompareJobDeps } from '../compare/compare-job';
 import { supabaseCompareStore } from '../compare/supabase-compare-store';
 import { getConfig, type Env } from '../env';
 import { createLogger } from '../logger';
+import { projectNotifier } from '../notify';
 import { ssrfOptions } from '../ssrf';
 import { createServiceClient } from '../supabase';
 
@@ -38,6 +34,7 @@ export function compareJobDeps(env: Env): CompareJobDeps {
     accessKeyId: config.R2_ACCESS_KEY_ID,
     secretAccessKey: config.R2_SECRET_ACCESS_KEY,
   });
+  const notifier = projectNotifier(env);
   return {
     store: supabaseCompareStore(createServiceClient(config)),
     fetcher: guardedFetch((input, init) => fetch(input, init), ssrfOptions(config)) as typeof fetch,
@@ -54,8 +51,10 @@ export function compareJobDeps(env: Env): CompareJobDeps {
     },
     putReport: (bucket, key, html) =>
       objects.put(bucket, key, new TextEncoder().encode(html), 'text/html; charset=utf-8'),
-    // Notification channels arrive with T21.
-    notifier: noopNotifier,
+    notifier: {
+      notify: (event, { projectId, comparisonId }) =>
+        notifier.comparison(event, { projectId, comparisonId }),
+    },
   };
 }
 

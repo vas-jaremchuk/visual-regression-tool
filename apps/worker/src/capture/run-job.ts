@@ -55,12 +55,25 @@ export interface RunStore {
   audit(action: string, projectId: string, details: Record<string, unknown>): Promise<void>;
 }
 
+export type RunEvent = 'run_completed' | 'run_failed';
+
+/** Notification hook (06 §2 step 4): `run_completed` / `run_failed` to the project's channels. */
+export interface RunNotifier {
+  notify(
+    event: RunEvent,
+    context: { projectId: string; runId: string; error?: string },
+  ): Promise<void>;
+}
+
+export const noopRunNotifier: RunNotifier = { notify: async () => {} };
+
 export interface RunJobDeps {
   store: RunStore;
   /** Creates the project's bucket if missing (`BucketAdmin.ensure`, 409 tolerated). */
   ensureBucket(name: string): Promise<{ created: boolean }>;
   /** Sends messages to `vrt-capture`. */
   enqueue(messages: CaptureMsg[]): Promise<void>;
+  notifier?: RunNotifier;
   now?: () => Date;
 }
 
@@ -124,6 +137,13 @@ export function finalStatus(counts: ItemCounts, cancelRequested: boolean): RunSt
   return counts.failed > 0 ? 'completed_with_errors' : 'completed';
 }
 
+/** Event a finished run notifies (06 §2 step 4); a cancelled run notifies nobody. */
+export function runEvent(status: RunStatus): RunEvent | null {
+  if (status === 'completed' || status === 'completed_with_errors') return 'run_completed';
+  if (status === 'failed') return 'run_failed';
+  return null;
+}
+
 export interface PollResult {
   settled: boolean;
   cancelRequested: boolean;
@@ -133,6 +153,7 @@ export interface PollResult {
 export function createRunJob(runId: string, deps: RunJobDeps) {
   const { store } = deps;
   const now = () => (deps.now?.() ?? new Date()).toISOString();
+  const notifier = deps.notifier ?? noopRunNotifier;
 
   async function loadRun(): Promise<RunRow> {
     const run = await store.loadRun(runId);
@@ -205,6 +226,8 @@ export function createRunJob(runId: string, deps: RunJobDeps) {
         failed: counts.failed,
         skipped: counts.skipped,
       });
+      const event = runEvent(status);
+      if (event) await notifier.notify(event, { projectId: run.projectId, runId });
       return { status };
     },
 
@@ -217,6 +240,7 @@ export function createRunJob(runId: string, deps: RunJobDeps) {
       await store.refreshCounts(runId);
       await store.updateRun(runId, { status: 'failed', finished_at: now() });
       await store.audit('run.failed', run.projectId, { run_id: runId, error: reason });
+      await notifier.notify('run_failed', { projectId: run.projectId, runId, error: reason });
     },
 
     /**

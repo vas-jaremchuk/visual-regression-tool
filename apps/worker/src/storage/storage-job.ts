@@ -1,4 +1,9 @@
-import { summarizeStorage, type ObjectEntry, type ObjectStore, type StorageUsage } from '@vrt/shared';
+import {
+  summarizeStorage,
+  type ObjectEntry,
+  type ObjectStore,
+  type StorageUsage,
+} from '@vrt/shared';
 
 /**
  * `StorageWorkflow(projectId)` steps (F-STORAGE-1, port of prototype `storage.js`): list the

@@ -368,7 +368,8 @@ select is(
 );
 select is(
   (select counts from public.comparisons where id = '00000000-0000-0000-0000-0000000000b1'),
-  '{"compared":2,"changed":1,"unchanged":1,"new":0,"missing":0,"redirect":0,"error":0,"files_changed":1,"files_total":1}'::jsonb,
+  '{"compared":2,"changed":1,"unchanged":1,"new":0,"missing":0,"redirect":0,"error":0,"files_changed":1,"files_total":1,
+    "viewports":{"desktop":{"compared":2,"changed":1,"unchanged":1,"new":0,"missing":0,"redirect":0,"error":0}}}'::jsonb,
   'comparison counts are recomputed'
 );
 select ok(

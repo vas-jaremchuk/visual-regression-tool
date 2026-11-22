@@ -142,11 +142,36 @@ const cancelCapture: JobHandler = async ({ env, log }, [runId]) => {
   return new Response(null, { status: 202 });
 };
 
+/**
+ * POST /jobs/compare: like capture, one live `CompareWorkflow` per comparison; a request after it
+ * ended (re-running the same pair, F-CMP-1) starts a new instance that replaces the items.
+ */
+const startCompare: JobHandler = async ({ env, body, log }) => {
+  const parsed = parseBody(startCompareJob, body);
+  if (parsed instanceof Response) return parsed;
+  let instance: WorkflowInstance;
+  try {
+    instance = await env.COMPARE_RUN.create({ id: parsed.comparisonId, params: parsed });
+  } catch (error) {
+    if (!/already.exists/i.test(String(error))) throw error;
+    instance = await env.COMPARE_RUN.get(parsed.comparisonId);
+    if (!(await isLive(instance))) {
+      instance = await env.COMPARE_RUN.create({
+        id: `${parsed.comparisonId}-${Date.now().toString(36)}`,
+        params: parsed,
+      });
+    }
+  }
+  const response: JobStartedResponse = { workflowId: instance.id };
+  log.info('compare workflow started', { ...parsed, ...response });
+  return json(response);
+};
+
 const routes: { method: string; pattern: RegExp; handler: JobHandler }[] = [
   { method: 'POST', pattern: /^\/jobs\/sitemap$/, handler: startSitemap },
   { method: 'POST', pattern: /^\/jobs\/capture$/, handler: startCapture },
   { method: 'POST', pattern: /^\/jobs\/capture\/([^/]+)\/cancel$/, handler: cancelCapture },
-  { method: 'POST', pattern: /^\/jobs\/compare$/, handler: startJob('compare', startCompareJob) },
+  { method: 'POST', pattern: /^\/jobs\/compare$/, handler: startCompare },
   { method: 'POST', pattern: /^\/jobs\/delete$/, handler: startJob('delete', deleteJob) },
   {
     method: 'POST',

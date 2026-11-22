@@ -1,23 +1,13 @@
 import { z } from 'zod';
 import { parseEncryptionKeys } from './crypto';
+import { required, sharedSecret, url } from './env-fields';
+import { webPublicEnv } from './public-env';
 
 /**
  * Environment schemas (03 §2–§4). Every app validates its env at boot with `parseEnv`, which
  * fails fast with a message naming each missing or invalid variable. Keep each app's
  * `.env.example` in sync: a unit test compares the schema keys with the example file.
  */
-
-const required = (name: string) =>
-  z
-    .string({ error: `${name} is required` })
-    .trim()
-    .min(1, `${name} is required`);
-
-const url = (name: string) =>
-  required(name).pipe(z.url({ error: `${name} must be an absolute URL` }));
-
-const sharedSecret = (name: string) =>
-  required(name).pipe(z.string().min(32, `${name} must be at least 32 characters`));
 
 /** NFR-14: comma-separated hosts exempt from the SSRF guard; local development and tests only. */
 const ssrfAllowHosts = z.string().trim().default('');
@@ -36,8 +26,7 @@ const encryptionKeys = (name: string) =>
 
 export const webEnv = z.object({
   APP_URL: url('APP_URL'),
-  NEXT_PUBLIC_SUPABASE_URL: url('NEXT_PUBLIC_SUPABASE_URL'),
-  NEXT_PUBLIC_SUPABASE_ANON_KEY: required('NEXT_PUBLIC_SUPABASE_ANON_KEY'),
+  ...webPublicEnv.shape,
   SUPABASE_SERVICE_ROLE_KEY: required('SUPABASE_SERVICE_ROLE_KEY'),
   CF_ACCOUNT_ID: required('CF_ACCOUNT_ID'),
   CF_API_TOKEN: required('CF_API_TOKEN'),
@@ -64,13 +53,6 @@ export const webEnv = z.object({
   SSRF_ALLOW_HOSTS: ssrfAllowHosts,
 });
 export type WebEnv = z.infer<typeof webEnv>;
-
-/** The subset of `webEnv` the browser bundle may see. */
-export const webPublicEnv = webEnv.pick({
-  NEXT_PUBLIC_SUPABASE_URL: true,
-  NEXT_PUBLIC_SUPABASE_ANON_KEY: true,
-});
-export type WebPublicEnv = z.infer<typeof webPublicEnv>;
 
 export const workerEnv = z.object({
   SUPABASE_URL: url('SUPABASE_URL'),
@@ -103,36 +85,3 @@ export const containerEnv = z.object({
     .default(8080),
 });
 export type ContainerEnv = z.infer<typeof containerEnv>;
-
-export class EnvValidationError extends Error {
-  readonly variables: string[];
-
-  constructor(app: string, issues: { variable: string; message: string }[]) {
-    super(
-      `Invalid ${app} environment:\n` +
-        issues.map((issue) => `  - ${issue.variable}: ${issue.message}`).join('\n'),
-    );
-    this.name = 'EnvValidationError';
-    this.variables = [...new Set(issues.map((issue) => issue.variable))];
-  }
-}
-
-/**
- * Validates `source` (e.g. `process.env` or a Worker `env`) against `schema`. Unknown keys
- * (other variables, Worker bindings) are ignored and not returned.
- */
-export function parseEnv<T extends z.ZodObject>(
-  schema: T,
-  source: Record<string, unknown>,
-  app: string,
-): z.infer<T> {
-  const result = schema.safeParse(source);
-  if (result.success) return result.data;
-  throw new EnvValidationError(
-    app,
-    result.error.issues.map((issue) => ({
-      variable: String(issue.path[0] ?? '(root)'),
-      message: issue.message,
-    })),
-  );
-}

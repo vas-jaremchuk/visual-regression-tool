@@ -61,7 +61,7 @@ jobs:
       - run: pnpm db:reset
       - run: pnpm --filter web exec playwright install --with-deps chromium
       - run: pnpm test:e2e
-      - name: Service role key not in client bundle
+      - name: Server secrets not in client bundle
         run: |
           export SUPABASE_SERVICE_ROLE_KEY="$(pnpm exec supabase status -o json | jq -r .SERVICE_ROLE_KEY)"
           pnpm --filter web check:bundle

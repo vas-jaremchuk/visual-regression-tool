@@ -3,7 +3,8 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import type { z } from 'zod';
 import { toBase64 } from './encoding';
-import { EnvValidationError, containerEnv, parseEnv, webEnv, workerEnv } from './env';
+import { containerEnv, webEnv, workerEnv } from './env';
+import { EnvValidationError, parseEnv } from './env-fields';
 
 function exampleKeys(app: string): string[] {
   const file = fileURLToPath(new URL(`../../../apps/${app}/.env.example`, import.meta.url));

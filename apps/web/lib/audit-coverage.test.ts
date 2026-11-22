@@ -29,6 +29,10 @@ const RUNS_RPC = { file: 'lib/runs/service.ts', name: 'set_baseline' };
 
 const MUTATIONS: Record<string, Row> = {
   // Route handlers (09 §1).
+  'POST /api/comparisons/[id]/rediff': {
+    chain: ['lib/comparisons/service.ts#rediffComparison', 'lib/comparisons/commands.ts#rediff'],
+    actions: ['comparison.rediff'],
+  },
   'POST /api/invitations': {
     chain: ['lib/members/service.ts#createInvitation'],
     actions: ['invitation.create', 'member.add'],
@@ -178,6 +182,25 @@ const MUTATIONS: Record<string, Row> = {
       'lib/notifications/commands.ts#testChannel',
     ],
     actions: ['notification_channel.test'],
+  },
+  'app/(app)/p/[slug]/ignore-rules/actions.ts#createIgnoreRuleAction': {
+    chain: ['lib/ignore-rules/service.ts#createIgnoreRule', 'lib/ignore-rules/commands.ts#create'],
+    actions: ['ignore_rule.create'],
+  },
+  'app/(app)/p/[slug]/ignore-rules/actions.ts#updateIgnoreRuleAction': {
+    chain: ['lib/ignore-rules/service.ts#updateIgnoreRule', 'lib/ignore-rules/commands.ts#update'],
+    actions: ['ignore_rule.update'],
+  },
+  'app/(app)/p/[slug]/ignore-rules/actions.ts#setIgnoreRuleEnabledAction': {
+    chain: [
+      'lib/ignore-rules/service.ts#setIgnoreRuleEnabled',
+      'lib/ignore-rules/commands.ts#setEnabled',
+    ],
+    actions: ['ignore_rule.update'],
+  },
+  'app/(app)/p/[slug]/ignore-rules/actions.ts#deleteIgnoreRuleAction': {
+    chain: ['lib/ignore-rules/service.ts#deleteIgnoreRule', 'lib/ignore-rules/commands.ts#remove'],
+    actions: ['ignore_rule.delete'],
   },
   'app/(app)/p/[slug]/sitemap/actions.ts#addManualUrlAction': {
     chain: ['lib/sitemap/service.ts#addManualUrl'],

@@ -1,4 +1,4 @@
-/** Settings tabs in display order (03 §6, 08 §1). `later` tabs belong to later tickets. */
+/** Settings tabs in display order (03 §6, 08 §1). */
 export const SETTINGS_TABS = [
   { tab: 'general', label: 'General' },
   { tab: 'storage', label: 'Storage' },
@@ -6,7 +6,7 @@ export const SETTINGS_TABS = [
   { tab: 'capture', label: 'Capture' },
   { tab: 'viewports', label: 'Viewports' },
   { tab: 'diff', label: 'Diff' },
-  { tab: 'ignore-rules', label: 'Ignore rules', later: 'T19' },
+  { tab: 'ignore-rules', label: 'Ignore rules' },
   { tab: 'notifications', label: 'Notifications' },
   { tab: 'members', label: 'Members' },
   { tab: 'audit', label: 'Audit log' },

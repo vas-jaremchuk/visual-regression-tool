@@ -34,6 +34,7 @@ import {
 } from '@/lib/comparisons/report-items';
 import { createClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils';
+import { IgnoreRuleShortcuts } from './IgnoreRuleShortcuts';
 import { ItemViewer, VIEWER_MODES, type ViewerMode } from './ItemViewer';
 import { REVIEW_ACTIONS, ReviewToolbar } from './ReviewToolbar';
 import { ReviewSummary } from './ReviewSummary';
@@ -57,6 +58,11 @@ export interface ReportViewProps {
   /** Editor+: review toolbar, bulk review and keys a / r / i (F-REVIEW-1/2). */
   canReview: boolean;
   canSetBaseline: boolean;
+  /** Editor+: ignore-rule shortcuts of the item viewer (F-REVIEW-3). */
+  projectId: string;
+  canManageRules: boolean;
+  /** The project's viewports, offered when scoping a rule. */
+  projectViewports: string[];
   afterRunId: string;
   afterIsBaseline: boolean;
 }
@@ -643,6 +649,16 @@ export function ReportView(props: ReportViewProps) {
               onNoteChange={setNote}
               pending={reviewing}
               onReview={(review) => void reviewSelected(review)}
+            />
+          )}
+          {selected?.url && props.canManageRules && (
+            <IgnoreRuleShortcuts
+              key={selected.id}
+              item={{ ...selected, url: selected.url }}
+              projectId={props.projectId}
+              comparisonId={comparisonId}
+              publicUrl={props.publicUrl}
+              viewports={props.projectViewports}
             />
           )}
           {selected ? (

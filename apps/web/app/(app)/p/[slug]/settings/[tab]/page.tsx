@@ -56,20 +56,14 @@ export default async function SettingsTabPage({
   const archived = project.archivedAt !== null;
 
   let body: React.ReactNode;
-  if ('later' in entry) {
+  if (entry.tab === 'ignore-rules') {
     body = (
       <p className="text-sm text-muted-foreground">
-        {entry.label} settings are not available yet; they arrive with ticket {entry.later}.
-        {entry.tab === 'ignore-rules' && (
-          <>
-            {' '}
-            See{' '}
-            <Link className="underline" href={`/p/${slug}/ignore-rules`}>
-              Ignore rules
-            </Link>
-            .
-          </>
-        )}
+        Ignore rules have their own page:{' '}
+        <Link className="underline" href={`/p/${slug}/ignore-rules`}>
+          Ignore rules
+        </Link>
+        .
       </p>
     );
   } else if (entry.tab === 'viewports') {

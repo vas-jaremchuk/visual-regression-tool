@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { SHARE_LINK_DEFAULT_DAYS } from '../constants';
-import { httpUrl, id, runLabel, viewportSlug } from './common';
-import { itemKind, projectRole, reviewStatus } from './enums';
+import { httpUrl, id, region, runLabel, viewportSlug } from './common';
+import { ignoreRuleType, itemKind, projectRole, reviewStatus } from './enums';
 import { projectSecretsSchema, projectSettingsSchema } from './project-settings';
 
 /** Bodies and responses of the web app's custom endpoints (09 §1). */
@@ -108,6 +108,77 @@ export const reviewResponse = z.object({ updated: z.int().min(0) });
 
 // POST /api/comparisons/:id/rediff
 export const rediffResponse = workflowStartedResponse;
+
+// Ignore rules (02 `ignore_rules`, F-IGNORE-1, F-REVIEW-3), saved by server actions.
+export const ignoreRuleAppliesTo = z.enum(['capture', 'compare', 'both']);
+export type IgnoreRuleAppliesTo = z.infer<typeof ignoreRuleAppliesTo>;
+
+const optionalText = (max: number) =>
+  z
+    .string()
+    .trim()
+    .max(max)
+    .nullish()
+    .transform((value) => value || null);
+
+/** A `re:` pattern must compile; a glob is any non-empty text. */
+const urlPattern = z
+  .string()
+  .trim()
+  .min(1, 'Enter a URL pattern')
+  .max(2_048)
+  .refine(
+    (pattern) => {
+      if (!pattern.startsWith('re:')) return true;
+      try {
+        new RegExp(pattern.slice(3));
+        return true;
+      } catch {
+        return false;
+      }
+    },
+    { error: 'The regular expression after re: is invalid' },
+  );
+
+/**
+ * Create/edit body of an ignore rule, normalised to the table's columns: only the field of its
+ * type is kept, `url_pattern` is required for `url_pattern` rules and an optional scope for the
+ * others, and `applies_to` is meaningful for `url_pattern` rules only (`both` otherwise).
+ */
+export const ignoreRuleInput = z
+  .object({
+    type: ignoreRuleType,
+    urlPattern: z.union([urlPattern, z.literal('')]).nullish(),
+    selector: optionalText(1_000),
+    region: region.nullish(),
+    viewportSlug: z.union([viewportSlug, z.literal('')]).nullish(),
+    appliesTo: ignoreRuleAppliesTo.default('both'),
+    enabled: z.boolean().default(true),
+    reason: optionalText(500),
+  })
+  .superRefine((rule, ctx) => {
+    if (rule.type === 'url_pattern' && !rule.urlPattern) {
+      ctx.addIssue({ code: 'custom', path: ['urlPattern'], message: 'Enter a URL pattern' });
+    }
+    if (rule.type === 'selector' && !rule.selector) {
+      ctx.addIssue({ code: 'custom', path: ['selector'], message: 'Enter a CSS selector' });
+    }
+    if (rule.type === 'region' && !rule.region) {
+      ctx.addIssue({ code: 'custom', path: ['region'], message: 'Draw or enter a region' });
+    }
+  })
+  .transform((rule) => ({
+    type: rule.type,
+    url_pattern: rule.urlPattern || null,
+    selector: rule.type === 'selector' ? rule.selector : null,
+    region: rule.type === 'region' ? (rule.region ?? null) : null,
+    viewport_slug: rule.viewportSlug || null,
+    applies_to: rule.type === 'url_pattern' ? rule.appliesTo : ('both' as const),
+    enabled: rule.enabled,
+    reason: rule.reason,
+  }));
+export type IgnoreRuleInput = z.input<typeof ignoreRuleInput>;
+export type IgnoreRuleValues = z.output<typeof ignoreRuleInput>;
 
 // POST /api/comparisons/:id/share
 export const createShareRequest = z.object({

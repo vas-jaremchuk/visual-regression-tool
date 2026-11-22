@@ -37,7 +37,7 @@ export function ReviewToolbar({
   return (
     <div
       role="group"
-      aria-label="Review"
+      aria-label="Review actions"
       data-testid="review-toolbar"
       className="flex flex-wrap items-end gap-2 rounded-md border p-2"
     >

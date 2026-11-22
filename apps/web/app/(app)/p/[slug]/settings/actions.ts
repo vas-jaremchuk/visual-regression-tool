@@ -24,6 +24,7 @@ import {
   updateViewport,
 } from '@/lib/projects/service';
 import { SETTINGS_GROUPS, type SettingsGroup } from '@/lib/projects/settings-groups';
+import { deleteProject } from '@/lib/storage/service';
 
 function parse<T extends z.ZodType>(schema: T, input: unknown): z.infer<T> {
   const result = schema.safeParse(input);
@@ -137,6 +138,31 @@ export async function archiveProject(input: {
     const body = parse(z.object({ projectId: id, archived: z.boolean() }), input);
     await setProjectArchived(await getCurrentUser(), body.projectId, body.archived);
     revalidateProject();
+  });
+}
+
+/**
+ * Delete project (F-PROJ-6, 03 §6): platform admin types the slug; R2 objects are deleted by the
+ * DeleteWorkflow only when `deleteObjects` is ticked.
+ */
+export async function deleteProjectAction(input: {
+  projectId: string;
+  confirmSlug: string;
+  deleteObjects: boolean;
+}): Promise<FormResult<{ queued: boolean }>> {
+  return runFormAction('Project deleted', async () => {
+    const body = parse(
+      z.object({ projectId: id, confirmSlug: z.string().max(200), deleteObjects: z.boolean() }),
+      input,
+    );
+    const result = await deleteProject(await getCurrentUser(), body.projectId, body);
+    revalidateProject();
+    return {
+      message: result.queued
+        ? 'Deleting the project and its R2 objects; it is archived until the cleanup finishes.'
+        : 'Project deleted',
+      data: result,
+    };
   });
 }
 

@@ -200,9 +200,12 @@ export async function getItemPage(
   const supabase = await createClient();
   let request = supabase
     .from('run_items')
-    .select('id, url, kind, viewport_slug, status, width, height, truncated, error, r2_key', {
-      count: 'exact',
-    })
+    .select(
+      'id, url, filename, kind, viewport_slug, status, width, height, truncated, error, r2_key',
+      {
+        count: 'exact',
+      },
+    )
     .eq('run_id', runId);
   if (query.status) request = request.eq('status', query.status);
   if (query.viewport === '_files') request = request.is('viewport_slug', null);
@@ -217,7 +220,8 @@ export async function getItemPage(
   const rows = await Promise.all(
     data.map(async (row) => ({
       id: row.id,
-      url: row.url,
+      // Legacy items whose URL could not be reconstructed (F-RUN-6) are shown by filename.
+      url: row.url ?? row.filename,
       kind: row.kind,
       viewportSlug: row.viewport_slug,
       status: row.status,
@@ -241,7 +245,7 @@ export async function getFailureGroups(runId: string): Promise<FailureGroup[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('run_items')
-    .select('id, url, viewport_slug, error')
+    .select('id, url, filename, viewport_slug, error')
     .eq('run_id', runId)
     .eq('status', 'failed')
     .order('url')
@@ -250,7 +254,8 @@ export async function getFailureGroups(runId: string): Promise<FailureGroup[]> {
   return groupFailures(
     data.map((row) => ({
       id: row.id,
-      url: row.url,
+      // Legacy items whose URL could not be reconstructed (F-RUN-6) are shown by filename.
+      url: row.url ?? row.filename,
       viewportSlug: row.viewport_slug,
       error: row.error,
     })),

@@ -90,14 +90,17 @@ describe('imageSrc', () => {
 describe('sharedItemsQuery', () => {
   it('sends only the set filters', () => {
     expect(
-      sharedItemsQuery({ status: 'changed', viewport: null, review: null, search: ' ' }, 0),
+      sharedItemsQuery(
+        { status: 'changed', viewport: null, review: null, search: ' ', maxPct: null },
+        0,
+      ),
     ).toBe('status=changed&offset=0');
     expect(
       sharedItemsQuery(
-        { status: 'new', viewport: 'mobile', review: 'approved', search: '/a' },
+        { status: 'new', viewport: 'mobile', review: 'approved', search: '/a', maxPct: 0.5 },
         100,
       ),
-    ).toBe('status=new&offset=100&viewport=mobile&review=approved&search=%2Fa');
+    ).toBe('status=new&offset=100&viewport=mobile&review=approved&search=%2Fa&maxPct=0.5');
   });
 });
 

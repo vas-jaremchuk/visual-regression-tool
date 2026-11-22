@@ -1,5 +1,5 @@
 import { id } from '@vrt/shared';
-import { Download } from 'lucide-react';
+import { Download, Flag } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Badge } from '@/components/ui/badge';
@@ -12,9 +12,9 @@ import {
   getReportItem,
   getReportSections,
 } from '@/lib/comparisons/report-queries';
-import { reviewProgress } from '@/lib/comparisons/queries';
 import { canDo } from '@/lib/projects/access';
 import { getProjectDetail } from '@/lib/projects/queries';
+import { getBaselineRunId } from '@/lib/runs/queries';
 import { createClient } from '@/lib/supabase/server';
 import { ReportSections } from './ReportSections';
 import { ShareDialog } from './ShareDialog';
@@ -26,6 +26,15 @@ const STATUS_CLASS: Record<string, string> = {
   completed: 'border-transparent bg-emerald-600 text-white',
   failed: 'border-transparent bg-destructive text-white',
 };
+
+function BaselineBadge() {
+  return (
+    <span className="ml-1 inline-flex items-center gap-1 align-middle font-sans text-xs font-normal text-primary">
+      <Flag className="size-3" aria-hidden />
+      baseline
+    </span>
+  );
+}
 
 /**
  * Report (08 §3) for `/p/[slug]/comparisons/[id]` and the deep-linked item viewer
@@ -47,14 +56,17 @@ export async function ReportPage({
   if (!project) notFound();
   const header = await getReportHeader(project.id, comparisonId);
   if (!header) notFound();
-  const [firstPage, sections, item, canShare] = await Promise.all([
-    fetchItemPage(await createClient(), comparisonId, DEFAULT_FILTER, 0, { count: true }),
-    getReportSections(comparisonId),
-    itemId ? getReportItem(comparisonId, itemId) : Promise.resolve(null),
-    canDo(user, 'share_link.manage', project.id),
-  ]);
+  const [firstPage, sections, item, baselineRunId, canReview, canSetBaseline, canShare] =
+    await Promise.all([
+      fetchItemPage(await createClient(), comparisonId, DEFAULT_FILTER, 0, { count: true }),
+      getReportSections(comparisonId),
+      itemId ? getReportItem(comparisonId, itemId) : Promise.resolve(null),
+      getBaselineRunId(project.id),
+      canDo(user, 'comparison.review', project.id),
+      canDo(user, 'baseline.set', project.id),
+      canDo(user, 'share_link.manage', project.id),
+    ]);
   if (itemId && !item) notFound();
-  const progress = reviewProgress(header.reviewCounts);
 
   return (
     <div className="mx-auto grid max-w-[100rem] gap-6">
@@ -63,11 +75,13 @@ export async function ReportPage({
           <h1 className="font-mono text-xl font-semibold">
             <Link href={`/p/${slug}/runs/${header.beforeLabel}`} className="hover:underline">
               {header.beforeLabel}
-            </Link>{' '}
+            </Link>
+            {header.beforeRunId === baselineRunId && <BaselineBadge />}{' '}
             <span aria-label="versus">↔</span>{' '}
             <Link href={`/p/${slug}/runs/${header.afterLabel}`} className="hover:underline">
               {header.afterLabel}
             </Link>
+            {header.afterRunId === baselineRunId && <BaselineBadge />}
           </h1>
           <Badge className={STATUS_CLASS[header.status]}>{header.status}</Badge>
           <div className="ml-auto flex flex-wrap gap-2">
@@ -90,7 +104,6 @@ export async function ReportPage({
         </div>
         <p className="text-sm text-muted-foreground">
           Threshold: &gt;{header.changeThresholdPct ?? 0}% pixel change
-          {progress.total > 0 && ` · ${progress.reviewed}/${progress.total} reviewed`}
         </p>
         {(header.status === 'queued' || header.status === 'running') && (
           <p role="status" className="text-sm text-muted-foreground">
@@ -112,6 +125,11 @@ export async function ReportPage({
         initialItems={firstPage.items}
         initialTotal={firstPage.total ?? 0}
         initialItem={item}
+        reviewCounts={header.reviewCounts}
+        canReview={canReview}
+        canSetBaseline={canSetBaseline}
+        afterRunId={header.afterRunId}
+        afterIsBaseline={header.afterRunId === baselineRunId}
       />
 
       <ReportSections sections={sections} />

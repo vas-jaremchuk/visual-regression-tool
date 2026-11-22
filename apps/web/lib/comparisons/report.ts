@@ -38,6 +38,8 @@ export interface ItemFilter {
   review: ReviewStatus | null;
   /** Case-insensitive substring of the URL. */
   search: string;
+  /** Only items whose diff is below this percentage (e.g. bulk-approve all < 0.5 %); null: any. */
+  maxPct: number | null;
 }
 
 export const DEFAULT_FILTER: ItemFilter = {
@@ -45,6 +47,7 @@ export const DEFAULT_FILTER: ItemFilter = {
   viewport: null,
   review: null,
   search: '',
+  maxPct: null,
 };
 
 export interface PageCounts {
@@ -119,6 +122,7 @@ export function sharedItemsQuery(filter: ItemFilter, offset: number): string {
   if (filter.viewport !== null) query.set('viewport', filter.viewport);
   if (filter.review !== null) query.set('review', filter.review);
   if (filter.search.trim()) query.set('search', filter.search.trim());
+  if (filter.maxPct !== null) query.set('maxPct', String(filter.maxPct));
   return query.toString();
 }
 
@@ -149,4 +153,30 @@ export function keyBelongsToComparison(key: string, scope: ComparisonKeyScope): 
     return false;
   }
   return prefixes.some((prefix) => key.startsWith(prefix) && key.length > prefix.length);
+}
+
+export interface ReviewCounts {
+  pending: number;
+  approved: number;
+  rejected: number;
+  ignored: number;
+}
+
+/** Reviewed and reviewable (changed) items of a comparison (F-REVIEW-4). */
+export function reviewProgress(review: Partial<ReviewCounts>): { reviewed: number; total: number } {
+  const reviewed = (review.approved ?? 0) + (review.rejected ?? 0) + (review.ignored ?? 0);
+  return { reviewed, total: reviewed + (review.pending ?? 0) };
+}
+
+/** F-REVIEW-4: fully reviewed when it has changed items and none of them is pending. */
+export function isFullyReviewed(review: Partial<ReviewCounts>): boolean {
+  const { reviewed, total } = reviewProgress(review);
+  return total > 0 && reviewed === total;
+}
+
+/** Splits ids into request-sized batches (`reviewRequest` takes at most 1000). */
+export function chunk<T>(values: T[], size: number): T[][] {
+  const batches: T[][] = [];
+  for (let i = 0; i < values.length; i += size) batches.push(values.slice(i, i + size));
+  return batches;
 }

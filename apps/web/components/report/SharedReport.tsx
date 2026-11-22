@@ -53,6 +53,11 @@ export function SharedReport({ token, report }: { token: string; report: SharedR
           initialTotal={report.firstPage.total ?? 0}
           initialItem={null}
           shareToken={token}
+          reviewCounts={header.reviewCounts}
+          canReview={false}
+          canSetBaseline={false}
+          afterRunId={header.afterRunId}
+          afterIsBaseline={false}
         />
 
         <ReportSections sections={report.sections} />

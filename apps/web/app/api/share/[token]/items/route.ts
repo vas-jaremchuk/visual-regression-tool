@@ -12,6 +12,7 @@ const itemsQuery = z.object({
   viewport: z.string().min(1).max(64).optional(),
   review: reviewStatus.optional(),
   search: z.string().max(500).default(''),
+  maxPct: z.coerce.number().min(0).max(100).optional(),
   offset: z.coerce.number().int().min(0).max(1_000_000).default(0),
 });
 
@@ -25,11 +26,11 @@ export async function GET(
 ) {
   const query = itemsQuery.safeParse(Object.fromEntries(request.nextUrl.searchParams));
   if (!query.success) return validationResponse(query.error.issues);
-  const { offset, viewport, review, ...rest } = query.data;
+  const { offset, viewport, review, maxPct, ...rest } = query.data;
   try {
     const page = await fetchSharedItemPage(
       (await params).token,
-      { ...rest, viewport: viewport ?? null, review: review ?? null },
+      { ...rest, viewport: viewport ?? null, review: review ?? null, maxPct: maxPct ?? null },
       offset,
     );
     if (!page) throw new RequestError(404, 'not_found', 'Share link not found');

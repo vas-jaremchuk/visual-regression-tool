@@ -68,7 +68,7 @@ export interface CompareProject {
 }
 
 export interface CompareRunItem {
-  url: string;
+  url: string | null;
   kind: ItemKind;
   viewport_slug: string | null;
   filename: string;
@@ -99,7 +99,7 @@ export interface CompareSettings {
 
 export interface NewComparisonItem {
   comparison_id: string;
-  url: string;
+  url: string | null;
   name: string;
   kind: ItemKind;
   viewport_slug: string | null;
@@ -114,12 +114,12 @@ export interface NewComparisonItem {
 
 export interface PendingPair {
   id: string;
-  url: string;
+  url: string | null;
 }
 
 export interface ChangedItem {
   id: string;
-  url: string;
+  url: string | null;
   viewportSlug: string | null;
   afterKey: string | null;
 }
@@ -436,7 +436,14 @@ export function createCompareJob(comparisonId: string, deps: CompareJobDeps) {
       const project = await store.loadProject(comparison.projectId);
       const auth = await deps.basicAuthHeader(project);
       const headers = auth ? { Authorization: auth } : undefined;
-      const urls = [...new Set((await store.listPendingPairs(comparisonId)).map((p) => p.url))];
+      // Legacy items without a reconstructed URL (F-RUN-6) cannot be redirect-checked.
+      const urls = [
+        ...new Set(
+          (await store.listPendingPairs(comparisonId))
+            .map((p) => p.url)
+            .filter((u): u is string => u !== null),
+        ),
+      ];
       const targets = await mapLimit(urls, REDIRECT_CHECK_CONCURRENCY, (url) =>
         detectRedirect(url, deps.fetcher, { headers }),
       );
@@ -483,7 +490,10 @@ export function createCompareJob(comparisonId: string, deps: CompareJobDeps) {
       if (changed.length === 0) return { ignored: 0, remembered: 0 };
 
       const ignoredIds = changed
-        .filter((i) => isUrlIgnored(settings.ignoreRules, i.url, 'compare', i.viewportSlug))
+        .filter(
+          (i) =>
+            i.url !== null && isUrlIgnored(settings.ignoreRules, i.url, 'compare', i.viewportSlug),
+        )
         .map((i) => i.id);
       if (ignoredIds.length > 0) {
         await store.setReview(ignoredIds, 'ignored', 'auto: ignore rule');
@@ -499,7 +509,7 @@ export function createCompareJob(comparisonId: string, deps: CompareJobDeps) {
       const skip = new Set(ignoredIds);
       for (const item of changed) {
         const sha = item.afterKey ? shaByKey.get(item.afterKey) : undefined;
-        if (skip.has(item.id) || !sha) continue;
+        if (skip.has(item.id) || !sha || item.url === null) continue;
         const review = await store.findReviewMemory(
           comparison.projectId,
           item.url,

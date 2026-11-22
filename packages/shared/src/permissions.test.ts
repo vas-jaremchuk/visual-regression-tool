@@ -21,6 +21,7 @@ const matrix: [PermissionAction, boolean, boolean, boolean, boolean][] = [
   ['project.settings', false, false, true, true],
   ['member.manage', false, false, true, true],
   ['run.delete', false, false, true, true],
+  ['legacy.import', false, false, true, true],
   ['project.archive', false, false, false, true],
   ['project.create', false, false, false, true],
   ['user.manage', false, false, false, true],

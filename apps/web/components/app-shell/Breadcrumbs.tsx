@@ -20,7 +20,12 @@ export function Breadcrumbs({ projects }: { projects: ProjectSummary[] }) {
       index === 1 && segments[0] === 'p' ? projects.find((p) => p.slug === segment) : undefined;
     crumbs.push({
       href: `/${segments.slice(0, index + 1).join('/')}`,
-      label: project ? project.name : label(segment),
+      // Run labels (`2026-11-22_09-00-00`) are shown as they are.
+      label: project
+        ? project.name
+        : segments[index - 1] === 'runs'
+          ? decodeURIComponent(segment)
+          : label(segment),
     });
   });
 

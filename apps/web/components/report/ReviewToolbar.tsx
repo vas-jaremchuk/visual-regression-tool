@@ -87,9 +87,11 @@ export function ReviewToolbar({
           className="h-8"
         />
       </div>
-      <p className="w-full text-xs text-muted-foreground">
+      <p className="w-full text-xs text-muted-foreground" data-testid="review-state">
         Review: <span className="font-medium">{item.review}</span>
+        {item.autoReviewed && ' automatically'}
         {item.reviewNote && ` · “${item.reviewNote}”`} · keys a / r / i
+        {item.autoReviewed && ' · choose a review to override it'}
       </p>
     </div>
   );

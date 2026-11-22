@@ -13,9 +13,10 @@ import {
   getReportSections,
 } from '@/lib/comparisons/report-queries';
 import { canDo } from '@/lib/projects/access';
-import { getProjectDetail } from '@/lib/projects/queries';
+import { getProjectDetail, listViewports } from '@/lib/projects/queries';
 import { getBaselineRunId } from '@/lib/runs/queries';
 import { createClient } from '@/lib/supabase/server';
+import { RediffButton } from './RediffButton';
 import { ReportSections } from './ReportSections';
 import { ShareDialog } from './ShareDialog';
 import { ReportView } from './ReportView';
@@ -56,16 +57,31 @@ export async function ReportPage({
   if (!project) notFound();
   const header = await getReportHeader(project.id, comparisonId);
   if (!header) notFound();
-  const [firstPage, sections, item, baselineRunId, canReview, canSetBaseline, canShare] =
-    await Promise.all([
-      fetchItemPage(await createClient(), comparisonId, DEFAULT_FILTER, 0, { count: true }),
-      getReportSections(comparisonId),
-      itemId ? getReportItem(comparisonId, itemId) : Promise.resolve(null),
-      getBaselineRunId(project.id),
-      canDo(user, 'comparison.review', project.id),
-      canDo(user, 'baseline.set', project.id),
-      canDo(user, 'share_link.manage', project.id),
-    ]);
+  const [
+    firstPage,
+    sections,
+    item,
+    baselineRunId,
+    canReview,
+    canSetBaseline,
+    canStart,
+    canManageRules,
+    viewports,
+    canShare,
+  ] = await Promise.all([
+    fetchItemPage(await createClient(), comparisonId, DEFAULT_FILTER, 0, { count: true }),
+    getReportSections(comparisonId),
+    itemId ? getReportItem(comparisonId, itemId) : Promise.resolve(null),
+    getBaselineRunId(project.id),
+    canDo(user, 'comparison.review', project.id),
+    canDo(user, 'baseline.set', project.id),
+    canDo(user, 'comparison.start', project.id),
+    canDo(user, 'ignore_rule.manage', project.id),
+    listViewports(project.id),
+    canDo(user, 'share_link.manage', project.id),
+  ]);
+  const archived = Boolean(project.archivedAt);
+  const running = header.status === 'queued' || header.status === 'running';
   if (itemId && !item) notFound();
 
   return (
@@ -85,6 +101,9 @@ export async function ReportPage({
           </h1>
           <Badge className={STATUS_CLASS[header.status]}>{header.status}</Badge>
           <div className="ml-auto flex flex-wrap gap-2">
+            {canStart && (
+              <RediffButton comparisonId={comparisonId} disabled={running || archived} />
+            )}
             {canShare && (
               <ShareDialog
                 comparisonId={comparisonId}
@@ -105,7 +124,7 @@ export async function ReportPage({
         <p className="text-sm text-muted-foreground">
           Threshold: &gt;{header.changeThresholdPct ?? 0}% pixel change
         </p>
-        {(header.status === 'queued' || header.status === 'running') && (
+        {running && (
           <p role="status" className="text-sm text-muted-foreground">
             The comparison is still running; reload to see more results.
           </p>
@@ -128,6 +147,9 @@ export async function ReportPage({
         reviewCounts={header.reviewCounts}
         canReview={canReview}
         canSetBaseline={canSetBaseline}
+        projectId={project.id}
+        canManageRules={canManageRules && !archived}
+        projectViewports={viewports.map((v) => v.slug)}
         afterRunId={header.afterRunId}
         afterIsBaseline={header.afterRunId === baselineRunId}
       />

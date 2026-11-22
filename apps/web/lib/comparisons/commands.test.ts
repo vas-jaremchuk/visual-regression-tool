@@ -46,6 +46,19 @@ function setup(
       );
       return found ? { id: found.id, label: found.label, status: found.status } : null;
     },
+    loadComparison: async (id) => {
+      const found = state.comparisons.find((c) => c.id === id);
+      return found
+        ? {
+            id: found.id,
+            label: found.label,
+            status: found.status,
+            projectId: found.projectId,
+            beforeRunId: found.beforeRunId,
+            afterRunId: found.afterRunId,
+          }
+        : null;
+    },
     insertComparison: async (comparison) => {
       const id = `55555555-5555-4555-8555-${String(state.comparisons.length).padStart(12, '0')}`;
       state.comparisons.push({ ...comparison, id, status: 'queued', patches: [] });
@@ -200,6 +213,72 @@ describe('startComparison', () => {
     const { state, commands } = setup({ workerDown: true });
     const error = await rejection(commands.startComparison(PROJECT, USER, input));
     expect(error).toMatchObject({ status: 502, code: 'worker_unavailable' });
+    expect(state.comparisons[0]!.status).toBe('failed');
+    expect(state.audits).toEqual([]);
+  });
+});
+
+describe('rediff', () => {
+  async function completed(options: Parameters<typeof setup>[0] = {}) {
+    const ctx = setup(options);
+    const { comparisonId } = await setup().commands.startComparison(PROJECT, USER, input);
+    ctx.state.comparisons.push({
+      id: comparisonId,
+      projectId: PROJECT,
+      beforeRunId: BEFORE,
+      afterRunId: AFTER,
+      label: LABEL,
+      startedBy: USER,
+      status: 'completed',
+      patches: [],
+    });
+    return { ...ctx, comparisonId };
+  }
+
+  it('requeues the comparison, starts the workflow and audits comparison.rediff', async () => {
+    const { state, commands, comparisonId } = await completed();
+    await expect(commands.rediff(comparisonId, USER)).resolves.toEqual({ workflowId: 'wf-1' });
+    expect(state.authorized).toEqual(['comparison.start']);
+    expect(state.started).toEqual([comparisonId]);
+    expect(state.comparisons[0]!.patches).toEqual([
+      { status: 'queued', started_by: USER, started_at: null, finished_at: null },
+      { workflow_id: 'wf-1' },
+    ]);
+    expect(state.audits).toEqual([
+      { action: 'comparison.rediff', details: { comparisonId, label: LABEL, workflowId: 'wf-1' } },
+    ]);
+  });
+
+  it('answers 404 for an unknown comparison', async () => {
+    const { commands } = setup();
+    const error = await rejection(commands.rediff(AFTER, USER));
+    expect(error).toMatchObject({ status: 404 });
+  });
+
+  it('refuses viewers', async () => {
+    const { state, commands, comparisonId } = await completed({ role: 'viewer' });
+    await expect(commands.rediff(comparisonId, USER)).rejects.toBeInstanceOf(ForbiddenError);
+    expect(state.started).toEqual([]);
+  });
+
+  it('answers 409 while the comparison is still running', async () => {
+    const { state, commands, comparisonId } = await completed();
+    state.comparisons[0]!.status = 'running';
+    const error = await rejection(commands.rediff(comparisonId, USER));
+    expect(error).toMatchObject({ status: 409, code: 'conflict' });
+    expect(state.started).toEqual([]);
+  });
+
+  it('refuses an archived project', async () => {
+    const { commands, comparisonId } = await completed({ archived: true });
+    const error = await rejection(commands.rediff(comparisonId, USER));
+    expect(error).toMatchObject({ status: 422 });
+  });
+
+  it('marks the comparison failed when the worker is down', async () => {
+    const { state, commands, comparisonId } = await completed({ workerDown: true });
+    const error = await rejection(commands.rediff(comparisonId, USER));
+    expect(error).toMatchObject({ status: 502 });
     expect(state.comparisons[0]!.status).toBe('failed');
     expect(state.audits).toEqual([]);
   });

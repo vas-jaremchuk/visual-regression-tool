@@ -460,6 +460,26 @@ describe('CompareJob steps', () => {
     expect(await createCompareJob(CMP, deps(store)).prepare()).toEqual({ skip: true });
   });
 
+  it('snapshots the enabled compare rules into the settings; later edits do not change them', async () => {
+    const store = new MemoryStore();
+    fixtureRuns(store);
+    const o = site.origin;
+    const region = { x: 0, y: 0, width: 100, height: 50 };
+    store.rules = [
+      { type: 'url_pattern', url_pattern: `${o}/about/`, applies_to: 'compare' },
+      { type: 'url_pattern', url_pattern: `${o}/blog/**`, applies_to: 'capture' },
+      { type: 'region', region, viewport_slug: 'desktop', applies_to: 'both' },
+      { type: 'region', region, enabled: false, applies_to: 'both' },
+    ];
+    const job = createCompareJob(CMP, deps(store));
+    await job.prepare();
+    expect(store.comparison.settings.ignoreRules).toEqual([store.rules[0], store.rules[2]]);
+
+    store.rules = [];
+    await job.matrix();
+    expect(store.comparison.settings.ignoreRules).toHaveLength(2);
+  });
+
   it('auto-reviews ignored URLs and remembered after PNGs, then reports clean', async () => {
     const store = new MemoryStore();
     const { changed } = fixtureRuns(store);

@@ -27,6 +27,12 @@ export interface ComparisonRecord {
   status: ComparisonStatus;
 }
 
+export interface StoredComparison extends ComparisonRecord {
+  projectId: string;
+  beforeRunId: string;
+  afterRunId: string;
+}
+
 export interface NewComparison {
   projectId: string;
   beforeRunId: string;
@@ -52,6 +58,8 @@ export interface ComparisonsGateway {
     beforeRunId: string,
     afterRunId: string,
   ): Promise<ComparisonRecord | null>;
+  /** The comparison (RLS: only comparisons the user can view). */
+  loadComparison(comparisonId: string): Promise<StoredComparison | null>;
   insertComparison(comparison: NewComparison): Promise<{ id: string }>;
   updateComparison(comparisonId: string, patch: ComparisonPatch): Promise<void>;
   audit(action: string, projectId: string, details: Record<string, Json>): Promise<void>;
@@ -98,6 +106,26 @@ export function createComparisonCommands(deps: ComparisonCommandDeps) {
       );
     }
     return run;
+  }
+
+  /** Starts the compare workflow; a worker failure marks the comparison failed. */
+  async function start(comparisonId: string): Promise<string> {
+    try {
+      const { workflowId } = await worker.startCompare({ comparisonId });
+      await db.updateComparison(comparisonId, { workflow_id: workflowId });
+      return workflowId;
+    } catch (cause) {
+      log(cause);
+      await db.updateComparison(comparisonId, {
+        status: 'failed',
+        finished_at: now().toISOString(),
+      });
+      throw new RequestError(
+        502,
+        'worker_unavailable',
+        'Could not start the comparison job. Try again.',
+      );
+    }
   }
 
   return {
@@ -172,22 +200,7 @@ export function createComparisonCommands(deps: ComparisonCommandDeps) {
         ).id;
       }
 
-      let workflowId: string;
-      try {
-        ({ workflowId } = await worker.startCompare({ comparisonId }));
-        await db.updateComparison(comparisonId, { workflow_id: workflowId });
-      } catch (cause) {
-        log(cause);
-        await db.updateComparison(comparisonId, {
-          status: 'failed',
-          finished_at: now().toISOString(),
-        });
-        throw new RequestError(
-          502,
-          'worker_unavailable',
-          'Could not start the comparison job. Try again.',
-        );
-      }
+      const workflowId = await start(comparisonId);
       await db.audit(existing ? 'comparison.replace' : 'comparison.start', projectId, {
         comparisonId,
         label,
@@ -196,6 +209,45 @@ export function createComparisonCommands(deps: ComparisonCommandDeps) {
         workflowId,
       });
       return { comparisonId, label };
+    },
+
+    /**
+     * POST /api/comparisons/:id/rediff (09 §1, F-IGNORE-3): re-runs a finished comparison with
+     * the project's current thresholds and ignore rules. The workflow's prepare step snapshots
+     * them into `comparisons.settings` and replaces the items.
+     */
+    async rediff(comparisonId: string, userId: string): Promise<{ workflowId: string }> {
+      const comparison = await db.loadComparison(comparisonId);
+      if (!comparison) throw new RequestError(404, 'not_found', 'Comparison not found');
+      const { projectId } = comparison;
+      await deps.authorize('comparison.start', projectId);
+      const project = await db.loadProject(projectId);
+      if (!project) throw new RequestError(404, 'not_found', 'Project not found');
+      if (project.archived) {
+        throw new RequestError(422, 'business_rule', 'The project is archived; unarchive it first');
+      }
+      if (BUSY.includes(comparison.status)) {
+        throw new RequestError(
+          409,
+          'conflict',
+          `Comparison ${comparison.label} is ${comparison.status}`,
+        );
+      }
+      await loadRun(projectId, comparison.beforeRunId, 'before');
+      await loadRun(projectId, comparison.afterRunId, 'after');
+      await db.updateComparison(comparisonId, {
+        status: 'queued',
+        started_by: userId,
+        started_at: null,
+        finished_at: null,
+      });
+      const workflowId = await start(comparisonId);
+      await db.audit('comparison.rediff', projectId, {
+        comparisonId,
+        label: comparison.label,
+        workflowId,
+      });
+      return { workflowId };
     },
   };
 }

@@ -67,6 +67,26 @@ function supabaseGateway(supabase: UserClient): ComparisonsGateway {
       );
     },
 
+    async loadComparison(comparisonId) {
+      const row = check(
+        'load the comparison',
+        await supabase
+          .from('comparisons')
+          .select('id, label, status, project_id, before_run_id, after_run_id')
+          .eq('id', comparisonId)
+          .maybeSingle(),
+      );
+      if (!row) return null;
+      return {
+        id: row.id,
+        label: row.label,
+        status: row.status,
+        projectId: row.project_id,
+        beforeRunId: row.before_run_id,
+        afterRunId: row.after_run_id,
+      };
+    },
+
     async insertComparison(comparison) {
       const { data, error } = await supabase
         .from('comparisons')
@@ -115,6 +135,23 @@ export async function startComparison(
     worker: workerClient(),
   });
   return commands.startComparison(projectId, user.id, input);
+}
+
+/** F-IGNORE-3: editor+ re-runs a comparison with the current thresholds and ignore rules. */
+export async function rediffComparison(
+  user: CurrentUser | null,
+  comparisonId: string,
+): Promise<{ workflowId: string }> {
+  if (!user) throw new ForbiddenError('comparison.start');
+  const supabase = await createClient();
+  const commands = createComparisonCommands({
+    authorize: async (action, id) => {
+      await assertCan(user, action, id);
+    },
+    db: supabaseGateway(supabase),
+    worker: workerClient(),
+  });
+  return commands.rediff(comparisonId, user.id);
 }
 
 /** `ReviewGateway` as the signed-in user: RLS on the read, `review_items` checks `can_edit`. */

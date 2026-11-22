@@ -58,6 +58,9 @@ export function SharedReport({ token, report }: { token: string; report: SharedR
           canSetBaseline={false}
           afterRunId={header.afterRunId}
           afterIsBaseline={false}
+          projectId=""
+          canManageRules={false}
+          projectViewports={[]}
         />
 
         <ReportSections sections={report.sections} />

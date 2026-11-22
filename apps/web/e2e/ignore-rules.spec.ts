@@ -150,7 +150,7 @@ const rulesPath = `/p/${PROJECT.slug}/ignore-rules`;
 test('an editor creates, tests, disables, edits and deletes rules', async ({ page }) => {
   await signInWithMagicLink(page, EDITOR, rulesPath);
   await expect(page.getByRole('heading', { name: 'Ignore rules' })).toBeVisible();
-  await expect(page.getByText('No ignore rules.')).toBeVisible();
+  await expect(page.getByRole('main').getByText('No ignore rules.')).toBeVisible();
 
   await page.getByRole('button', { name: 'Add rule' }).click();
   const dialog = page.getByRole('dialog');
@@ -216,11 +216,13 @@ test('a viewer sees the rules and the tester but cannot change them', async ({ p
     url_pattern: 'https://www.example.com/cart',
   });
   await signInWithMagicLink(page, VIEWER, rulesPath);
-  await expect(page.getByTestId('ignore-rule-row')).toHaveCount(1);
-  await expect(page.getByRole('button', { name: 'Add rule' })).toHaveCount(0);
-  await expect(page.getByRole('button', { name: /Delete rule/ })).toHaveCount(0);
-  await page.getByLabel('URL', { exact: true }).fill('https://www.example.com/cart');
-  await expect(page.getByTestId('tester-result')).toContainText('https://www.example.com/cart');
+  // Scoped to main: while the page streams in, a hidden copy can exist outside it.
+  const main = page.getByRole('main');
+  await expect(main.getByTestId('ignore-rule-row')).toHaveCount(1);
+  await expect(main.getByRole('button', { name: 'Add rule' })).toHaveCount(0);
+  await expect(main.getByRole('button', { name: /Delete rule/ })).toHaveCount(0);
+  await main.getByLabel('URL', { exact: true }).fill('https://www.example.com/cart');
+  await expect(main.getByTestId('tester-result')).toContainText('https://www.example.com/cart');
 
   const report = `/p/${PROJECT.slug}/comparisons/${comparisonId}`;
   await page.goto(report);

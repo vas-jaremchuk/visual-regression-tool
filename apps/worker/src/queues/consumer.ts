@@ -1,23 +1,26 @@
+import { getRandom } from '@cloudflare/containers';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@vrt/db';
-import { captureMsg, decryptSecret, type WorkerEnv } from '@vrt/shared';
+import { captureMsg, decryptSecret, diffMsg, type WorkerEnv } from '@vrt/shared';
 import { R2ObjectStore } from '@vrt/storage';
 import { BrowserRenderingProvider } from '../capture/browser-rendering-provider';
 import { processCaptureMessage, type CaptureDeps } from '../capture/consumer';
 import { CaptureRepo } from '../capture/repo';
+import { containerDiff, processDiffMessage, type DiffDeps } from '../compare/diff-consumer';
+import { supabaseDiffRepo } from '../compare/supabase-compare-store';
 import type { Env } from '../env';
 import { durableLimiter } from '../limiter/limiter';
 import { createLogger, type Logger } from '../logger';
 import { createServiceClient } from '../supabase';
 
-/**
- * Queue consumer for `vrt-capture` and `vrt-diff` (03 §3). `vrt-diff` is still a stub that
- * acknowledges every message; diff dispatch (T15) replaces it.
- */
+/** Queue consumer for `vrt-capture` and `vrt-diff` (03 §3). */
 
 const log = createLogger({ component: 'queue' });
 
 export const CAPTURE_QUEUE_NAME = 'vrt-capture';
+export const DIFF_QUEUE_NAME = 'vrt-diff';
+/** Container instances the diff consumer spreads its requests over. */
+export const DIFF_CONTAINER_INSTANCES = 3;
 
 export async function handleQueue(
   batch: MessageBatch<unknown>,
@@ -28,7 +31,11 @@ export async function handleQueue(
     await handleCaptureBatch(batch, captureDeps(env, config));
     return;
   }
-  log.info('stub queue batch', { queue: batch.queue, messages: batch.messages.length });
+  if (batch.queue === DIFF_QUEUE_NAME) {
+    await handleDiffBatch(batch, diffDeps(env, config));
+    return;
+  }
+  log.info('unknown queue batch', { queue: batch.queue, messages: batch.messages.length });
   batch.ackAll();
 }
 
@@ -82,6 +89,49 @@ function captureDeps(env: Env, config: WorkerEnv, logger: Logger = log): Capture
       await env.CAPTURE_QUEUE.send(msg, { delaySeconds });
     },
     decrypt: (payload) => decryptSecret(payload, config.SETTINGS_ENCRYPTION_KEY),
+    log: logger,
+  };
+}
+
+/**
+ * Diff messages run in parallel (one container request at a time each). A message that throws is
+ * retried by the queue; its pairs become `error` on attempt `DIFF_MAX_ATTEMPTS` (06 §6).
+ */
+export async function handleDiffBatch(batch: MessageBatch<unknown>, deps: DiffDeps): Promise<void> {
+  await Promise.all(
+    batch.messages.map(async (message) => {
+      const parsed = diffMsg.safeParse(message.body);
+      if (!parsed.success) {
+        deps.log.error('invalid diff message; dropped', {
+          messageId: message.id,
+          issues: parsed.error.issues,
+        });
+        message.ack();
+        return;
+      }
+      try {
+        await processDiffMessage(parsed.data, message.attempts, deps);
+        message.ack();
+      } catch (err) {
+        deps.log.error('diff message failed; will be retried', {
+          messageId: message.id,
+          comparisonId: parsed.data.comparisonId,
+          attempts: message.attempts,
+          err,
+        });
+        message.retry();
+      }
+    }),
+  );
+}
+
+function diffDeps(env: Env, config: WorkerEnv, logger: Logger = log): DiffDeps {
+  return {
+    repo: supabaseDiffRepo(createServiceClient(config)),
+    diff: containerDiff(async (request) => {
+      const stub = await getRandom(env.DIFF_CONTAINER, DIFF_CONTAINER_INSTANCES);
+      return stub.fetch(request);
+    }, config.DIFF_CONTAINER_SHARED_SECRET),
     log: logger,
   };
 }

@@ -1,4 +1,5 @@
 import { id } from '@vrt/shared';
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Badge } from '@/components/ui/badge';
 import { requireUser } from '@/lib/auth/session';
@@ -55,7 +56,13 @@ export async function ReportPage({
       <header className="grid gap-1">
         <div className="flex flex-wrap items-center gap-3">
           <h1 className="font-mono text-xl font-semibold">
-            {header.beforeLabel} <span aria-label="versus">↔</span> {header.afterLabel}
+            <Link href={`/p/${slug}/runs/${header.beforeLabel}`} className="hover:underline">
+              {header.beforeLabel}
+            </Link>{' '}
+            <span aria-label="versus">↔</span>{' '}
+            <Link href={`/p/${slug}/runs/${header.afterLabel}`} className="hover:underline">
+              {header.afterLabel}
+            </Link>
           </h1>
           <Badge className={STATUS_CLASS[header.status]}>{header.status}</Badge>
         </div>

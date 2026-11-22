@@ -224,7 +224,7 @@ export function supabaseCompareStore(db: SupabaseClient): CompareStore {
     async listUnreviewedChanged(comparisonId) {
       const rows = await pages<{
         id: string;
-        url: string;
+        url: string | null;
         viewport_slug: string | null;
         after_key: string | null;
       }>('list changed items', (from, to) =>

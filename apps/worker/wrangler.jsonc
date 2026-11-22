@@ -18,6 +18,7 @@
     { "binding": "SITEMAP_FETCH", "name": "vrt-sitemap-fetch", "class_name": "SitemapWorkflow" },
     { "binding": "DELETE_JOB", "name": "vrt-delete", "class_name": "DeleteWorkflow" },
     { "binding": "STORAGE_USAGE", "name": "vrt-storage-usage", "class_name": "StorageWorkflow" },
+    { "binding": "LEGACY_IMPORT", "name": "vrt-legacy-import", "class_name": "ImportWorkflow" },
   ],
   "queues": {
     "producers": [

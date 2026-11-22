@@ -9,6 +9,7 @@ export { CaptureRunWorkflow } from './workflows/capture-run';
 export { CompareWorkflow } from './workflows/compare';
 export { DeleteWorkflow } from './workflows/delete';
 export { StorageWorkflow } from './workflows/storage';
+export { ImportWorkflow } from './workflows/import-legacy';
 
 export default {
   fetch: (request, env) => handleRequest(request, env),

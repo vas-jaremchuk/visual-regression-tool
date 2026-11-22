@@ -50,6 +50,12 @@ export interface CaptureDeps {
 /** An item error that a retry cannot fix; the item fails on the first attempt. */
 class PermanentItemError extends Error {}
 
+/** Legacy items without a reconstructed URL (F-RUN-6) cannot be captured again. */
+function urlOf(item: CaptureItem): string {
+  if (item.url === null) throw new PermanentItemError(`Item ${item.filename} has no URL`);
+  return item.url;
+}
+
 interface Context {
   run: CaptureRun;
   project: CaptureProject;
@@ -198,9 +204,10 @@ async function capturePage(
   if (!viewport) {
     throw new PermanentItemError(`Viewport "${item.viewport_slug}" not found in project`);
   }
+  const url = urlOf(item);
   const key = keyFor(item, ctx.run);
   const { png, truncated } = await session.capture({
-    url: item.url,
+    url,
     viewport: {
       width: viewport.width,
       height: viewport.height,
@@ -208,7 +215,7 @@ async function capturePage(
       isMobile: viewport.is_mobile,
     },
     basicAuth: ctx.basicAuth,
-    css: buildInjectedCss(ctx.project, ctx.rules, item.url, item.viewport_slug),
+    css: buildInjectedCss(ctx.project, ctx.rules, url, item.viewport_slug),
     pageTimeoutMs: ctx.project.page_timeout_ms,
     settleMs: ctx.project.settle_ms,
     maxPageHeight: ctx.project.max_page_height,
@@ -234,11 +241,12 @@ async function captureFile(
   ctx: Context,
   deps: CaptureDeps,
 ): Promise<ItemUpdate> {
+  const url = urlOf(item);
   const key = keyFor(item, ctx.run);
   const headers: Record<string, string> = ctx.basicAuth
     ? { Authorization: basicAuthHeader(ctx.basicAuth.username, ctx.basicAuth.password) }
     : {};
-  const fp = await fingerprintUrl(item.url, headers, deps.fetcher, { now: deps.now });
+  const fp = await fingerprintUrl(url, headers, deps.fetcher, { now: deps.now });
   await deps.store.put(
     ctx.project.r2_bucket,
     key,

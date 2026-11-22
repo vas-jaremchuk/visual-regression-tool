@@ -748,7 +748,7 @@ export type Database = {
           sha256: string | null;
           status: Database['public']['Enums']['item_status'];
           truncated: boolean;
-          url: string;
+          url: string | null;
           viewport_slug: string | null;
           width: number | null;
         };
@@ -773,7 +773,7 @@ export type Database = {
           sha256?: string | null;
           status?: Database['public']['Enums']['item_status'];
           truncated?: boolean;
-          url: string;
+          url?: string | null;
           viewport_slug?: string | null;
           width?: number | null;
         };
@@ -797,7 +797,7 @@ export type Database = {
           sha256?: string | null;
           status?: Database['public']['Enums']['item_status'];
           truncated?: boolean;
-          url?: string;
+          url?: string | null;
           viewport_slug?: string | null;
           width?: number | null;
         };
@@ -1270,6 +1270,16 @@ export type Database = {
           p_review: Database['public']['Enums']['review_status'];
         };
         Returns: number;
+      };
+      run_item_stats: {
+        Args: { p_run_ids: string[] };
+        Returns: {
+          bytes: number;
+          items: number;
+          run_id: string;
+          status: Database['public']['Enums']['item_status'];
+          viewport_slug: string;
+        }[];
       };
       run_project_id: { Args: { p_run_id: string }; Returns: string };
       set_baseline: { Args: { p_project_id: string; p_run_id: string }; Returns: undefined };

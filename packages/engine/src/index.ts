@@ -16,3 +16,4 @@ export * from './report';
 export * from './ignore-rules';
 export { Sha256, sha256Hex } from './sha256';
 export { basicAuthHeader, mapLimit } from './util';
+export * from './legacy';

@@ -52,20 +52,6 @@ function parseBody<T extends z.ZodType>(schema: T, body: Uint8Array): z.infer<T>
 }
 
 /**
- * Start-job stubs: validate the ids-only body and answer with a placeholder workflow id.
- * Creating the Workflow instance is real job logic and belongs to T10+.
- */
-function startJob(job: string, schema: z.ZodType): JobHandler {
-  return ({ body, log }) => {
-    const parsed = parseBody(schema, body);
-    if (parsed instanceof Response) return parsed;
-    const response: JobStartedResponse = { workflowId: `stub-${crypto.randomUUID()}` };
-    log.info('stub job started', { job, ...(parsed as object), ...response });
-    return json(response);
-  };
-}
-
-/**
  * POST /jobs/sitemap: one `SitemapWorkflow` instance per snapshot, named after it, so a repeated
  * request does not start a second fetch.
  */
@@ -81,6 +67,19 @@ const startSitemap: JobHandler = async ({ env, body, log }) => {
   }
   const response: JobStartedResponse = { workflowId: instance.id };
   log.info('sitemap workflow started', { ...parsed, ...response });
+  return json(response);
+};
+
+/** POST /jobs/import-legacy (F-RUN-6): one `ImportWorkflow` instance per request. */
+const startImportLegacy: JobHandler = async ({ env, body, log }) => {
+  const parsed = parseBody(importLegacyJob, body);
+  if (parsed instanceof Response) return parsed;
+  const instance = await env.LEGACY_IMPORT.create({
+    id: `${parsed.projectId}-${Date.now().toString(36)}`,
+    params: parsed,
+  });
+  const response: JobStartedResponse = { workflowId: instance.id };
+  log.info('legacy import workflow started', { ...parsed, ...response });
   return json(response);
 };
 
@@ -208,11 +207,7 @@ const routes: { method: string; pattern: RegExp; handler: JobHandler }[] = [
   { method: 'POST', pattern: /^\/jobs\/capture\/([^/]+)\/cancel$/, handler: cancelCapture },
   { method: 'POST', pattern: /^\/jobs\/compare$/, handler: startCompare },
   { method: 'POST', pattern: /^\/jobs\/delete$/, handler: startDelete },
-  {
-    method: 'POST',
-    pattern: /^\/jobs\/import-legacy$/,
-    handler: startJob('import-legacy', importLegacyJob),
-  },
+  { method: 'POST', pattern: /^\/jobs\/import-legacy$/, handler: startImportLegacy },
   { method: 'POST', pattern: /^\/jobs\/storage$/, handler: startStorage },
   {
     method: 'GET',

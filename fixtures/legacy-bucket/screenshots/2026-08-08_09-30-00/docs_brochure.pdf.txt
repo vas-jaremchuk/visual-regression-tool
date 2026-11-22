@@ -1,0 +1,8 @@
+url: https://example.com/docs/brochure.pdf
+sha256: ERROR HTTP 404
+size: 0
+status: 404
+content-type: text/html
+last-modified: 
+etag: 
+fetched-at: 2026-08-08T09:31:40.000Z

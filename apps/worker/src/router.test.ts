@@ -209,6 +209,26 @@ describe('POST /jobs/capture', () => {
   });
 });
 
+describe('POST /jobs/import-legacy', () => {
+  it('starts an ImportWorkflow instance with the selected labels', async () => {
+    const create = vi.fn(async ({ id }: { id: string; params: unknown }) => ({ id }));
+    const env = makeEnv({ LEGACY_IMPORT: { create } });
+    const body = { projectId: uuid, labels: ['2026-08-07_10-00-00'] };
+    const res = await handleRequest(await signed('POST', '/jobs/import-legacy', body), env);
+    expect(res.status).toBe(200);
+    const { workflowId } = (await res.json()) as { workflowId: string };
+    expect(workflowId.startsWith(`${uuid}-`)).toBe(true);
+    expect(create).toHaveBeenCalledWith({ id: workflowId, params: body });
+  });
+
+  it('rejects an invalid label', async () => {
+    const env = makeEnv({ LEGACY_IMPORT: { create: vi.fn() } });
+    const body = { projectId: uuid, labels: ['latest'] };
+    const res = await handleRequest(await signed('POST', '/jobs/import-legacy', body), env);
+    expect(res.status).toBe(400);
+  });
+});
+
 describe('POST /jobs/compare', () => {
   function workflowBinding(status: string) {
     const instances = new Map<string, unknown>();
@@ -316,16 +336,6 @@ describe('POST /jobs/delete and /jobs/storage', () => {
 });
 
 describe('signed job stubs', () => {
-  it.each([['/jobs/import-legacy', { projectId: uuid, labels: ['2026-08-07_10-00-00'] }]])(
-    'POST %s answers 200 with a workflow id',
-    async (path, body) => {
-      const res = await handleRequest(await signed('POST', path, body), makeEnv());
-      expect(res.status).toBe(200);
-      const json = (await res.json()) as { workflowId: string };
-      expect(json.workflowId).toMatch(/^stub-/);
-    },
-  );
-
   it('GET /jobs/:workflowId answers 200 with a status', async () => {
     const res = await handleRequest(await signed('GET', '/jobs/stub-abc'), makeEnv());
     expect(res.status).toBe(200);

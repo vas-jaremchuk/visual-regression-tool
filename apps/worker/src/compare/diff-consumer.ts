@@ -14,7 +14,7 @@ import type { CompareSettings } from './compare-job';
 
 export interface DiffItem {
   id: string;
-  url: string;
+  url: string | null;
   viewportSlug: string | null;
   status: string;
   beforeKey: string | null;
@@ -76,7 +76,7 @@ function reason(error: unknown): string {
 
 export function diffRequest(comparison: DiffComparison, item: DiffItem): DiffRequest {
   const { settings } = comparison;
-  const regions: Region[] = regionsFor(settings.ignoreRules, item.url, item.viewportSlug);
+  const regions: Region[] = regionsFor(settings.ignoreRules, item.url ?? '', item.viewportSlug);
   return {
     bucket: comparison.bucket,
     beforeKey: item.beforeKey!,

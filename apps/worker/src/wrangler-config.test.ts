@@ -23,6 +23,7 @@ describe('wrangler.jsonc', () => {
       SITEMAP_FETCH: 'SitemapWorkflow',
       DELETE_JOB: 'DeleteWorkflow',
       STORAGE_USAGE: 'StorageWorkflow',
+      LEGACY_IMPORT: 'ImportWorkflow',
     });
   });
 

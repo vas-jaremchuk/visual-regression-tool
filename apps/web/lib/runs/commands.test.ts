@@ -1,3 +1,4 @@
+import type { IgnoreRule } from '@vrt/engine';
 import type { ItemStatus, PermissionAction, RunStatus } from '@vrt/shared';
 import { describe, expect, it } from 'vitest';
 import { ForbiddenError } from '../auth/assert-can';
@@ -34,7 +35,9 @@ interface Item extends PlannedItem {
   error: string | null;
 }
 
-function setup(options: { role?: 'editor' | 'viewer'; workerDown?: boolean } = {}) {
+function setup(
+  options: { role?: 'editor' | 'viewer'; workerDown?: boolean; ignoreRules?: IgnoreRule[] } = {},
+) {
   const state = {
     runs: [] as Run[],
     items: [] as Item[],
@@ -73,7 +76,7 @@ function setup(options: { role?: 'editor' | 'viewer'; workerDown?: boolean } = {
       { url: 'https://example.com/b', kind: 'page' },
       { url: 'https://example.com/doc.pdf', kind: 'file' },
     ],
-    loadIgnoreRules: async () => [],
+    loadIgnoreRules: async () => options.ignoreRules ?? [],
     findActiveRun: async (projectId) =>
       state.runs.find(
         (r) => r.projectId === projectId && ['queued', 'running'].includes(r.status),
@@ -203,6 +206,23 @@ describe('startRun', () => {
         details: { runId: 'run-1', label: LABEL, items: 7, workflowId: 'wf-run-1-1' },
       },
     ]);
+  });
+
+  it('snapshots the capture ignore rules into the run settings (F-IGNORE-3)', async () => {
+    const rules: IgnoreRule[] = [
+      { type: 'url_pattern', url_pattern: 'https://example.com/b', applies_to: 'capture' },
+      { type: 'url_pattern', url_pattern: 'https://example.com/a', applies_to: 'compare' },
+      { type: 'selector', selector: '#chat', applies_to: 'both' },
+      { type: 'region', region: { x: 0, y: 0, width: 10, height: 10 }, applies_to: 'both' },
+    ];
+    const { state, commands } = setup({ ignoreRules: rules });
+    await commands.startRun(PROJECT, USER, input);
+    expect(state.runs[0]!.insert!.settings).toMatchObject({
+      ignoreRules: [rules[0], rules[2], rules[3]],
+    });
+    // The capture URL rule leaves https://example.com/b out of the run.
+    expect(state.items.some((i) => i.url === 'https://example.com/b')).toBe(false);
+    expect(state.items.some((i) => i.url === 'https://example.com/a')).toBe(true);
   });
 
   it('dry run lists the items without writing anything', async () => {

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { StartComparisonForm } from '@/components/comparisons/StartComparisonForm';
 import { Badge } from '@/components/ui/badge';
@@ -46,7 +47,13 @@ function CountsText({ counts }: { counts: ComparisonSummary['counts'] }) {
   return <span className="tabular-nums">{parts.join(' · ')}</span>;
 }
 
-function ComparisonTable({ comparisons }: { comparisons: ComparisonSummary[] }) {
+function ComparisonTable({
+  slug,
+  comparisons,
+}: {
+  slug: string;
+  comparisons: ComparisonSummary[];
+}) {
   return (
     <div className="overflow-x-auto rounded-md border">
       <table className="w-full text-sm">
@@ -76,7 +83,9 @@ function ComparisonTable({ comparisons }: { comparisons: ComparisonSummary[] }) 
             return (
               <tr key={cmp.id} className="border-t align-top">
                 <td className="px-3 py-2 font-mono">
-                  {cmp.beforeLabel} → {cmp.afterLabel}
+                  <Link href={`/p/${slug}/comparisons/${cmp.id}`} className="hover:underline">
+                    {cmp.beforeLabel} → {cmp.afterLabel}
+                  </Link>
                 </td>
                 <td className="px-3 py-2">
                   <StatusBadge status={cmp.status} />
@@ -168,7 +177,7 @@ export default async function ComparisonsPage({ params }: { params: Params }) {
           <h2 id="comparisons-heading" className="sr-only">
             Comparisons
           </h2>
-          <ComparisonTable comparisons={comparisons} />
+          <ComparisonTable slug={slug} comparisons={comparisons} />
           {comparisons.length === COMPARISON_LIST_LIMIT && (
             <p className="text-sm text-muted-foreground">
               Showing the newest {COMPARISON_LIST_LIMIT} comparisons.

@@ -4,6 +4,7 @@ import type { ReviewStatus } from '@vrt/shared';
 import { Loader2 } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -299,7 +300,8 @@ export function ReportView(props: ReportViewProps) {
       try {
         await postReview(comparisonId, [selected.id], review, note);
         const reviewNote = review === 'pending' ? null : note.trim() || null;
-        const update = (i: ReportItem) => (i.id === selected.id ? { ...i, review, reviewNote } : i);
+        const update = (i: ReportItem) =>
+          i.id === selected.id ? { ...i, review, reviewNote, autoReviewed: false } : i;
         setItems((prev) => prev.map(update));
         setSelected((prev) => (prev ? update(prev) : prev));
         if (review === 'pending') setNote('');
@@ -324,7 +326,9 @@ export function ReportView(props: ReportViewProps) {
       await Promise.all([load(filterRef.current, 0), refreshCounts()]);
       const reviewed = new Set(ids);
       setSelected((prev) =>
-        prev && reviewed.has(prev.id) ? { ...prev, review, reviewNote: null } : prev,
+        prev && reviewed.has(prev.id)
+          ? { ...prev, review, reviewNote: null, autoReviewed: false }
+          : prev,
       );
     } catch (e) {
       toast.error(e instanceof Error ? e.message : 'The review could not be saved');
@@ -609,6 +613,15 @@ export function ReportView(props: ReportViewProps) {
                         title={`Review: ${item.review}`}
                       />
                       <span className="sr-only">Review {item.review}.</span>
+                      {item.autoReviewed && (
+                        <Badge
+                          variant="outline"
+                          className="px-1 py-0 text-[10px]"
+                          title={item.reviewNote ?? undefined}
+                        >
+                          auto
+                        </Badge>
+                      )}
                       <span
                         className="min-w-0 flex-1 truncate font-mono text-xs"
                         title={item.url ?? item.name}

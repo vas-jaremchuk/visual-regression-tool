@@ -124,6 +124,12 @@ export interface ChangedItem {
   afterKey: string | null;
 }
 
+/** A `review_memory` row: the decision and the comparison it was taken in. */
+export interface ReviewMemory {
+  review: ReviewStatus;
+  comparisonLabel: string | null;
+}
+
 export interface ComparisonPatch {
   status?: ComparisonStatus;
   settings?: CompareSettings;
@@ -166,13 +172,13 @@ export interface CompareStore {
   failPending(comparisonId: string, error: string): Promise<void>;
   /** `changed` items whose review is still `pending`. */
   listUnreviewedChanged(comparisonId: string): Promise<ChangedItem[]>;
-  /** Remembered approved/ignored decision for this URL, viewport and after-PNG hash (F-REVIEW-6). */
+  /** Remembered decision for this URL, viewport and after-PNG hash (F-REVIEW-6). */
   findReviewMemory(
     projectId: string,
     url: string,
     viewportSlug: string | null,
     afterSha256: string,
-  ): Promise<ReviewStatus | null>;
+  ): Promise<ReviewMemory | null>;
   setReview(itemIds: string[], review: ReviewStatus, note: string): Promise<void>;
   listReportItems(comparisonId: string): Promise<ReportItem[]>;
   refreshCounts(comparisonId: string): Promise<void>;
@@ -318,6 +324,11 @@ export function diffBatches(
     messages.push({ v: 1, comparisonId, itemIds: pairs.slice(i, i + size).map((p) => p.id) });
   }
   return messages;
+}
+
+/** F-REVIEW-6 note of an item auto-reviewed from memory: `auto: same as approved in <label>`. */
+export function reviewMemoryNote(memory: ReviewMemory): string {
+  return `auto: same as ${memory.review} ${memory.comparisonLabel ? `in ${memory.comparisonLabel}` : 'earlier'}`;
 }
 
 /** 06 §5 step 9: changed pages still pending or rejected, or a changed file fingerprint. */
@@ -510,14 +521,14 @@ export function createCompareJob(comparisonId: string, deps: CompareJobDeps) {
       for (const item of changed) {
         const sha = item.afterKey ? shaByKey.get(item.afterKey) : undefined;
         if (skip.has(item.id) || !sha || item.url === null) continue;
-        const review = await store.findReviewMemory(
+        const memory = await store.findReviewMemory(
           comparison.projectId,
           item.url,
           item.viewportSlug,
           sha,
         );
-        if (review !== 'approved' && review !== 'ignored') continue;
-        await store.setReview([item.id], review, `auto: same as ${review} earlier`);
+        if (memory?.review !== 'approved' && memory?.review !== 'ignored') continue;
+        await store.setReview([item.id], memory.review, reviewMemoryNote(memory));
         remembered++;
       }
       await store.refreshCounts(comparisonId);

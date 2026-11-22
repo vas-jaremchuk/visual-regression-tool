@@ -715,6 +715,8 @@ export type Database = {
       review_memory: {
         Row: {
           after_sha256: string;
+          comparison_id: string | null;
+          comparison_label: string | null;
           created_at: string;
           decided_by: string | null;
           id: string;
@@ -726,6 +728,8 @@ export type Database = {
         ComputedFields: never;
         Insert: {
           after_sha256: string;
+          comparison_id?: string | null;
+          comparison_label?: string | null;
           created_at?: string;
           decided_by?: string | null;
           id?: string;
@@ -736,6 +740,8 @@ export type Database = {
         };
         Update: {
           after_sha256?: string;
+          comparison_id?: string | null;
+          comparison_label?: string | null;
           created_at?: string;
           decided_by?: string | null;
           id?: string;
@@ -745,6 +751,13 @@ export type Database = {
           viewport_slug?: string | null;
         };
         Relationships: [
+          {
+            foreignKeyName: 'review_memory_comparison_id_fkey';
+            columns: ['comparison_id'];
+            isOneToOne: false;
+            referencedRelation: 'comparisons';
+            referencedColumns: ['id'];
+          },
           {
             foreignKeyName: 'review_memory_decided_by_fkey';
             columns: ['decided_by'];

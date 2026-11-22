@@ -229,9 +229,58 @@ describe('POST /jobs/import-legacy', () => {
   });
 });
 
+describe('POST /jobs/compare', () => {
+  function workflowBinding(status: string) {
+    const instances = new Map<string, unknown>();
+    return {
+      instances,
+      create: vi.fn(async ({ id, params }: { id: string; params: unknown }) => {
+        if (instances.has(id)) throw new Error(`instance.already_exists: ${id}`);
+        instances.set(id, params);
+        return { id };
+      }),
+      get: vi.fn(async (id: string) => ({ id, status: async () => ({ status }) })),
+    };
+  }
+  it('starts a CompareWorkflow instance named after the comparison', async () => {
+    const binding = workflowBinding('running');
+    const env = makeEnv({ COMPARE_RUN: binding });
+    const res = await handleRequest(
+      await signed('POST', '/jobs/compare', { comparisonId: uuid }),
+      env,
+    );
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ workflowId: uuid });
+    expect(binding.instances.get(uuid)).toEqual({ comparisonId: uuid });
+  });
+
+  it('answers with the live instance instead of starting a second one', async () => {
+    const binding = workflowBinding('waiting');
+    const env = makeEnv({ COMPARE_RUN: binding });
+    await handleRequest(await signed('POST', '/jobs/compare', { comparisonId: uuid }), env);
+    const res = await handleRequest(
+      await signed('POST', '/jobs/compare', { comparisonId: uuid }),
+      env,
+    );
+    expect(await res.json()).toEqual({ workflowId: uuid });
+    expect(binding.instances.size).toBe(1);
+  });
+
+  it('starts a new instance when the same pair is re-run after the first ended', async () => {
+    const binding = workflowBinding('complete');
+    const env = makeEnv({ COMPARE_RUN: binding });
+    await handleRequest(await signed('POST', '/jobs/compare', { comparisonId: uuid }), env);
+    const res = await handleRequest(
+      await signed('POST', '/jobs/compare', { comparisonId: uuid }),
+      env,
+    );
+    const { workflowId } = (await res.json()) as { workflowId: string };
+    expect(workflowId).toMatch(new RegExp(`^${uuid}-[a-z0-9]+$`));
+  });
+});
+
 describe('signed job stubs', () => {
   it.each([
-    ['/jobs/compare', { comparisonId: uuid }],
     ['/jobs/delete', { entity: 'run', id: uuid }],
     ['/jobs/storage', { projectId: uuid }],
   ])('POST %s answers 200 with a workflow id', async (path, body) => {

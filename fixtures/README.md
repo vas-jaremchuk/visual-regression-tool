@@ -9,6 +9,7 @@ tickets that first need them.
 | `site/` | Tiny static website served by a local server in tests (`apps/worker/src/test/fixture-site.ts`; optional basic auth over the whole site): a sitemap index pointing to 2 child sitemaps, a redirect (`routes.json`), a 404, a PDF. `{{origin}}` in XML files is replaced with the server origin. Still to come with the capture tickets: lazy images, a cookie banner, an animation. |
 | `site/v2/` | Variant of `site/` that changes one heading, one image and the PDF bytes, adds a page and removes a page. |
 | `png/` | PNG pairs: identical, 1-pixel change, height difference, antialias-only change. |
+| `legacy-bucket/` | R2 bucket in prototype layout for legacy import tests (F-RUN-6): two prototype runs (`screenshots/<ts>/<filename>.png` and `.txt` fingerprints, including a legacy screenshot of a PDF link and a page missing from the sitemap) and one run in the new layout that must not be listed. |
 | `prototype-env/` | Sample prototype `.env` files for legacy import tests. |
 | `urls.txt` | ≥ 200 fixture URLs (fixture domains only) for filename parity. |
 | `golden/` | Expected engine output generated from the prototype's own functions by `tools/generate-golden.mjs`: filenames, fingerprint text, pixel diff counts for `png/`, `extractLocs` and `samePage` cases. |

@@ -238,7 +238,7 @@ function file(url: string, sha256: string): CompareRunItem {
 function diffAll(store: MemoryStore, changedUrls: Set<string>) {
   for (const item of store.items) {
     if (item.status !== 'pending') continue;
-    const changed = changedUrls.has(item.url);
+    const changed = item.url !== null && changedUrls.has(item.url);
     Object.assign(item, { status: changed ? 'changed' : 'unchanged', diff_pct: changed ? 2.5 : 0 });
   }
 }

@@ -13,7 +13,7 @@ describe('wrangler.jsonc', () => {
     expect(config.browser?.binding).toBe('BROWSER');
   });
 
-  it('declares the three workflows', () => {
+  it('declares the workflows', () => {
     const workflows = Object.fromEntries(
       (config.workflows ?? []).map((w) => [w.binding, w.class_name]),
     );
@@ -21,6 +21,7 @@ describe('wrangler.jsonc', () => {
       CAPTURE_RUN: 'CaptureRunWorkflow',
       COMPARE_RUN: 'CompareWorkflow',
       SITEMAP_FETCH: 'SitemapWorkflow',
+      LEGACY_IMPORT: 'ImportWorkflow',
     });
   });
 

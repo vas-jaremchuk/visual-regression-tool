@@ -84,6 +84,19 @@ const startSitemap: JobHandler = async ({ env, body, log }) => {
   return json(response);
 };
 
+/** POST /jobs/import-legacy (F-RUN-6): one `ImportWorkflow` instance per request. */
+const startImportLegacy: JobHandler = async ({ env, body, log }) => {
+  const parsed = parseBody(importLegacyJob, body);
+  if (parsed instanceof Response) return parsed;
+  const instance = await env.LEGACY_IMPORT.create({
+    id: `${parsed.projectId}-${Date.now().toString(36)}`,
+    params: parsed,
+  });
+  const response: JobStartedResponse = { workflowId: instance.id };
+  log.info('legacy import workflow started', { ...parsed, ...response });
+  return json(response);
+};
+
 /** Workflow instance statuses that will still make progress on their own. */
 const LIVE_STATUSES = new Set(['queued', 'running', 'paused', 'waiting', 'waitingForPause']);
 
@@ -173,11 +186,7 @@ const routes: { method: string; pattern: RegExp; handler: JobHandler }[] = [
   { method: 'POST', pattern: /^\/jobs\/capture\/([^/]+)\/cancel$/, handler: cancelCapture },
   { method: 'POST', pattern: /^\/jobs\/compare$/, handler: startCompare },
   { method: 'POST', pattern: /^\/jobs\/delete$/, handler: startJob('delete', deleteJob) },
-  {
-    method: 'POST',
-    pattern: /^\/jobs\/import-legacy$/,
-    handler: startJob('import-legacy', importLegacyJob),
-  },
+  { method: 'POST', pattern: /^\/jobs\/import-legacy$/, handler: startImportLegacy },
   { method: 'POST', pattern: /^\/jobs\/storage$/, handler: startJob('storage', storageJob) },
   {
     method: 'GET',

@@ -748,7 +748,7 @@ export type Database = {
           sha256: string | null;
           status: Database['public']['Enums']['item_status'];
           truncated: boolean;
-          url: string;
+          url: string | null;
           viewport_slug: string | null;
           width: number | null;
         };
@@ -773,7 +773,7 @@ export type Database = {
           sha256?: string | null;
           status?: Database['public']['Enums']['item_status'];
           truncated?: boolean;
-          url: string;
+          url?: string | null;
           viewport_slug?: string | null;
           width?: number | null;
         };
@@ -797,7 +797,7 @@ export type Database = {
           sha256?: string | null;
           status?: Database['public']['Enums']['item_status'];
           truncated?: boolean;
-          url?: string;
+          url?: string | null;
           viewport_slug?: string | null;
           width?: number | null;
         };

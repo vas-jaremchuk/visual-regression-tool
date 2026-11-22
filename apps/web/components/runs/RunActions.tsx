@@ -1,6 +1,7 @@
 'use client';
 
 import { Ban, Flag, GitCompare, Loader2, RotateCcw, Trash2 } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -8,19 +9,24 @@ import { Button } from '@/components/ui/button';
 import { BASELINE_RUN_STATUSES, RETRYABLE_RUN_STATUSES, isActiveRun } from '@/lib/runs/progress';
 import type { RunStatus } from '@vrt/shared';
 
-type Action = 'cancel' | 'retry-failed' | 'baseline';
+type Action = 'cancel' | 'retry-failed' | 'baseline' | 'compare';
 
 const DONE: Record<Action, string> = {
   cancel: 'Cancel requested',
   'retry-failed': 'Retrying failed items',
   baseline: 'Run set as baseline',
+  compare: 'Comparison with the baseline started',
 };
 
 /**
- * F-RUN-4 actions of the run detail, rendered for editors and project admins only. Compare and
- * delete are placeholders until the comparison (T15) and delete (T22) tickets ship.
+ * F-RUN-4 actions of the run detail, rendered for editors and project admins only. *Compare
+ * with…* opens the comparisons page to pick the other run; delete is a placeholder until the
+ * delete workflow (T22) ships.
  */
 export function RunActions({
+  projectId,
+  slug,
+  baselineRunId,
   runId,
   status,
   failedItems,
@@ -28,6 +34,9 @@ export function RunActions({
   isBaseline,
   canDelete,
 }: {
+  projectId: string;
+  slug: string;
+  baselineRunId: string | null;
   runId: string;
   status: RunStatus;
   failedItems: number;
@@ -41,11 +50,18 @@ export function RunActions({
   async function run(action: Action) {
     setPending(action);
     try {
-      const res = await fetch(`/api/runs/${runId}/${action}`, {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: '{}',
-      });
+      const res =
+        action === 'compare'
+          ? await fetch(`/api/projects/${projectId}/comparisons`, {
+              method: 'POST',
+              headers: { 'content-type': 'application/json' },
+              body: JSON.stringify({ beforeRunId: baselineRunId, afterRunId: runId }),
+            })
+          : await fetch(`/api/runs/${runId}/${action}`, {
+              method: 'POST',
+              headers: { 'content-type': 'application/json' },
+              body: '{}',
+            });
       const body = (await res.json().catch(() => null)) as {
         error?: { message?: string };
       } | null;
@@ -54,7 +70,8 @@ export function RunActions({
         return;
       }
       toast.success(DONE[action]);
-      router.refresh();
+      if (action === 'compare') router.push(`/p/${slug}/comparisons`);
+      else router.refresh();
     } catch {
       toast.error('Could not reach the server. Try again.');
     } finally {
@@ -66,7 +83,6 @@ export function RunActions({
     pending === action ? <Loader2 className="animate-spin" aria-hidden /> : <Icon aria-hidden />;
   const retryable = RETRYABLE_RUN_STATUSES.includes(status) && failedItems > 0;
   const baselineable = BASELINE_RUN_STATUSES.includes(status) && !isBaseline;
-  const soon = 'Available once comparisons are supported';
 
   return (
     <div className="flex flex-wrap gap-2">
@@ -88,13 +104,17 @@ export function RunActions({
       )}
       {BASELINE_RUN_STATUSES.includes(status) && (
         <>
-          <Button variant="outline" disabled title={soon}>
-            <GitCompare aria-hidden />
-            Compare with baseline
-          </Button>
-          <Button variant="outline" disabled title={soon}>
-            <GitCompare aria-hidden />
-            Compare with…
+          {baselineRunId && !isBaseline && (
+            <Button variant="outline" onClick={() => run('compare')} disabled={pending !== null}>
+              {icon('compare', GitCompare)}
+              Compare with baseline
+            </Button>
+          )}
+          <Button asChild variant="outline">
+            <Link href={`/p/${slug}/comparisons`}>
+              <GitCompare aria-hidden />
+              Compare with…
+            </Link>
           </Button>
         </>
       )}

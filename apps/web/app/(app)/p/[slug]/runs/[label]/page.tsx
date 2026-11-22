@@ -261,6 +261,9 @@ export default async function RunDetailPage({
         </div>
         {canEdit && (
           <RunActions
+            projectId={project.id}
+            slug={slug}
+            baselineRunId={baselineRunId}
             runId={run.id}
             status={run.status}
             failedItems={run.failedItems}

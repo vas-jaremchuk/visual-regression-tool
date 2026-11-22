@@ -186,6 +186,7 @@ test('editor starts a run and sees its progress update without reload', async ({
 
   // Refreshed by the status change: items, failures and actions of the finished run.
   await expect(page.getByRole('button', { name: 'Retry failed' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Compare with…' })).toBeVisible();
   await page.getByRole('link', { name: /^Failures/ }).click();
   await expect(
     page.getByRole('region', { name: 'Navigation timeout of 30000 ms exceeded' }),
@@ -239,6 +240,7 @@ test('viewer sees runs without actions and the API refuses viewer actions', asyn
   for (const name of ['Cancel', 'Retry failed', 'Set as baseline', 'Delete']) {
     await expect(page.getByRole('button', { name })).toHaveCount(0);
   }
+  await expect(page.getByRole('link', { name: 'Compare with…' })).toHaveCount(0);
   await expect(page.getByRole('table')).toContainText(`${BASE}/about`);
 
   const post = (path: string, data: unknown = {}) => page.request.post(path, { data });

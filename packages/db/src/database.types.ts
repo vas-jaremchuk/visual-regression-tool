@@ -1064,6 +1064,61 @@ export type Database = {
           },
         ];
       };
+      storage_usage: {
+        Row: {
+          bucket: string;
+          error: string | null;
+          groups: NonNullable<Json>;
+          object_count: number;
+          project_id: string;
+          refreshed_at: string | null;
+          status: string;
+          total_bytes: number;
+          updated_at: string;
+          workflow_id: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          bucket: string;
+          error?: string | null;
+          groups?: NonNullable<Json>;
+          object_count?: number;
+          project_id: string;
+          refreshed_at?: string | null;
+          status?: string;
+          total_bytes?: number;
+          updated_at?: string;
+          workflow_id?: string | null;
+        };
+        Update: {
+          bucket?: string;
+          error?: string | null;
+          groups?: NonNullable<Json>;
+          object_count?: number;
+          project_id?: string;
+          refreshed_at?: string | null;
+          status?: string;
+          total_bytes?: number;
+          updated_at?: string;
+          workflow_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'storage_usage_project_id_fkey';
+            columns: ['project_id'];
+            isOneToOne: true;
+            referencedRelation: 'projects';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'storage_usage_project_id_fkey';
+            columns: ['project_id'];
+            isOneToOne: true;
+            referencedRelation: 'projects_public';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       viewports: {
         Row: {
           created_at: string;
@@ -1211,6 +1266,23 @@ export type Database = {
             columns: ['created_by'];
             isOneToOne: false;
             referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      run_sizes: {
+        Row: {
+          bytes: number | null;
+          objects: number | null;
+          run_id: string;
+        };
+        ComputedFields: never;
+        Relationships: [
+          {
+            foreignKeyName: 'run_items_run_id_fkey';
+            columns: ['run_id'];
+            isOneToOne: false;
+            referencedRelation: 'runs';
             referencedColumns: ['id'];
           },
         ];

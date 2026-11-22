@@ -2,24 +2,52 @@
 
 import { Archive, ArchiveRestore, Loader2, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useTransition } from 'react';
+import { useState, useTransition } from 'react';
 import { toast } from 'sonner';
-import { archiveProject } from '@/app/(app)/p/[slug]/settings/actions';
+import { archiveProject, deleteProjectAction } from '@/app/(app)/p/[slug]/settings/actions';
 import { Button } from '@/components/ui/button';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
-/** Danger zone (03 §6, F-PROJ-6): archive / unarchive; delete arrives with T22. */
+/** Danger zone (03 §6, F-PROJ-6): archive / unarchive and delete (platform admins). */
 export function DangerZone({
   projectId,
+  slug,
   archived,
   canArchive,
 }: {
   projectId: string;
+  slug: string;
   archived: boolean;
   canArchive: boolean;
 }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
+  const [deleting, setDeleting] = useState(false);
+  const [confirmSlug, setConfirmSlug] = useState('');
+  const [deleteObjects, setDeleteObjects] = useState(false);
+
+  function remove() {
+    startTransition(async () => {
+      const result = await deleteProjectAction({ projectId, confirmSlug, deleteObjects });
+      if (!result.ok) {
+        toast.error(result.message);
+        return;
+      }
+      toast.success(result.message);
+      setDeleting(false);
+      if (result.data?.queued) router.refresh();
+      else router.push('/');
+    });
+  }
 
   function toggleArchive() {
     startTransition(async () => {
@@ -83,19 +111,78 @@ export function DangerZone({
             too.
           </p>
         </div>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            {/* A disabled button gets no pointer events, so the wrapper carries the tooltip. */}
-            <span tabIndex={0}>
-              <Button type="button" variant="destructive" disabled>
-                <Trash2 aria-hidden />
-                Delete
-              </Button>
-            </span>
-          </TooltipTrigger>
-          <TooltipContent>Deleting projects is not available yet.</TooltipContent>
-        </Tooltip>
+        <Button
+          type="button"
+          variant="destructive"
+          disabled={!canArchive || pending}
+          onClick={() => {
+            setConfirmSlug('');
+            setDeleteObjects(false);
+            setDeleting(true);
+          }}
+        >
+          <Trash2 aria-hidden />
+          Delete
+        </Button>
       </section>
+
+      <Dialog open={deleting} onOpenChange={(open) => !pending && setDeleting(open)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete project {slug}?</DialogTitle>
+            <DialogDescription>
+              Deletes the project with its runs, comparisons, members and settings. This cannot be
+              undone.
+            </DialogDescription>
+          </DialogHeader>
+          <form
+            id="delete-project-form"
+            className="grid gap-4"
+            onSubmit={(event) => {
+              event.preventDefault();
+              remove();
+            }}
+          >
+            <div className="grid gap-2">
+              <Label htmlFor="delete-project-slug">
+                Type <span className="font-mono">{slug}</span> to confirm
+              </Label>
+              <Input
+                id="delete-project-slug"
+                autoComplete="off"
+                value={confirmSlug}
+                onChange={(event) => setConfirmSlug(event.target.value)}
+              />
+            </div>
+            <label className="flex items-start gap-2 text-sm">
+              <input
+                type="checkbox"
+                className="mt-1"
+                checked={deleteObjects}
+                onChange={(event) => setDeleteObjects(event.target.checked)}
+              />
+              <span>
+                Also delete R2 objects (screenshots, diffs and reports of its runs and comparisons).
+                The bucket itself is kept.
+              </span>
+            </label>
+          </form>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleting(false)} disabled={pending}>
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              form="delete-project-form"
+              variant="destructive"
+              disabled={pending || confirmSlug !== slug}
+            >
+              {pending && <Loader2 className="animate-spin" aria-hidden />}
+              Delete project
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

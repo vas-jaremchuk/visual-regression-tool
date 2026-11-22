@@ -1,10 +1,11 @@
 'use client';
 
-import { Ban, Flag, GitCompare, Loader2, RotateCcw, Trash2 } from 'lucide-react';
+import { Ban, Flag, GitCompare, Loader2, RotateCcw } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { DeleteEntityButton } from '@/components/storage/DeleteEntityButton';
 import { Button } from '@/components/ui/button';
 import { BASELINE_RUN_STATUSES, RETRYABLE_RUN_STATUSES, isActiveRun } from '@/lib/runs/progress';
 import type { RunStatus } from '@vrt/shared';
@@ -20,14 +21,15 @@ const DONE: Record<Action, string> = {
 
 /**
  * F-RUN-4 actions of the run detail, rendered for editors and project admins only. *Compare
- * with…* opens the comparisons page to pick the other run; delete is a placeholder until the
- * delete workflow (T22) ships.
+ * with…* opens the comparisons page to pick the other run. *Delete* (project admins) previews the
+ * comparisons that go with the run; the baseline cannot be deleted (T22).
  */
 export function RunActions({
   projectId,
   slug,
   baselineRunId,
   runId,
+  label,
   status,
   failedItems,
   cancelRequested,
@@ -38,6 +40,7 @@ export function RunActions({
   slug: string;
   baselineRunId: string | null;
   runId: string;
+  label: string;
   status: RunStatus;
   failedItems: number;
   cancelRequested: boolean;
@@ -124,11 +127,15 @@ export function RunActions({
           Set as baseline
         </Button>
       )}
-      {canDelete && (
-        <Button variant="outline" disabled title="Deleting runs is not available yet">
-          <Trash2 aria-hidden />
-          Delete
-        </Button>
+      {canDelete && !isActiveRun(status) && status !== 'deleting' && (
+        <DeleteEntityButton
+          entity="run"
+          id={runId}
+          label={label}
+          retry={status === 'delete_failed'}
+          disabled={isBaseline}
+          disabledReason="The baseline run cannot be deleted; set another baseline first"
+        />
       )}
     </div>
   );

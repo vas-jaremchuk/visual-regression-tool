@@ -84,6 +84,7 @@ export default async function SettingsTabPage({ params }: { params: Params }) {
     body = (
       <DangerZone
         projectId={project.id}
+        slug={project.settings.slug}
         archived={archived}
         canArchive={await canDo(user, 'project.archive', project.id)}
       />

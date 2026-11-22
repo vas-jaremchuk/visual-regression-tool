@@ -265,6 +265,7 @@ export default async function RunDetailPage({
             slug={slug}
             baselineRunId={baselineRunId}
             runId={run.id}
+            label={run.label}
             status={run.status}
             failedItems={run.failedItems}
             cancelRequested={Boolean(run.cancelRequestedAt)}

@@ -21,6 +21,8 @@ describe('wrangler.jsonc', () => {
       CAPTURE_RUN: 'CaptureRunWorkflow',
       COMPARE_RUN: 'CompareWorkflow',
       SITEMAP_FETCH: 'SitemapWorkflow',
+      DELETE_JOB: 'DeleteWorkflow',
+      STORAGE_USAGE: 'StorageWorkflow',
       LEGACY_IMPORT: 'ImportWorkflow',
     });
   });

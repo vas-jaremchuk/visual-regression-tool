@@ -1,6 +1,9 @@
 import 'server-only';
 import type { ComparisonStatus, RunStatus } from '@vrt/shared';
 import { createClient } from '../supabase/server';
+import type { ReviewCounts } from './report';
+
+export { reviewProgress, type ReviewCounts } from './report';
 
 /** Comparisons list (F-CMP-7) and the runs that can be compared (F-CMP-1), as the user sees them. */
 
@@ -18,17 +21,12 @@ export interface ComparisonCounts {
   files_total: number;
 }
 
-export interface ReviewCounts {
-  pending: number;
-  approved: number;
-  rejected: number;
-  ignored: number;
-}
-
 export interface ComparisonSummary {
   id: string;
   label: string;
   status: ComparisonStatus;
+  beforeRunId: string;
+  afterRunId: string;
   beforeLabel: string;
   afterLabel: string;
   counts: Partial<ComparisonCounts>;
@@ -50,19 +48,13 @@ function labelOf(value: Labels): string {
   return (Array.isArray(value) ? value[0]?.label : value?.label) ?? '';
 }
 
-/** "12/40 reviewed": changed items with a review other than pending, of all changed items. */
-export function reviewProgress(review: Partial<ReviewCounts>): { reviewed: number; total: number } {
-  const reviewed = (review.approved ?? 0) + (review.rejected ?? 0) + (review.ignored ?? 0);
-  return { reviewed, total: reviewed + (review.pending ?? 0) };
-}
-
 export async function listComparisons(projectId: string): Promise<ComparisonSummary[]> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('comparisons')
     .select(
-      'id, label, status, counts, review_counts, created_at, finished_at, ' +
-        'before:runs!comparisons_project_id_before_run_id_fkey(label), ' +
+      'id, label, status, counts, review_counts, created_at, finished_at, before_run_id, ' +
+        'after_run_id, before:runs!comparisons_project_id_before_run_id_fkey(label), ' +
         'after:runs!comparisons_project_id_after_run_id_fkey(label)',
     )
     .eq('project_id', projectId)
@@ -74,6 +66,8 @@ export async function listComparisons(projectId: string): Promise<ComparisonSumm
     id: row.id as string,
     label: row.label as string,
     status: row.status as ComparisonStatus,
+    beforeRunId: row.before_run_id as string,
+    afterRunId: row.after_run_id as string,
     beforeLabel: labelOf(row.before as Labels),
     afterLabel: labelOf(row.after as Labels),
     counts: (row.counts ?? {}) as Partial<ComparisonCounts>,

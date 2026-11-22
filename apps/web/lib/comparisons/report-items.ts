@@ -2,7 +2,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@vrt/db';
 import type { CmpItemStatus, ReviewStatus } from '@vrt/shared';
 import { escapeLike } from '../sitemap/filters';
-import { REPORT_PAGE_SIZE, statusesFor, type ItemFilter } from './report';
+import { REPORT_PAGE_SIZE, statusesFor, type ItemFilter, type ReviewCounts } from './report';
 
 /**
  * Report list pages (F-CMP-3, NFR-4): page items sorted by diff % desc, 100 at a time. Takes either
@@ -24,12 +24,13 @@ export interface ReportItem {
   beforeDims: number[] | null;
   afterDims: number[] | null;
   review: ReviewStatus;
+  reviewNote: string | null;
   error: string | null;
 }
 
 export const REPORT_ITEM_COLUMNS =
   'id, url, name, viewport_slug, status, diff_pct, diff_pixels, total_pixels, before_key, ' +
-  'after_key, diff_key, before_dims, after_dims, review, error';
+  'after_key, diff_key, before_dims, after_dims, review, review_note, error';
 
 type ItemRow = Pick<
   Database['public']['Tables']['comparison_items']['Row'],
@@ -47,6 +48,7 @@ type ItemRow = Pick<
   | 'before_dims'
   | 'after_dims'
   | 'review'
+  | 'review_note'
   | 'error'
 >;
 
@@ -66,6 +68,7 @@ export function toReportItem(row: ItemRow): ReportItem {
     beforeDims: row.before_dims,
     afterDims: row.after_dims,
     review: row.review,
+    reviewNote: row.review_note,
     error: row.error,
   };
 }
@@ -92,6 +95,7 @@ export async function fetchItemPage(
   if (filter.viewport !== null) query = query.eq('viewport_slug', filter.viewport);
   if (filter.review !== null) query = query.eq('review', filter.review);
   if (filter.search.trim()) query = query.ilike('url', `%${escapeLike(filter.search.trim())}%`);
+  if (filter.maxPct !== null) query = query.lt('diff_pct', filter.maxPct);
   const { data, error, count } = await query
     .order('diff_pct', { ascending: false, nullsFirst: false })
     .order('url', { ascending: true })
@@ -100,4 +104,49 @@ export async function fetchItemPage(
   if (error) throw new Error(`Could not load the items: ${error.message}`);
   const rows = (data ?? []) as unknown as ItemRow[];
   return { items: rows.map(toReportItem), total: options.count ? (count ?? 0) : null };
+}
+
+/** Rows per request when collecting the ids of a filtered selection (PostgREST max rows). */
+const ID_PAGE_SIZE = 1000;
+
+/**
+ * Ids of the changed items matching the filter (F-REVIEW-2 bulk review on the filtered selection),
+ * all pages of it, not only the loaded ones. Only changed items carry a review.
+ */
+export async function fetchChangedItemIds(
+  supabase: SupabaseClient<Database>,
+  comparisonId: string,
+  filter: ItemFilter,
+): Promise<string[]> {
+  const ids: string[] = [];
+  for (let offset = 0; ; offset += ID_PAGE_SIZE) {
+    let query = supabase
+      .from('comparison_items')
+      .select('id')
+      .eq('comparison_id', comparisonId)
+      .eq('kind', 'page')
+      .eq('status', 'changed');
+    if (filter.viewport !== null) query = query.eq('viewport_slug', filter.viewport);
+    if (filter.review !== null) query = query.eq('review', filter.review);
+    if (filter.search.trim()) query = query.ilike('url', `%${escapeLike(filter.search.trim())}%`);
+    if (filter.maxPct !== null) query = query.lt('diff_pct', filter.maxPct);
+    const { data, error } = await query.order('id').range(offset, offset + ID_PAGE_SIZE - 1);
+    if (error) throw new Error(`Could not load the selection: ${error.message}`);
+    ids.push(...(data ?? []).map((row) => row.id));
+    if ((data ?? []).length < ID_PAGE_SIZE) return ids;
+  }
+}
+
+/** Current review counters of the comparison (refreshed by `review_items`). */
+export async function fetchReviewCounts(
+  supabase: SupabaseClient<Database>,
+  comparisonId: string,
+): Promise<Partial<ReviewCounts>> {
+  const { data, error } = await supabase
+    .from('comparisons')
+    .select('review_counts')
+    .eq('id', comparisonId)
+    .maybeSingle();
+  if (error) throw new Error(`Could not load the review counts: ${error.message}`);
+  return (data?.review_counts ?? {}) as Partial<ReviewCounts>;
 }

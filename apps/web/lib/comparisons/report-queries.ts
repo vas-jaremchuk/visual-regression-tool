@@ -1,8 +1,7 @@
 import 'server-only';
 import type { CmpItemStatus, ComparisonStatus } from '@vrt/shared';
 import { createClient } from '../supabase/server';
-import type { ReviewCounts } from './queries';
-import { viewportTabs, type ReportCounts } from './report';
+import { viewportTabs, type ReportCounts, type ReviewCounts } from './report';
 import { REPORT_ITEM_COLUMNS, toReportItem, type ReportItem } from './report-items';
 
 /** Report page data (F-CMP-2, F-CMP-5, F-CMP-6) as the signed-in user sees it (RLS). */
@@ -14,6 +13,8 @@ export interface ReportHeader {
   id: string;
   label: string;
   status: ComparisonStatus;
+  beforeRunId: string;
+  afterRunId: string;
   beforeLabel: string;
   afterLabel: string;
   counts: ReportCounts;
@@ -78,7 +79,7 @@ export async function getReportHeader(
     .from('comparisons')
     .select(
       'id, label, status, settings, counts, review_counts, created_at, finished_at, ' +
-        'before:runs!comparisons_project_id_before_run_id_fkey(label), ' +
+        'before_run_id, after_run_id, before:runs!comparisons_project_id_before_run_id_fkey(label), ' +
         'after:runs!comparisons_project_id_after_run_id_fkey(label)',
     )
     .eq('project_id', projectId)
@@ -93,6 +94,8 @@ export async function getReportHeader(
     id: row.id as string,
     label: row.label as string,
     status: row.status as ComparisonStatus,
+    beforeRunId: row.before_run_id as string,
+    afterRunId: row.after_run_id as string,
     beforeLabel: labelOf(row.before as Labels),
     afterLabel: labelOf(row.after as Labels),
     counts,

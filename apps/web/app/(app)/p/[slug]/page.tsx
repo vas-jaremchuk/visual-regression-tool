@@ -2,6 +2,7 @@ import { Camera, GitCompare, ListTree, Settings } from 'lucide-react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { ImportLegacyRuns } from '@/components/runs/ImportLegacyRuns';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -39,9 +40,10 @@ export default async function ProjectOverviewPage({ params }: { params: Params }
   const user = await requireUser();
   const project = await getProjectDetail(slug);
   if (!project) notFound();
-  const [activity, admin] = await Promise.all([
+  const [activity, admin, canImport] = await Promise.all([
     recentActivity(project.id),
     canDo(user, 'project.settings', project.id),
+    canDo(user, 'legacy.import', project.id),
   ]);
 
   return (
@@ -90,6 +92,9 @@ export default async function ProjectOverviewPage({ params }: { params: Params }
             <GitCompare aria-hidden />
             Compare latest with baseline
           </Button>
+          {canImport && (
+            <ImportLegacyRuns projectId={project.id} disabled={project.archivedAt !== null} />
+          )}
         </CardContent>
       </Card>
 

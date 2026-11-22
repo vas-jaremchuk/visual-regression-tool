@@ -1,0 +1,8 @@
+url: https://example.com/docs/brochure.pdf
+sha256: 9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08
+size: 4
+status: 200
+content-type: application/pdf
+last-modified: Wed, 05 Aug 2026 10:00:00 GMT
+etag: "brochure-v1"
+fetched-at: 2026-11-20T12:01:00.000Z

@@ -3,7 +3,8 @@ import type { CmpItemStatus, ItemKind, ItemStatus } from '@vrt/shared';
 
 /** Subset of a `run_items` row the matrix needs. */
 export interface MatrixRunItem {
-  url: string;
+  /** null for legacy items whose URL could not be reconstructed. */
+  url: string | null;
   kind: ItemKind;
   /** null for files. Legacy run items use 'desktop'. */
   viewport_slug: string | null;
@@ -25,7 +26,7 @@ export interface MatrixEntry<T extends MatrixRunItem = MatrixRunItem> {
   filename: string;
   /** Filename without extension. */
   name: string;
-  url: string;
+  url: string | null;
   before: T | null;
   after: T | null;
   status: MatrixStatus;

@@ -16,6 +16,7 @@
     { "binding": "CAPTURE_RUN", "name": "vrt-capture-run", "class_name": "CaptureRunWorkflow" },
     { "binding": "COMPARE_RUN", "name": "vrt-compare-run", "class_name": "CompareWorkflow" },
     { "binding": "SITEMAP_FETCH", "name": "vrt-sitemap-fetch", "class_name": "SitemapWorkflow" },
+    { "binding": "LEGACY_IMPORT", "name": "vrt-legacy-import", "class_name": "ImportWorkflow" },
   ],
   "queues": {
     "producers": [

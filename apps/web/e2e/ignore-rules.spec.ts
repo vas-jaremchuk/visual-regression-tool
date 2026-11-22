@@ -224,7 +224,8 @@ test('a viewer sees the rules and the tester but cannot change them', async ({ p
 
   const report = `/p/${PROJECT.slug}/comparisons/${comparisonId}`;
   await page.goto(report);
-  await expect(page.getByTestId('item-viewer')).toBeVisible();
+  // While the page streams in, the viewer can briefly render twice.
+  await expect(page.getByTestId('item-viewer').first()).toBeVisible();
   await expect(page.getByRole('group', { name: 'Ignore rule shortcuts' })).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'Re-diff' })).toHaveCount(0);
   const res = await page.request.post(`/api/comparisons/${comparisonId}/rediff`, { data: {} });

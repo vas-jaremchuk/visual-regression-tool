@@ -62,6 +62,14 @@ export function IgnoreRulesPanel({
   const [pending, run] = useAction();
   const [editing, setEditing] = useState<IgnoreRuleRow | 'new' | null>(null);
   const [deleting, setDeleting] = useState<IgnoreRuleRow | null>(null);
+  const [toggled, setToggled] = useState(new Map<string, boolean>());
+
+  // Drop optimistic toggles once the refreshed server rows arrive.
+  const [seen, setSeen] = useState(rules);
+  if (seen !== rules) {
+    setSeen(rules);
+    setToggled(new Map());
+  }
 
   return (
     <div className="grid gap-4">
@@ -132,19 +140,28 @@ export function IgnoreRulesPanel({
                         <input
                           type="checkbox"
                           aria-label={`Enable rule ${preview}`}
-                          checked={rule.enabled}
+                          checked={toggled.get(rule.id) ?? rule.enabled}
                           disabled={pending}
-                          onChange={(e) =>
-                            run(
-                              () =>
-                                setIgnoreRuleEnabledAction({
-                                  projectId,
-                                  id: rule.id,
-                                  enabled: e.target.checked,
-                                }),
-                              router.refresh,
-                            )
-                          }
+                          onChange={(e) => {
+                            const enabled = e.target.checked;
+                            // Shown at once; the refreshed rows replace it once saved.
+                            setToggled((m) => new Map(m).set(rule.id, enabled));
+                            run(async () => {
+                              const result = await setIgnoreRuleEnabledAction({
+                                projectId,
+                                id: rule.id,
+                                enabled,
+                              });
+                              if (!result.ok) {
+                                setToggled((m) => {
+                                  const next = new Map(m);
+                                  next.delete(rule.id);
+                                  return next;
+                                });
+                              }
+                              return result;
+                            }, router.refresh);
+                          }}
                         />
                       ) : (
                         <Badge variant={rule.enabled ? 'secondary' : 'outline'}>

@@ -1,0 +1,55 @@
+name: Staging acceptance
+
+# Release acceptance v1 (specification/11-testing.md §4): deploys the fixture site Worker and runs
+# the Playwright staging suite (apps/web/e2e-staging) against the deployed staging stack.
+# Manual trigger only; the `staging` environment holds staging secrets, never production ones.
+# See docs/runbook.md for the secrets and what each step checks.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: staging-acceptance
+  cancel-in-progress: false
+
+jobs:
+  acceptance:
+    runs-on: ubuntu-latest
+    environment: staging
+    timeout-minutes: 120
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+      STAGING_APP_URL: ${{ secrets.STAGING_APP_URL }}
+      STAGING_SUPABASE_URL: ${{ secrets.STAGING_SUPABASE_URL }}
+      STAGING_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.STAGING_SUPABASE_SERVICE_ROLE_KEY }}
+      STAGING_FIXTURE_SITE_URL: ${{ secrets.STAGING_FIXTURE_SITE_URL }}
+      STAGING_ADMIN_EMAIL: ${{ secrets.STAGING_ADMIN_EMAIL }}
+      STAGING_SLACK_WEBHOOK_URL: ${{ secrets.STAGING_SLACK_WEBHOOK_URL }}
+      STAGING_LEGACY_ENV: ${{ secrets.STAGING_LEGACY_ENV }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter web exec playwright install --with-deps chromium
+
+      # The suite redeploys it with SITE_VERSION v2 for step 4 and back to v1 at the end.
+      - name: Deploy fixture site (v1)
+        working-directory: apps/worker
+        run: pnpm exec wrangler deploy --config wrangler.fixture-site.jsonc --var SITE_VERSION:v1
+
+      - name: Release acceptance steps 1-9
+        run: pnpm test:staging
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: staging-acceptance-results
+          path: apps/web/test-results

@@ -1,0 +1,21 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  // Staging fixture site (specification/11-testing.md §4), not part of the product. Deployed by
+  // .github/workflows/staging-acceptance.yml; see docs/runbook.md.
+  "name": "vrt-fixture-site",
+  "main": "src/fixture-site/worker.ts",
+  "compatibility_date": "2026-11-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "assets": {
+    "directory": "../../fixtures/site",
+    "binding": "ASSETS",
+    // The Worker maps every request onto v1 or v2 files itself.
+    "run_worker_first": true,
+    "html_handling": "none",
+  },
+  "vars": {
+    // v1 or v2; switch with `wrangler deploy --config wrangler.fixture-site.jsonc --var SITE_VERSION:v2`.
+    "SITE_VERSION": "v1",
+  },
+}

@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import type { z } from 'zod';
 import { toBase64 } from './encoding';
-import { containerEnv, webEnv, workerEnv } from './env';
+import { containerEnv, stagingEnv, webEnv, workerEnv } from './env';
 import { EnvValidationError, parseEnv } from './env-fields';
 
 function exampleKeys(app: string): string[] {
@@ -53,6 +53,7 @@ describe('.env.example files match the schemas', () => {
     ['web', webEnv],
     ['worker', workerEnv],
     ['diff-container', containerEnv],
+    ['web/e2e-staging', stagingEnv],
   ];
   it.each(cases)('apps/%s', (app, schema) => {
     expect(exampleKeys(app).sort()).toEqual(Object.keys(schema.shape).sort());

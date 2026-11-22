@@ -9,6 +9,7 @@ export const SETTINGS_TABS = [
   { tab: 'ignore-rules', label: 'Ignore rules', later: 'T19' },
   { tab: 'notifications', label: 'Notifications' },
   { tab: 'members', label: 'Members' },
+  { tab: 'audit', label: 'Audit log' },
   { tab: 'danger', label: 'Danger zone' },
 ] as const;
 

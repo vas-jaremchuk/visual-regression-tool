@@ -358,8 +358,8 @@ select throws_ok(
 select is(
   tests.run_as('00000000-0000-0000-0000-0000000000c2',
     $$select public.review_items('00000000-0000-0000-0000-0000000000b1', array['00000000-0000-0000-0000-0000000000b3', '00000000-0000-0000-0000-0000000000b4']::uuid[], 'approved', 'ok')::text$$),
-  '2',
-  'editor reviews items through review_items'
+  '1',
+  'editor reviews items through review_items (changed items only)'
 );
 select is(
   (select review::text || '|' || reviewed_by::text || '|' || review_note

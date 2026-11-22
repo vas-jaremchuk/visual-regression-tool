@@ -10,6 +10,7 @@ import {
   type ComparisonsGateway,
   type StartComparisonInput,
 } from './commands';
+import { createReviewCommands, type ReviewGateway, type ReviewInput } from './review';
 
 type UserClient = Awaited<ReturnType<typeof createClient>>;
 
@@ -114,4 +115,50 @@ export async function startComparison(
     worker: workerClient(),
   });
   return commands.startComparison(projectId, user.id, input);
+}
+
+/** `ReviewGateway` as the signed-in user: RLS on the read, `review_items` checks `can_edit`. */
+function reviewGateway(supabase: UserClient): ReviewGateway {
+  return {
+    async loadComparison(comparisonId) {
+      const row = check(
+        'load the comparison',
+        await supabase
+          .from('comparisons')
+          .select('id, project_id, status')
+          .eq('id', comparisonId)
+          .maybeSingle(),
+      );
+      return row ? { id: row.id, projectId: row.project_id, status: row.status } : null;
+    },
+
+    async reviewItems(comparisonId, itemIds, review, note) {
+      const { data, error } = await supabase.rpc('review_items', {
+        p_comparison_id: comparisonId,
+        p_item_ids: itemIds,
+        p_review: review,
+        ...(note === null ? {} : { p_note: note }),
+      });
+      if (error?.code === '42501') throw new RequestError(403, 'forbidden', error.message);
+      if (error) throw new Error(`Could not review the items: ${error.message}`);
+      return data ?? 0;
+    },
+  };
+}
+
+/** F-REVIEW-1/2: editor+ sets the review of one or many changed items of a comparison. */
+export async function reviewItems(
+  user: CurrentUser | null,
+  comparisonId: string,
+  input: ReviewInput,
+): Promise<{ updated: number }> {
+  if (!user) throw new ForbiddenError('comparison.review');
+  const supabase = await createClient();
+  const commands = createReviewCommands({
+    authorize: async (action, id) => {
+      await assertCan(user, action, id);
+    },
+    db: reviewGateway(supabase),
+  });
+  return commands.review(comparisonId, input);
 }

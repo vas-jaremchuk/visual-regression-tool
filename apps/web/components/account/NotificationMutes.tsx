@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useTransition } from 'react';
+import { useOptimistic, useTransition } from 'react';
 import { toast } from 'sonner';
 import { muteProject } from '@/app/(app)/account/actions';
 import type { ProjectMute } from '@/lib/notifications/queries';
@@ -11,6 +11,11 @@ import type { ProjectMute } from '@/lib/notifications/queries';
 export function NotificationMutes({ projects }: { projects: ProjectMute[] }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
+  const [muted, setMuted] = useOptimistic(
+    new Map(projects.map((project) => [project.projectId, project.muted])),
+    (current, change: { projectId: string; muted: boolean }) =>
+      new Map(current).set(change.projectId, change.muted),
+  );
 
   if (projects.length === 0) {
     return (
@@ -18,9 +23,10 @@ export function NotificationMutes({ projects }: { projects: ProjectMute[] }) {
     );
   }
 
-  const toggle = (projectId: string, muted: boolean) =>
+  const toggle = (projectId: string, value: boolean) =>
     startTransition(async () => {
-      const result = await muteProject({ projectId, muted });
+      setMuted({ projectId, muted: value });
+      const result = await muteProject({ projectId, muted: value });
       if (result.ok) toast.success(result.message);
       else toast.error(result.message);
       router.refresh();
@@ -37,7 +43,7 @@ export function NotificationMutes({ projects }: { projects: ProjectMute[] }) {
             <input
               type="checkbox"
               className="size-4 accent-primary"
-              checked={project.muted}
+              checked={muted.get(project.projectId) ?? false}
               disabled={pending}
               onChange={(event) => toggle(project.projectId, event.target.checked)}
             />

@@ -5,6 +5,7 @@ import {
   itemPath,
   keyBelongsToComparison,
   severity,
+  sharedItemsQuery,
   statusesFor,
   viewportTabs,
 } from './report';
@@ -78,6 +79,28 @@ describe('imageSrc', () => {
     expect(imageSrc(null, 'c1', 'diffs/a b/c.png')).toBe(
       '/api/r2/sign?comparison=c1&key=diffs%2Fa+b%2Fc.png&redirect=1',
     );
+  });
+  it('signs with the share token on the share page', () => {
+    expect(imageSrc(null, 'c1', 'diffs/a/b.png', 'tok')).toBe(
+      '/api/r2/sign?comparison=c1&key=diffs%2Fa%2Fb.png&redirect=1&token=tok',
+    );
+  });
+});
+
+describe('sharedItemsQuery', () => {
+  it('sends only the set filters', () => {
+    expect(
+      sharedItemsQuery(
+        { status: 'changed', viewport: null, review: null, search: ' ', maxPct: null },
+        0,
+      ),
+    ).toBe('status=changed&offset=0');
+    expect(
+      sharedItemsQuery(
+        { status: 'new', viewport: 'mobile', review: 'approved', search: '/a', maxPct: 0.5 },
+        100,
+      ),
+    ).toBe('status=new&offset=100&viewport=mobile&review=approved&search=%2Fa&maxPct=0.5');
   });
 });
 

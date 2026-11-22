@@ -52,6 +52,22 @@ const MUTATIONS: Record<string, Row> = {
     chain: ['lib/storage/service.ts#deleteComparison', 'lib/storage/commands.ts#deleteComparison'],
     actions: ['comparison.delete'],
   },
+  'POST /api/comparisons/[id]/share': {
+    chain: [
+      'lib/share/service.ts#shareCommands',
+      'lib/share/commands.ts#createShareCommands',
+      'lib/share/commands.ts#create',
+    ],
+    actions: ['share_link.created'],
+  },
+  'DELETE /api/comparisons/[id]/share': {
+    chain: [
+      'lib/share/service.ts#shareCommands',
+      'lib/share/commands.ts#createShareCommands',
+      'lib/share/commands.ts#revoke',
+    ],
+    actions: ['share_link.revoked'],
+  },
   'POST /api/comparisons/[id]/review': {
     chain: ['lib/comparisons/service.ts#reviewItems', 'lib/comparisons/review.ts#review'],
     actions: ['comparison.review'],

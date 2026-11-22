@@ -5,11 +5,13 @@ import { AuditLogView } from '@/components/admin/AuditLogView';
 import { AccessPassword } from '@/components/projects/AccessPassword';
 import { BucketChecks } from '@/components/projects/BucketChecks';
 import { DangerZone } from '@/components/projects/DangerZone';
+import { NotificationsPanel } from '@/components/projects/NotificationsPanel';
 import { SettingsForm } from '@/components/projects/SettingsForm';
 import { ViewportsPanel } from '@/components/projects/ViewportsPanel';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { parseAuditFilters } from '@/lib/admin/audit-filters';
 import { listActorOptions, listAuditLog } from '@/lib/admin/queries';
+import { listChannels } from '@/lib/notifications/queries';
 import { canDo, requireProjectSettings } from '@/lib/projects/access';
 import { listViewports } from '@/lib/projects/queries';
 import { isSettingsGroup, settingsToForm } from '@/lib/projects/settings-groups';
@@ -33,6 +35,8 @@ const DESCRIPTIONS: Record<string, string> = {
   capture: 'How pages are loaded and captured. Changes apply to new runs only.',
   viewports: 'Screen sizes every run captures. Disabled viewports are skipped.',
   diff: 'How sensitive comparisons are.',
+  notifications:
+    'Email and Slack messages when runs and comparisons finish. Failed deliveries are retried 3 times.',
   audit: 'Changes made in this project, newest first.',
   danger: 'Archive or delete the project.',
 };
@@ -90,6 +94,16 @@ export default async function SettingsTabPage({
         entries={entries}
         hasMore={hasMore}
         actors={actors}
+      />
+    );
+  } else if (entry.tab === 'notifications') {
+    const { channels, deliveries } = await listChannels(project.id);
+    body = (
+      <NotificationsPanel
+        projectId={project.id}
+        channels={channels}
+        deliveries={deliveries}
+        disabled={archived}
       />
     );
   } else if (entry.tab === 'danger') {

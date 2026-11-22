@@ -5,6 +5,7 @@ import { createRunJob, MAX_POLLS, type RunJobDeps } from '../capture/run-job';
 import { supabaseRunStore } from '../capture/supabase-run-store';
 import { getConfig, type Env } from '../env';
 import { createLogger } from '../logger';
+import { projectNotifier } from '../notify';
 import { createServiceClient } from '../supabase';
 
 /**
@@ -24,8 +25,10 @@ export function runJobDeps(env: Env): RunJobDeps {
     accountId: config.CF_ACCOUNT_ID,
     apiToken: config.CF_API_TOKEN,
   });
+  const notifier = projectNotifier(env);
   return {
     store: supabaseRunStore(createServiceClient(config)),
+    notifier: { notify: (event, context) => notifier.run(event, context) },
     ensureBucket: (name) => buckets.ensure(name),
     enqueue: async (messages: CaptureMsg[]) => {
       await env.CAPTURE_QUEUE.sendBatch(messages.map((body) => ({ body })));

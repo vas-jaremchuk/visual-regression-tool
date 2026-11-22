@@ -37,6 +37,13 @@ const MUTATIONS: Record<string, Row> = {
     chain: ['lib/members/service.ts#revokeInvitation'],
     actions: ['invitation.revoke'],
   },
+  'POST /api/notifications/[channelId]/test': {
+    chain: [
+      'lib/notifications/service.ts#testChannel',
+      'lib/notifications/commands.ts#testChannel',
+    ],
+    actions: ['notification_channel.test'],
+  },
   'POST /api/projects': {
     chain: ['lib/projects/service.ts#createProject'],
     actions: ['project.create'],
@@ -81,6 +88,10 @@ const MUTATIONS: Record<string, Row> = {
 
   // Server actions.
   'app/(app)/actions.ts#signOut': { exempt: 'ends the session; no application data changes' },
+  'app/(app)/account/actions.ts#muteProject': {
+    chain: ['lib/notifications/service.ts#setProjectMute', 'lib/notifications/commands.ts#setMute'],
+    actions: ['notification.mute', 'notification.unmute'],
+  },
   'app/(app)/admin/users/actions.ts#invitePlatformUser': {
     chain: ['lib/members/service.ts#createInvitation'],
     actions: ['invitation.create'],
@@ -139,6 +150,34 @@ const MUTATIONS: Record<string, Row> = {
   'app/(app)/p/[slug]/settings/actions.ts#checkProjectBucket': {
     chain: ['lib/projects/service.ts#runBucketCheck'],
     actions: ['project.bucket.check'],
+  },
+  'app/(app)/p/[slug]/settings/actions.ts#addNotificationChannel': {
+    chain: [
+      'lib/notifications/service.ts#createChannel',
+      'lib/notifications/commands.ts#createChannel',
+    ],
+    actions: ['notification_channel.create'],
+  },
+  'app/(app)/p/[slug]/settings/actions.ts#editNotificationChannel': {
+    chain: [
+      'lib/notifications/service.ts#updateChannel',
+      'lib/notifications/commands.ts#updateChannel',
+    ],
+    actions: ['notification_channel.update'],
+  },
+  'app/(app)/p/[slug]/settings/actions.ts#removeNotificationChannel': {
+    chain: [
+      'lib/notifications/service.ts#deleteChannel',
+      'lib/notifications/commands.ts#deleteChannel',
+    ],
+    actions: ['notification_channel.delete'],
+  },
+  'app/(app)/p/[slug]/settings/actions.ts#sendTestNotification': {
+    chain: [
+      'lib/notifications/service.ts#testChannel',
+      'lib/notifications/commands.ts#testChannel',
+    ],
+    actions: ['notification_channel.test'],
   },
   'app/(app)/p/[slug]/sitemap/actions.ts#addManualUrlAction': {
     chain: ['lib/sitemap/service.ts#addManualUrl'],

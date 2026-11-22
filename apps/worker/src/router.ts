@@ -167,18 +167,53 @@ const startCompare: JobHandler = async ({ env, body, log }) => {
   return json(response);
 };
 
+/**
+ * One live instance per key: a repeated request joins the live instance; once it has ended, a
+ * new request (retry, refresh) starts a new one.
+ */
+async function createOrJoin(workflow: Workflow, key: string, params: object) {
+  try {
+    return await workflow.create({ id: key, params });
+  } catch (error) {
+    if (!/already.exists/i.test(String(error))) throw error;
+    const instance = await workflow.get(key);
+    if (await isLive(instance)) return instance;
+    return workflow.create({ id: `${key}-${Date.now().toString(36)}`, params });
+  }
+}
+
+/** POST /jobs/delete (F-STORAGE-3): `DeleteWorkflow` per entity; a failed delete can be retried. */
+const startDelete: JobHandler = async ({ env, body, log }) => {
+  const parsed = parseBody(deleteJob, body);
+  if (parsed instanceof Response) return parsed;
+  const instance = await createOrJoin(env.DELETE_JOB, `${parsed.entity}-${parsed.id}`, parsed);
+  const response: JobStartedResponse = { workflowId: instance.id };
+  log.info('delete workflow started', { ...parsed, ...response });
+  return json(response);
+};
+
+/** POST /jobs/storage (F-STORAGE-1): `StorageWorkflow` per project; *Refresh* reuses a live one. */
+const startStorage: JobHandler = async ({ env, body, log }) => {
+  const parsed = parseBody(storageJob, body);
+  if (parsed instanceof Response) return parsed;
+  const instance = await createOrJoin(env.STORAGE_USAGE, `storage-${parsed.projectId}`, parsed);
+  const response: JobStartedResponse = { workflowId: instance.id };
+  log.info('storage workflow started', { ...parsed, ...response });
+  return json(response);
+};
+
 const routes: { method: string; pattern: RegExp; handler: JobHandler }[] = [
   { method: 'POST', pattern: /^\/jobs\/sitemap$/, handler: startSitemap },
   { method: 'POST', pattern: /^\/jobs\/capture$/, handler: startCapture },
   { method: 'POST', pattern: /^\/jobs\/capture\/([^/]+)\/cancel$/, handler: cancelCapture },
   { method: 'POST', pattern: /^\/jobs\/compare$/, handler: startCompare },
-  { method: 'POST', pattern: /^\/jobs\/delete$/, handler: startJob('delete', deleteJob) },
+  { method: 'POST', pattern: /^\/jobs\/delete$/, handler: startDelete },
   {
     method: 'POST',
     pattern: /^\/jobs\/import-legacy$/,
     handler: startJob('import-legacy', importLegacyJob),
   },
-  { method: 'POST', pattern: /^\/jobs\/storage$/, handler: startJob('storage', storageJob) },
+  { method: 'POST', pattern: /^\/jobs\/storage$/, handler: startStorage },
   {
     method: 'GET',
     pattern: /^\/jobs\/([^/]+)$/,

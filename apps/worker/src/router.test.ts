@@ -259,12 +259,64 @@ describe('POST /jobs/compare', () => {
   });
 });
 
+describe('POST /jobs/delete and /jobs/storage', () => {
+  function workflowBinding(status = 'running') {
+    const instances = new Map<string, unknown>();
+    return {
+      instances,
+      create: vi.fn(async ({ id, params }: { id: string; params: unknown }) => {
+        if (instances.has(id)) throw new Error(`instance.already_exists: ${id}`);
+        instances.set(id, params);
+        return { id };
+      }),
+      get: vi.fn(async (id: string) => ({ id, status: async () => ({ status }) })),
+    };
+  }
+
+  it('starts a DeleteWorkflow instance per entity', async () => {
+    const binding = workflowBinding();
+    const env = makeEnv({ DELETE_JOB: binding });
+    const body = { entity: 'run', id: uuid };
+    const res = await handleRequest(await signed('POST', '/jobs/delete', body), env);
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ workflowId: `run-${uuid}` });
+    expect(binding.instances.get(`run-${uuid}`)).toEqual(body);
+  });
+
+  it('retries a delete with a new instance once the first has ended', async () => {
+    const binding = workflowBinding('errored');
+    const env = makeEnv({ DELETE_JOB: binding });
+    const body = { entity: 'comparison', id: uuid };
+    await handleRequest(await signed('POST', '/jobs/delete', body), env);
+    const res = await handleRequest(await signed('POST', '/jobs/delete', body), env);
+    const { workflowId } = (await res.json()) as { workflowId: string };
+    expect(workflowId).toMatch(new RegExp(`^comparison-${uuid}-[a-z0-9]+$`));
+  });
+
+  it('joins a live storage refresh instead of starting a second one', async () => {
+    const binding = workflowBinding('running');
+    const env = makeEnv({ STORAGE_USAGE: binding });
+    await handleRequest(await signed('POST', '/jobs/storage', { projectId: uuid }), env);
+    const res = await handleRequest(
+      await signed('POST', '/jobs/storage', { projectId: uuid }),
+      env,
+    );
+    expect(await res.json()).toEqual({ workflowId: `storage-${uuid}` });
+    expect(binding.instances.size).toBe(1);
+  });
+
+  it('rejects an unknown entity', async () => {
+    const env = makeEnv({ DELETE_JOB: workflowBinding() });
+    const res = await handleRequest(
+      await signed('POST', '/jobs/delete', { entity: 'bucket', id: uuid }),
+      env,
+    );
+    expect(res.status).toBe(400);
+  });
+});
+
 describe('signed job stubs', () => {
-  it.each([
-    ['/jobs/delete', { entity: 'run', id: uuid }],
-    ['/jobs/import-legacy', { projectId: uuid, labels: ['2026-08-07_10-00-00'] }],
-    ['/jobs/storage', { projectId: uuid }],
-  ])('POST %s answers 200 with a workflow id', async (path, body) => {
+  it.each([['/jobs/import-legacy', { projectId: uuid, labels: ['2026-08-07_10-00-00'] }]])('POST %s answers 200 with a workflow id', async (path, body) => {
     const res = await handleRequest(await signed('POST', path, body), makeEnv());
     expect(res.status).toBe(200);
     const json = (await res.json()) as { workflowId: string };

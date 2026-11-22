@@ -116,6 +116,7 @@ insert into public.notification_channels (id, project_id, type, target_enc, even
 values ('00000000-0000-0000-0000-0000000000b8', '00000000-0000-0000-0000-0000000000a1', 'slack', 'v1:webhook', '{run_failed}');
 insert into public.notification_log (id, channel_id, event, status)
 values ('00000000-0000-0000-0000-0000000000b9', '00000000-0000-0000-0000-0000000000b8', 'run_failed', 'sent');
+insert into public.storage_usage (project_id, bucket) values ('00000000-0000-0000-0000-0000000000a1', 'bucket');
 insert into public.audit_log (id, project_id, action)
 values ('00000000-0000-0000-0000-0000000000ba', '00000000-0000-0000-0000-0000000000a1', 'project.update');
 insert into public.invitations (id, email, project_id, role)
@@ -219,7 +220,12 @@ insert into matrix values
   ('audit_log', 'select', $$select 1 from public.audit_log where id = '00000000-0000-0000-0000-0000000000ba'$$, '{f,f,t,t,f}'),
   ('audit_log', 'insert', $$insert into public.audit_log (project_id, action) values ('00000000-0000-0000-0000-0000000000a1', 'x') returning 1$$, '{f,f,f,f,f}'),
   ('audit_log', 'update', $$update public.audit_log set action = 'x' where id = '00000000-0000-0000-0000-0000000000ba' returning 1$$, '{f,f,f,f,f}'),
-  ('audit_log', 'delete', $$delete from public.audit_log where id = '00000000-0000-0000-0000-0000000000ba' returning 1$$, '{f,f,f,f,f}');
+  ('audit_log', 'delete', $$delete from public.audit_log where id = '00000000-0000-0000-0000-0000000000ba' returning 1$$, '{f,f,f,f,f}'),
+
+  ('storage_usage', 'select', $$select 1 from public.storage_usage where project_id = '00000000-0000-0000-0000-0000000000a1'$$, '{f,f,t,t,f}'),
+  ('storage_usage', 'insert', $$insert into public.storage_usage (project_id, bucket) values ('00000000-0000-0000-0000-0000000000a2', 'bucket2') returning 1$$, '{f,f,f,f,f}'),
+  ('storage_usage', 'update', $$update public.storage_usage set total_bytes = 1 where project_id = '00000000-0000-0000-0000-0000000000a1' returning 1$$, '{f,f,f,f,f}'),
+  ('storage_usage', 'delete', $$delete from public.storage_usage where project_id = '00000000-0000-0000-0000-0000000000a1' returning 1$$, '{f,f,f,f,f}');
 
 create temp table roles (idx int, name text, user_id uuid);
 insert into roles values

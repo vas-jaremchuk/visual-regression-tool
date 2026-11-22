@@ -10,6 +10,7 @@
     "lint": "eslint .",
     "typecheck": "next typegen && tsc --noEmit",
     "test:e2e": "playwright test",
+    "test:staging": "playwright test --config playwright.staging.config.ts",
     "check:bundle": "node scripts/check-client-bundle.mjs",
     "seed:admin": "node --env-file-if-exists=.env.local --import tsx scripts/seed-admin.ts"
   },

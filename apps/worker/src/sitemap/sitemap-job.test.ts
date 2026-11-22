@@ -101,6 +101,18 @@ describe('SitemapWorkflow job against fixtures/site', () => {
     expect(urls.get(`${origin}/about/`)).toMatchObject({ source: 'sitemap' });
   });
 
+  it('fixture site v2: adds /contact/, drops /blog/post-1/, keeps the redirect and the PDF', async () => {
+    site = await startFixtureSite({ version: 'v2' });
+    const origin = site.origin;
+    const { store, snapshot, urls } = memoryStore({ sourceUrl: `${origin}/sitemap.xml` });
+    await runSitemapJob(SNAPSHOT_ID, deps(store, [new URL(origin).host]));
+    // /, /about/, /missing/, /contact/, /docs/brochure.pdf
+    expect(snapshot).toMatchObject({ status: 'completed', url_count: 5, redirect_count: 1 });
+    expect(urls.get(`${origin}/contact/`)).toMatchObject({ included: true, httpStatus: 200 });
+    expect(urls.has(`${origin}/blog/post-1/?a=1&b=2`)).toBe(false);
+    expect(urls.get(`${origin}/docs/brochure.pdf`)).toMatchObject({ kind: 'file' });
+  });
+
   it('excludes URLs matching url_pattern ignore rules for capture', async () => {
     site = await startFixtureSite();
     const origin = site.origin;

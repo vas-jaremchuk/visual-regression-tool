@@ -18,7 +18,8 @@
     "db:types": "supabase gen types typescript --local --schema public > packages/db/src/database.types.ts && prettier --write packages/db/src/database.types.ts",
     "seed:admin": "pnpm --filter web seed:admin",
     "test:db": "supabase test db",
-    "test:e2e": "pnpm --filter web test:e2e"
+    "test:e2e": "pnpm --filter web test:e2e",
+    "test:staging": "pnpm --filter web test:staging"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",

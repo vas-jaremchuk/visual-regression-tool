@@ -85,3 +85,21 @@ export const containerEnv = z.object({
     .default(8080),
 });
 export type ContainerEnv = z.infer<typeof containerEnv>;
+
+/** Staging fixture site Worker (`apps/worker/wrangler.fixture-site.jsonc`, 11 §4): `v1` or `v2`. */
+export const fixtureSiteEnv = z.object({
+  SITE_VERSION: z.enum(['v1', 'v2'], { error: 'SITE_VERSION must be v1 or v2' }).default('v1'),
+});
+export type FixtureSiteEnv = z.infer<typeof fixtureSiteEnv>;
+
+/** Playwright staging suite (`apps/web/e2e-staging`, 11 §4); never production. */
+export const stagingEnv = z.object({
+  STAGING_APP_URL: url('STAGING_APP_URL'),
+  STAGING_SUPABASE_URL: url('STAGING_SUPABASE_URL'),
+  STAGING_SUPABASE_SERVICE_ROLE_KEY: required('STAGING_SUPABASE_SERVICE_ROLE_KEY'),
+  STAGING_FIXTURE_SITE_URL: url('STAGING_FIXTURE_SITE_URL'),
+  STAGING_ADMIN_EMAIL: required('STAGING_ADMIN_EMAIL').pipe(z.email()),
+  STAGING_SLACK_WEBHOOK_URL: url('STAGING_SLACK_WEBHOOK_URL'),
+  STAGING_LEGACY_ENV: required('STAGING_LEGACY_ENV'),
+});
+export type StagingEnv = z.infer<typeof stagingEnv>;

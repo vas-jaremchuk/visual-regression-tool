@@ -1,22 +1,24 @@
 import { readFile } from 'node:fs/promises';
 import { createServer, type Server } from 'node:http';
 import type { AddressInfo } from 'node:net';
-import { extname, join, normalize } from 'node:path';
+import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import {
+  contentType,
+  renderFixtureBody,
+  routeFixturePath,
+  versionRoot,
+  type SiteVersion,
+} from '../fixture-site/routing';
 
 /**
  * Serves `fixtures/site/` on 127.0.0.1 (specification/11-testing.md §2). `{{origin}}` in XML
  * files becomes the server origin; `routes.json` declares redirects; unknown paths are 404.
- * With `basicAuth` every request needs those credentials.
+ * With `basicAuth` every request needs those credentials; `version: 'v2'` serves `site/v2/` under
+ * the same URLs (routing shared with the staging Worker, `src/fixture-site/`).
  */
 
 const ROOT = fileURLToPath(new URL('../../../../fixtures/site/', import.meta.url).href);
-
-const TYPES: Record<string, string> = {
-  '.html': 'text/html; charset=utf-8',
-  '.xml': 'application/xml',
-  '.pdf': 'application/pdf',
-};
 
 export interface FixtureSite {
   origin: string;
@@ -26,9 +28,12 @@ export interface FixtureSite {
 }
 
 export async function startFixtureSite(
-  opts: { basicAuth?: { user: string; pass: string } } = {},
+  opts: { basicAuth?: { user: string; pass: string }; version?: SiteVersion } = {},
 ): Promise<FixtureSite> {
-  const routes = JSON.parse(await readFile(join(ROOT, 'routes.json'), 'utf8')) as {
+  const version = opts.version ?? 'v1';
+  const routes = JSON.parse(
+    await readFile(join(ROOT, versionRoot(version), 'routes.json'), 'utf8'),
+  ) as {
     redirects: Record<string, string>;
   };
   const requests: string[] = [];
@@ -46,27 +51,24 @@ export async function startFixtureSite(
           return;
         }
       }
-      const redirect = routes.redirects[path];
-      if (redirect) {
-        res.writeHead(301, { location: redirect }).end();
+      const route = routeFixturePath(path, version, routes.redirects);
+      if (route.kind === 'redirect') {
+        res.writeHead(301, { location: route.location }).end();
         return;
       }
-      const file = normalize(join(ROOT, path.endsWith('/') ? `${path}index.html` : path));
-      if (!file.startsWith(ROOT) || file.endsWith('routes.json')) {
+      if (route.kind === 'not-found') {
         res.writeHead(404).end();
         return;
       }
       let body: Buffer;
       try {
-        body = await readFile(file);
+        body = await readFile(join(ROOT, route.path));
       } catch {
         res.writeHead(404).end();
         return;
       }
-      const ext = extname(file);
-      const content =
-        ext === '.xml' ? body.toString('utf8').replaceAll('{{origin}}', origin) : body;
-      res.writeHead(200, { 'content-type': TYPES[ext] ?? 'application/octet-stream' });
+      const content = renderFixtureBody(route.path, body, origin);
+      res.writeHead(200, { 'content-type': contentType(route.path) });
       res.end(req.method === 'HEAD' ? undefined : content);
     })();
   });

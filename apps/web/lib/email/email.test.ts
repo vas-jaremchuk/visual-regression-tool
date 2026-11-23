@@ -1,5 +1,11 @@
 import { describe, expect, it, vi } from 'vitest';
-import { FakeEmailSender, MailpitEmailSender, ResendEmailSender, parseAddress } from './sender';
+import {
+  FakeEmailSender,
+  MailpitEmailSender,
+  RedirectingEmailSender,
+  ResendEmailSender,
+  parseAddress,
+} from './sender';
 import { invitationEmail, memberAddedEmail } from './templates';
 
 describe('invitationEmail', () => {
@@ -96,5 +102,29 @@ describe('email senders', () => {
       Email: 'vrt@example.com',
       Name: 'Visual Regression',
     });
+  });
+});
+
+describe('RedirectingEmailSender', () => {
+  const message = { to: 'ann@client.com', subject: 'Invitation', text: 'Hi', html: '<p>Hi</p>' };
+
+  it('delivers to the redirect address and names the intended recipient', async () => {
+    const inner = new FakeEmailSender();
+    await new RedirectingEmailSender(inner, 'me@example.com').send(message);
+    expect(inner.sent).toHaveLength(1);
+    expect(inner.sent[0]!.to).toBe('me@example.com');
+    expect(inner.sent[0]!.subject).toBe('[for ann@client.com] Invitation');
+    expect(inner.sent[0]!.text).toContain('Intended recipient: ann@client.com');
+    expect(inner.sent[0]!.html).toContain('ann@client.com');
+    expect(inner.sent[0]!.html).toContain('<p>Hi</p>');
+  });
+
+  it('leaves emails to the redirect address unchanged', async () => {
+    const inner = new FakeEmailSender();
+    await new RedirectingEmailSender(inner, 'Me@Example.com').send({
+      ...message,
+      to: 'me@example.com',
+    });
+    expect(inner.sent[0]).toEqual({ ...message, to: 'me@example.com' });
   });
 });

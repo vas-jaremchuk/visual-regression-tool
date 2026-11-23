@@ -58,6 +58,37 @@ export class MailpitEmailSender implements EmailSender {
   }
 }
 
+/**
+ * Delivers every email to one address instead of its recipient (EMAIL_REDIRECT_TO). The original
+ * recipient is named in the subject and at the top of the body so the email can be forwarded.
+ */
+export class RedirectingEmailSender implements EmailSender {
+  constructor(
+    private readonly inner: EmailSender,
+    private readonly redirectTo: string,
+  ) {}
+
+  async send(message: EmailMessage): Promise<void> {
+    if (message.to.toLowerCase() === this.redirectTo.toLowerCase()) {
+      return this.inner.send(message);
+    }
+    const note = `Redirected test email. Intended recipient: ${message.to}`;
+    await this.inner.send({
+      to: this.redirectTo,
+      subject: `[for ${message.to}] ${message.subject}`,
+      text: `${note}\n\n${message.text}`,
+      html: `<p style="padding:8px;background:#fff3bf;border:1px solid #f08c00">${escapeHtml(note)}</p>${message.html}`,
+    });
+  }
+}
+
+function escapeHtml(value: string): string {
+  return value.replace(
+    /[&<>"]/g,
+    (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!,
+  );
+}
+
 /** Records emails instead of sending them. */
 export class FakeEmailSender implements EmailSender {
   readonly sent: EmailMessage[] = [];
